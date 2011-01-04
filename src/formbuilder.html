@@ -1,0 +1,22 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>JQuery Form Builder Plugin</title>
+<script type="text/javascript" src="../lib/js/jquery-1.4.4.min.js"></script>
+<script type="text/javascript" src="../lib/js/jquery-ui-1.8.7.custom.min.js"></script>
+<script type="text/javascript" src="../lib/js/jquery.ui.subclass.js"></script>
+<script type="text/javascript" src="js/jquery.formbuilder.widget.js"></script>
+<link type="text/css" href="../lib/css/smoothness/jquery-ui-1.8.7.custom.css" media="screen" rel="stylesheet" />  
+<script type="text/javascript">
+$(function() {
+ $('#button1').button();
+ $('#button2').fbWidget({name: 'Testing button'});
+});
+</script>
+</head>
+<body>
+<a id="button1">Button 1</a>
+<a id="button2">Button 2</a>
+</body>
+</html>

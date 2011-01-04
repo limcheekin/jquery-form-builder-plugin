@@ -34,7 +34,7 @@
 
 	var methods = {
 		init : function(options) {
-			// set default options
+			// merge default options and passed in options (overwrite the default)
 			var options = $.extend(true, {}, $.fn.pluginName.options, options);
 			
 			return this.each(function() {
