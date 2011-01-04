@@ -1,0 +1,13 @@
+/*
+* jquery-form-builder-plugin - JQuery WYSIWYG Web Form Builder
+* http://code.google.com/p/jquery-form-builder-plugin/
+*
+* Revision: @REVISION
+* Version: @VERSION
+* Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
+*
+* Licensed under Apache v2.0 http://www.apache.org/licenses/LICENSE-2.0.html
+*
+* Date: 
+*/
+

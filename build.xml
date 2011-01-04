@@ -1,0 +1,184 @@
+<project name="jquery-form-builder-plugin" default="all" basedir=".">
+
+	<loadfile property="version" srcfile="VERSION.txt" />
+
+	<property name="BUILD_DIR" value="./build" description="Build folder" />
+	<property name="SRC_JS_DIR" value="./src/js" description="JavaScript Source folder" />
+	<property name="SRC_CSS_DIR" value="./src/css" description="CSS Source folder" />
+	<property name="DIST_DIR" value="./dist" description="Compiled jquery-form-builder-plugin folder" />
+	<property name="IMG_DIR" value="./images" description="Images folder" />
+
+	<property name="JQUERY_FORM_BUILDER" value="${DIST_DIR}/jquery-formbuilder-${version}.js" />
+	<property name="JQUERY_FORM_BUILDER_MIN" value="${DIST_DIR}/jquery-formbuilder-${version}.min.js" />
+	<property name="JQUERY_FORM_BUILDER_PACK" value="${DIST_DIR}/jquery-formbuilder-${version}.pack.js" />
+	<property name="JQUERY_FORM_BUILDER_CSS" value="${DIST_DIR}/jquery-formbuilder-${version}.css" />
+	<property name="JQUERY_FORM_BUILDER_IMG" value="${DIST_DIR}/images" />
+
+	<property name="PLUGINS" value="textfield" />
+
+	<path id="svnant.classpath">
+		<pathelement path="${BUILD_DIR}/svnant.jar" />
+		<pathelement path="${BUILD_DIR}/svnClientAdapter.jar" />
+		<pathelement path="${BUILD_DIR}/svnjavahl.jar" />
+		<pathelement path="${BUILD_DIR}/svnkit.jar" />
+	</path>
+
+	<typedef resource="org/tigris/subversion/svnant/svnantlib.xml" classpathref="svnant.classpath" />
+
+	<target name="plugins">
+		<script language="groovy" classpath="${BUILD_DIR}/groovy-all-1.7.4.jar">
+			<![CDATA[
+		 	   def pluginNames = project.getProperty("PLUGINS").split(",")
+		 	   String jsDir = project.getProperty("SRC_JS_DIR")
+		 	   String cssDir = project.getProperty("SRC_CSS_DIR")
+		 	   String pluginJavaScriptFiles = ''
+		 	   String pluginCssFiles = ''
+		 	   pluginNames.each { name ->
+			      name = name.trim()
+		 	      pluginJavaScriptFiles += "${jsDir}/jquery.formbuilder.${name}.js "
+		 	      pluginCssFiles += "${cssDir}/jquery.formbuilder.${name}.css "
+		 	      }
+		 	   project.setProperty("PLUGINS_JS", pluginJavaScriptFiles)
+		 	   project.setProperty("PLUGINS_CSS", pluginCssFiles)
+		   ]]>
+		 </script>
+		<echo message="PLUGINS_JS: ${PLUGINS_JS}" />
+		<echo message="PLUGINS_CSS: ${PLUGINS_CSS}" />
+	</target>
+	<target name="all" depends="clean,svninfo,plugins,formbuilder,lint,css,images,min,pack" description="Builds jquery-form-builder-plugin including minified, packed JS files, as well as images and CSS" />
+
+	<target name="svninfo">
+		<svn javahl="false" svnkit="true">
+			<update dir="." />
+			<info target="." />
+		</svn>
+		<echo message="svn.info.lastRev: ${svn.info.lastRev}" />
+		<echo message="svn.info.lastDate: ${svn.info.lastDate}" />
+	</target>
+
+	<target name="dir" description="Builds distribution directory">
+		<mkdir dir="${DIST_DIR}" />
+	</target>
+
+	<target name="formbuilder" depends="dir" description="Main jquery-form-builder-plugin build. Concatenates source and css files and replaces @VERSION/Date">
+		<echo message="Building ${JQUERY_FORM_BUILDER}" />
+
+		<concat destfile="${JQUERY_FORM_BUILDER}">
+			<fileset file="${SRC_JS_DIR}/../HEADER.txt" />
+			<!--fileset file="${SRC_JS_DIR}/intro.js" /-->
+			<fileset file="${SRC_JS_DIR}/jquery.formbuilder.core.js" />
+			<filelist files="${PLUGINS_JS}" />
+			<!--fileset file="${SRC_JS_DIR}/outro.js" /-->
+		</concat>
+		<replaceregexp match="@REVISION" replace="${svn.info.lastRev}" flags="g" byline="true" file="${JQUERY_FORM_BUILDER}" />
+		<replaceregexp match="@VERSION" replace="${version}" flags="g" byline="true" file="${JQUERY_FORM_BUILDER}" />
+		<replaceregexp match="Date: " replace="Date: ${svn.info.lastDate}" file="${JQUERY_FORM_BUILDER}" />
+
+		<echo message="${JQUERY_FORM_BUILDER} built." />
+	</target>
+
+	<target name="min" depends="formbuilder" description="Remove all comments and whitespace, no compression, great in combination with GZip">
+		<echo message="Building ${JQUERY_FORM_BUILDER_MIN}" />
+
+		<apply executable="java" parallel="false" verbose="true" dest="${DIST_DIR}">
+			<fileset dir="${DIST_DIR}">
+				<include name="jquery.formbuilder.js" />
+			</fileset>
+
+			<arg line="-jar" />
+			<arg path="${BUILD_DIR}/compiler.jar" />
+			<arg value="--warning_level" />
+			<arg value="QUIET" />
+			<arg value="--js_output_file" />
+			<targetfile />
+			<arg value="--js" />
+			<mapper type="glob" from="jquery.formbuilder.js" to="tmpmin" />
+		</apply>
+
+		<concat destfile="${JQUERY_FORM_BUILDER_MIN}">
+			<filelist files="${JQUERY_FORM_BUILDER}, dist/tmpmin" />
+			<filterchain>
+				<headfilter lines="12" />
+			</filterchain>
+		</concat>
+
+		<concat destfile="${JQUERY_FORM_BUILDER_MIN}" append="yes">
+			<filelist files="dist/tmpmin" />
+		</concat>
+		<delete file="dist/tmpmin" />
+
+		<echo message="${JQUERY_FORM_BUILDER_MIN} built." />
+	</target>
+
+	<target name="pack" depends="min" description="Compresses minified jquery-form-builder-plugin source for even smaller file-sizes">
+		<echo message="Building ${JQUERY_FORM_BUILDER_PACK}" />
+
+		<apply executable="java" parallel="false" verbose="true">
+			<fileset dir="${DIST_DIR}">
+				<include name="jquery.formbuilder.js" />
+			</fileset>
+
+			<arg line="-jar" />
+			<arg path="${BUILD_DIR}/js.jar" />
+			<arg value="${BUILD_DIR}/packer.js" />
+			<arg value="${JQUERY_FORM_BUILDER_MIN}" />
+			<arg value="${JQUERY_FORM_BUILDER_PACK}.tmp" />
+		</apply>
+
+		<concat destfile="${JQUERY_FORM_BUILDER_PACK}">
+			<filelist files="${JQUERY_FORM_BUILDER}, ${JQUERY_FORM_BUILDER_PACK}.tmp" />
+			<filterchain>
+				<headfilter lines="12" />
+			</filterchain>
+		</concat>
+
+		<concat destfile="${JQUERY_FORM_BUILDER_PACK}" append="yes">
+			<filelist files="${JQUERY_FORM_BUILDER_PACK}.tmp" />
+		</concat>
+		<delete file="${JQUERY_FORM_BUILDER_PACK}.tmp" />
+
+		<echo message="${JQUERY_FORM_BUILDER_PACK} built." />
+	</target>
+
+	<target name="css" depends="dir" description="Builds jquery-form-builder-plugin CSS file">
+		<echo message="Building ${JQUERY_FORM_BUILDER_CSS}" />
+
+		<concat destfile="${JQUERY_FORM_BUILDER_CSS}">
+			<fileset file="${SRC_CSS_DIR}/../HEADER.txt" />
+			<filelist files="${PLUGINS_CSS}" />
+		</concat>
+
+		<replaceregexp match="@REVISION" replace="${svn.info.lastRev}" flags="g" byline="true" file="${JQUERY_FORM_BUILDER_CSS}" />
+		<replaceregexp match="@VERSION" replace="${version}" flags="g" byline="true" file="${JQUERY_FORM_BUILDER_CSS}" />
+		<replaceregexp match="Date: " replace="Date: ${svn.info.lastDate}" file="${JQUERY_FORM_BUILDER_CSS}" />
+
+		<echo message="${JQUERY_FORM_BUILDER_CSS} built." />
+	</target>
+
+	<target name="images" depends="dir" description="Builds images directory">
+		<echo message="Building ${JQUERY_FORM_BUILDER_IMG}" />
+
+		<mkdir dir="${JQUERY_FORM_BUILDER_IMG}" />
+		<copy todir="${JQUERY_FORM_BUILDER_IMG}">
+			<fileset dir="${IMG_DIR}">
+				<include name="**/*.png" />
+			</fileset>
+		</copy>
+
+		<echo message="${JQUERY_FORM_BUILDER_IMG} built." />
+	</target>
+
+	<target name="lint" description="Builds and checks the jquery-form-builder-plugin source with JSLint">
+		<echo message="Checking jquery-form-builder-plugin against JSLint..." />
+
+		<exec executable="java">
+			<arg line="-jar" />
+			<arg path="${BUILD_DIR}/js.jar" />
+			<arg value="${BUILD_DIR}/jslint-check.js" />
+		</exec>
+	</target>
+
+	<target name="clean">
+		<delete dir="${DIST_DIR}" />
+	</target>
+</project>
