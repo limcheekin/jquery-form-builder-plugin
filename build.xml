@@ -7,6 +7,7 @@
 	<property name="SRC_CSS_DIR" value="./src/css" description="CSS Source folder" />
 	<property name="DIST_DIR" value="./dist" description="Compiled jquery-form-builder-plugin folder" />
 	<property name="IMG_DIR" value="./images" description="Images folder" />
+	<property name="LIB_DIR" value="./lib" description="External library folder" />
 
 	<property name="JQUERY_FORM_BUILDER" value="${DIST_DIR}/jquery-formbuilder-${version}.js" />
 	<property name="JQUERY_FORM_BUILDER_MIN" value="${DIST_DIR}/jquery-formbuilder-${version}.min.js" />
@@ -14,7 +15,20 @@
 	<property name="JQUERY_FORM_BUILDER_CSS" value="${DIST_DIR}/jquery-formbuilder-${version}.css" />
 	<property name="JQUERY_FORM_BUILDER_IMG" value="${DIST_DIR}/images" />
 
-	<property name="PLUGINS" value="textfield" />
+	<property name="PLUGINS" value="" />
+	
+	<property name="APPENGINE_SDK_DIR" location="/opt/dev/lib/appengine-java-sdk/1.4.0" />
+	<import file="${APPENGINE_SDK_DIR}/config/user/ant-macros.xml" />
+	
+  <path id="appengine.project.classpath">
+    <pathelement path="war/WEB-INF/classes" />
+    <fileset dir="war/WEB-INF/lib">
+      <include name="**/*.jar" />
+    </fileset>
+    <fileset dir="${APPENGINE_SDK_DIR}/lib">
+      <include name="shared/**/*.jar" />
+    </fileset>
+  </path>
 
 	<path id="svnant.classpath">
 		<pathelement path="${BUILD_DIR}/svnant.jar" />
@@ -67,6 +81,7 @@
 			<fileset file="${SRC_JS_DIR}/../HEADER.txt" />
 			<!--fileset file="${SRC_JS_DIR}/intro.js" /-->
 			<fileset file="${SRC_JS_DIR}/jquery.formbuilder.core.js" />
+			<fileset file="${SRC_JS_DIR}/jquery.formbuilder.widget.js" />
 			<filelist files="${PLUGINS_JS}" />
 			<!--fileset file="${SRC_JS_DIR}/outro.js" /-->
 		</concat>
@@ -82,7 +97,7 @@
 
 		<apply executable="java" parallel="false" verbose="true" dest="${DIST_DIR}">
 			<fileset dir="${DIST_DIR}">
-				<include name="jquery.formbuilder.js" />
+				<include name="jquery-formbuilder-${version}.js" />
 			</fileset>
 
 			<arg line="-jar" />
@@ -92,7 +107,7 @@
 			<arg value="--js_output_file" />
 			<targetfile />
 			<arg value="--js" />
-			<mapper type="glob" from="jquery.formbuilder.js" to="tmpmin" />
+			<mapper type="glob" from="jquery-formbuilder-${version}.js" to="tmpmin" />
 		</apply>
 
 		<concat destfile="${JQUERY_FORM_BUILDER_MIN}">
@@ -115,7 +130,7 @@
 
 		<apply executable="java" parallel="false" verbose="true">
 			<fileset dir="${DIST_DIR}">
-				<include name="jquery.formbuilder.js" />
+				<include name="jquery-formbuilder-${version}.js" />
 			</fileset>
 
 			<arg line="-jar" />
@@ -180,5 +195,31 @@
 
 	<target name="clean">
 		<delete dir="${DIST_DIR}" />
+	</target>
+	
+  <target name="copy" depends="all" description="Copies the App Engine JARs to the WAR.">
+    <copy todir="war" overwrite="true">
+      <fileset dir="${LIB_DIR}" />
+    </copy>
+  	<copy file="src/formbuilder.html" tofile="war/index.html" overwrite="true" />
+  	<copy file="${JQUERY_FORM_BUILDER_PACK}" todir="war/js" overwrite="true" />
+  	<copy file="${JQUERY_FORM_BUILDER_CSS}" todir="war/css" overwrite="true" />
+  	<replaceregexp match="../lib/" replace="" flags="g" byline="true" file="war/index.html" />
+  	<replaceregexp flags="s" byline="false" file="war/index.html">
+  		<regexp pattern="&lt;!--JS&amp;START--&gt;.&lt;!--JS&amp;END--&gt;"/>
+  		<substitution expression="&lt;script type=&quot;text/javascript&quot; src=&quot;js/jquery-formbuilder-${version}.pack.js&quot;&gt;&lt;/script&gt;" />
+  	</replaceregexp>
+  </target>	
+	
+  <target name="copyjars" depends="copy" description="Copies the App Engine JARs to the WAR.">
+    <copy todir="war/WEB-INF/lib" flatten="true">
+      <fileset dir="${APPENGINE_SDK_DIR}/lib/user">
+        <include name="**/*.jar" />
+      </fileset>
+    </copy>
+  </target>
+
+	<target name="deploy" depends="copyjars" description="Uploads the application to App Engine.">
+	    <appcfg action="update" war="war" />
 	</target>
 </project>
