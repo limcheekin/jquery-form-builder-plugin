@@ -5,18 +5,142 @@
 <title>JQuery Form Builder Plugin</title>
 <script type="text/javascript" src="../lib/js/jquery-1.4.4.min.js"></script>
 <script type="text/javascript" src="../lib/js/jquery-ui-1.8.7.custom.min.js"></script>
-<script type="text/javascript" src="../lib/js/jquery.ui.subclass.js"></script>
+<script type="text/javascript" src="js/jquery.formbuilder.core.js"></script>
 <script type="text/javascript" src="js/jquery.formbuilder.widget.js"></script>
-<link type="text/css" href="../lib/css/smoothness/jquery-ui-1.8.7.custom.css" media="screen" rel="stylesheet" />  
+<link type="text/css" href="../lib/css/smoothness/jquery-ui-1.8.7.custom.css" media="screen" rel="stylesheet" /> 
+<link type="text/css" href="../lib/css/uni-form.css" media="screen" rel="stylesheet" />  
+<link type="text/css" href="../lib/css/default.uni-form.css" media="screen" rel="stylesheet" />  
 <script type="text/javascript">
 $(function() {
- $('#button1').button();
+ $('#container').formbuilder();
  $('#button2').fbWidget({name: 'Testing button'});
 });
 </script>
+<style type="text/css">
+    /* REF: http://www.thesitewizard.com/css/design-2-column-layout.shtml */
+		#builderPalette {
+		  float: left;
+		  width: 320px;
+      padding: 0;
+		}  
+		  
+		#builderPanel {
+		  margin-left: 340px;
+		  margin-right: 5px;
+		  border: 1px solid #C0C0C0;  
+		  height: 490px	  
+		}
+		
+		#footer {
+			clear: both;
+			text-align: center;
+			margin-top: 5px;
+		}
+		
+		#header {
+			/* text-align: center; */
+		}
+		
+		.floatingPanel {
+
+		}		
+		
+		#addField, #fieldSettings, #formSettings {
+		  height: 430px
+		}
+		
+		#paletteTabs {
+				font-size: 12px;
+				margin: 0;
+				width: 320px;		
+		}
+		
+		.fbWidget {
+		   margin: 5px;
+		   width: 130px;
+		}
+		
+		#emptyBuilderPanel {
+			text-align: center;
+			margin-top: 50px;
+			color: grey;
+			font-size: 20px;
+			display: block;
+		}
+		
+		.uniForm {
+		  display: none;
+		}
+		
+</style>
 </head>
 <body>
-<a id="button1">Button 1</a>
-<a id="button2">Button 2</a>
+
+<div id="container">
+  <div id="header"><h1>JQuery Form Builder Plugin</h1></div>
+  <div id="builderPalette">
+     <div class="floatingPanelIdentifier"></div>
+     <div class="floatingPanel">
+			<div id="paletteTabs">
+				<ul>
+					<li><a href="#addField">Add Field</a></li>
+					<li><a href="#fieldSettings">Field Settings</a></li>
+					<li><a href="#formSettings">Form Settings</a></li>
+				</ul>
+				<div id="addField">
+				  <strong>Standard Fields</strong>
+					<div id="standardFields"></div>
+					<br />
+				  <strong>Fancy Fields</strong>
+				  <div id="fancyFields"></div>
+				</div>
+				<div id="fieldSettings">
+
+				</div>
+				<div id="formSettings">
+
+				</div>
+			</div>     
+     </div>
+            
+  </div>
+  <div id="builderPanel">
+	  <div id="emptyBuilderPanel">Start adding some fields from the menu on the left.</div>
+		<form action="#" class="uniForm">
+		  <fieldset>
+		    <div class="ctrlHolder">
+		      <label for="">Single Line Text</label>
+		      <input type="text" id="" name="" value="" size="35" class="textInput">
+		      <p class="formHint">This is a form hint.</p>
+		    </div>
+		  
+		    <div class="ctrlHolder">
+		      <label for="">Number</label>
+		      <input type="text" id="" name="" value="" size="35" class="textInput">
+		      <p class="formHint">This is a form hint.</p>
+		    </div>
+		  
+		    <div class="ctrlHolder">
+		      <label for="">Email Address</label>
+		      <input type="text" id="" name="" value="" size="35" class="textInput">
+		      <p class="formHint">This is a form hint.</p>
+		    </div>
+		  
+		    <div class="ctrlHolder">
+		      <label for="">Web Address</label>
+		      <input type="text" id="" name="" value="" size="35" class="textInput">
+		      <p class="formHint">This is a form hint.</p>
+		    </div>
+		  
+		    <div class="ctrlHolder">
+		      <label for="">Contact No.</label>
+		      <input type="text" id="" name="" value="" size="35" class="textInput">
+		      <p class="formHint">This is a form hint.</p>
+		    </div>
+		  </fieldset>
+		</form>	  
+  </div>
+  <div id="footer">&copy;2011 <a href="http://www.google.com/recaptcha/mailhide/d?k=01jTjzuFnxrUdgxzZaynYmkw==&amp;c=jsDnH9NCPyt5b09KmqvO1TZu2hgh2LxZya9yYaPRSPY=" onclick="window.open('http://www.google.com/recaptcha/mailhide/d?k\07501jTjzuFnxrUdgxzZaynYmkw\75\75\46c\75jsDnH9NCPyt5b09KmqvO1TZu2hgh2LxZya9yYaPRSPY\075', '', 'toolbar=0,scrollbars=0,location=0,statusbar=0,menubar=0,resizable=0,width=500,height=300'); return false;" title="Reveal my e-mail address">Lim, Chee Kin</a>  |  <a href="http://code.google.com/p/jquery-form-builder-plugin/">Project Home</a>  |  <a href="http://groups.google.com/group/jquery-form-builder-plugin">Discussion Group</a></div>
+</div>
 </body>
 </html>

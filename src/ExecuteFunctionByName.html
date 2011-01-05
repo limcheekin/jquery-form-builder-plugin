@@ -1,0 +1,24 @@
+<html>
+<head>
+<script>
+FormBuilder = {
+	PlainText: function (object) {
+			alert (object);
+	}
+};
+// From: http://stackoverflow.com/questions/359788/javascript-function-name-as-a-string
+function executeFunctionByName(functionName, context /*, args */) {
+    var args = Array.prototype.slice.call(arguments, 2);
+    var namespaces = functionName.split(".");
+    var func = namespaces.pop();
+    for (var i = 0; i < namespaces.length; i++) {
+        context = context[namespaces[i]];
+    }
+    return context[func].apply(context, args);
+}
+
+executeFunctionByName("FormBuilder.PlainText", window, "testing") ;
+</script>
+</head>
+<html>
+</html>
