@@ -1,6 +1,6 @@
 load("build/jslint.js");
 
-var src = readFile("dist/jquery.formbuilder.js");
+var src = readFile("@JQUERY_FORM_BUILDER");
 
 JSLINT(src, { evil: true, forin: true, maxerr: 100 });
 

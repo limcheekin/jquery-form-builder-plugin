@@ -14,6 +14,7 @@
 	<property name="JQUERY_FORM_BUILDER_PACK" value="${DIST_DIR}/jquery-formbuilder-${version}.pack.js" />
 	<property name="JQUERY_FORM_BUILDER_CSS" value="${DIST_DIR}/jquery-formbuilder-${version}.css" />
 	<property name="JQUERY_FORM_BUILDER_IMG" value="${DIST_DIR}/images" />
+	<property name="JQUERY_FORM_BUILDER_ZIP" value="${DIST_DIR}/jquery-formbuilder-${version}.zip" />
 
 	<property name="PLUGINS" value="" />
 	
@@ -38,8 +39,12 @@
 	</path>
 
 	<typedef resource="org/tigris/subversion/svnant/svnantlib.xml" classpathref="svnant.classpath" />
-
-	<target name="plugins">
+	
+	<target name="dir" depends="clean" description="Builds distribution directory">
+		<mkdir dir="${DIST_DIR}" />
+	</target>
+	
+	<target name="plugins" depends="dir">
 		<script language="groovy" classpath="${BUILD_DIR}/groovy-all-1.7.4.jar">
 			<![CDATA[
 		 	   def pluginNames = project.getProperty("PLUGINS").split(",")
@@ -59,9 +64,10 @@
 		<echo message="PLUGINS_JS: ${PLUGINS_JS}" />
 		<echo message="PLUGINS_CSS: ${PLUGINS_CSS}" />
 	</target>
-	<target name="all" depends="clean,svninfo,plugins,formbuilder,lint,css,images,min,pack" description="Builds jquery-form-builder-plugin including minified, packed JS files, as well as images and CSS" />
+	
+	<target name="all" depends="clean,dir,svninfo,plugins,formbuilder,lint,css,images,min,pack" description="Builds jquery-form-builder-plugin including minified, packed JS files, as well as images and CSS" />
 
-	<target name="svninfo">
+	<target name="svninfo" depends="dir">
 		<svn javahl="false" svnkit="true">
 			<update dir="." />
 			<info target="." />
@@ -70,14 +76,15 @@
 		<echo message="svn.info.lastDate: ${svn.info.lastDate}" />
 	</target>
 
-	<target name="dir" description="Builds distribution directory">
-		<mkdir dir="${DIST_DIR}" />
-	</target>
-
-	<target name="formbuilder" depends="dir" description="Main jquery-form-builder-plugin build. Concatenates source and css files and replaces @VERSION/Date">
+	<target name="formbuilder" depends="svninfo" description="Main jquery-form-builder-plugin build. Concatenates source and css files and replaces @VERSION/Date">
 		<echo message="Building ${JQUERY_FORM_BUILDER}" />
 
 		<concat destfile="${JQUERY_FORM_BUILDER}">
+			<filterchain>
+				<linecontains negate="true">
+				  <contains value="log("/>
+				</linecontains>
+			</filterchain>
 			<fileset file="${SRC_JS_DIR}/../HEADER.txt" />
 			<!--fileset file="${SRC_JS_DIR}/intro.js" /-->
 			<fileset file="${SRC_JS_DIR}/jquery.formbuilder.core.js" />
@@ -155,11 +162,12 @@
 		<echo message="${JQUERY_FORM_BUILDER_PACK} built." />
 	</target>
 
-	<target name="css" depends="dir" description="Builds jquery-form-builder-plugin CSS file">
+	<target name="css" depends="lint" description="Builds jquery-form-builder-plugin CSS file">
 		<echo message="Building ${JQUERY_FORM_BUILDER_CSS}" />
 
 		<concat destfile="${JQUERY_FORM_BUILDER_CSS}">
 			<fileset file="${SRC_CSS_DIR}/../HEADER.txt" />
+			<fileset file="${SRC_CSS_DIR}/jquery.formbuilder.core.css" />
 			<filelist files="${PLUGINS_CSS}" />
 		</concat>
 
@@ -170,7 +178,7 @@
 		<echo message="${JQUERY_FORM_BUILDER_CSS} built." />
 	</target>
 
-	<target name="images" depends="dir" description="Builds images directory">
+	<target name="images" description="Builds images directory">
 		<echo message="Building ${JQUERY_FORM_BUILDER_IMG}" />
 
 		<mkdir dir="${JQUERY_FORM_BUILDER_IMG}" />
@@ -183,9 +191,10 @@
 		<echo message="${JQUERY_FORM_BUILDER_IMG} built." />
 	</target>
 
-	<target name="lint" description="Builds and checks the jquery-form-builder-plugin source with JSLint">
+	<target name="lint" depends="formbuilder" description="Builds and checks the jquery-form-builder-plugin source with JSLint">
 		<echo message="Checking jquery-form-builder-plugin against JSLint..." />
-
+		<copy file="${BUILD_DIR}/jslint-check.js.template" tofile="${BUILD_DIR}/jslint-check.js" overwrite="true" />
+		<replaceregexp match="@JQUERY_FORM_BUILDER" replace="${JQUERY_FORM_BUILDER}" flags="g" byline="true" file="${BUILD_DIR}/jslint-check.js" />
 		<exec executable="java">
 			<arg line="-jar" />
 			<arg path="${BUILD_DIR}/js.jar" />
@@ -197,18 +206,33 @@
 		<delete dir="${DIST_DIR}" />
 	</target>
 	
+	<target name="release" depends="all" description="Release the distribution under compressed file.">
+	  <zip destfile="${JQUERY_FORM_BUILDER_ZIP}" basedir="${DIST_DIR}" />
+  </target>
+	
   <target name="copy" depends="all" description="Copies the App Engine JARs to the WAR.">
-    <copy todir="war" overwrite="true">
+  	<delete dir="war" />
+  	<mkdir dir="war/WEB-INF" />
+  	<copy todir="war" overwrite="true">
       <fileset dir="${LIB_DIR}" />
     </copy>
-  	<copy file="src/formbuilder.html" tofile="war/index.html" overwrite="true" />
+  	<copy file="src/formbuilder.html" tofile="war/index.html" overwrite="true">
+			<filterchain>
+				<linecontains negate="true">
+				  <contains value="&lt;!--DEV--&gt;"/>
+				</linecontains>
+			</filterchain> 	
+  	</copy>
   	<copy file="${JQUERY_FORM_BUILDER_PACK}" todir="war/js" overwrite="true" />
   	<copy file="${JQUERY_FORM_BUILDER_CSS}" todir="war/css" overwrite="true" />
+  	<copy todir="war/images" overwrite="true">
+      <fileset dir="${JQUERY_FORM_BUILDER_IMG}" />
+    </copy>
   	<replaceregexp match="../lib/" replace="" flags="g" byline="true" file="war/index.html" />
-  	<replaceregexp flags="s" byline="false" file="war/index.html">
-  		<regexp pattern="&lt;!--JS&amp;START--&gt;.&lt;!--JS&amp;END--&gt;"/>
-  		<substitution expression="&lt;script type=&quot;text/javascript&quot; src=&quot;js/jquery-formbuilder-${version}.pack.js&quot;&gt;&lt;/script&gt;" />
-  	</replaceregexp>
+  	<replaceregexp match="&lt;!--PROD.JS--&gt;" flags="g" byline="true" file="war/index.html" 
+  		replace="&lt;script type=&quot;text/javascript&quot; src=&quot;js/jquery-formbuilder-${version}.pack.js&quot;&gt;&lt;/script&gt;" />
+  	<replaceregexp match="&lt;!--PROD.CSS--&gt;" flags="g" byline="true" file="war/index.html" 
+  		replace="&lt;link type=&quot;text/css&quot; href=&quot;css/jquery-formbuilder-${version}.css&quot; media=&quot;screen&quot; rel=&quot;stylesheet&quot; /&gt;" />
   </target>	
 	
   <target name="copyjars" depends="copy" description="Copies the App Engine JARs to the WAR.">

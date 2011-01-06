@@ -43,10 +43,10 @@
 	};
 
 	var methods = {
-		init : function(options) {
+		init : function(passedInOptions) {
 			// merge default options and passed in options (overwrite the
 			// default)
-			var options = $.extend(true, {}, $.fn.formbuilder.options, options);
+			var options = $.extend(true, {}, $.fn.formbuilder.options, passedInOptions);
 
 			// REF: http://www.webresourcesdepot.com/smart-floating-banners/
 			$(window).scroll(
@@ -65,12 +65,13 @@
 			
 			$('#paletteTabs').tabs();
 			var length = options.widgets.standard.length;
-		  for (var i = 0; i < length; i++) {
+			var i;
+		  for (i = 0; i < length; i++) {
 		    $('<a href = "#" class="fbWidget">' + options.widgets.standard[i] + '</a>').appendTo('#standardFields');
 		    $('.fbWidget').button();
 		    }				
-			var length = options.widgets.fancy.length;
-		  for (var i = 0; i < length; i++) {
+			length = options.widgets.fancy.length;
+		  for (i = 0; i < length; i++) {
 		    $('<a href = "#" class="fbWidget">' + options.widgets.fancy[i] + '</a>').appendTo('#fancyFields');
 		    $('.fbWidget').button();
 		    }	
@@ -100,7 +101,7 @@
 				 *  // Namespacing FTW $(window).unbind('.' +
 				 * data.options.name); $this.removeData(pluginName);
 				 */
-			})
+			});
 
 		},
 		click : function() {

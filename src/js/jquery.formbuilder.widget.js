@@ -44,9 +44,9 @@
 	};
 
 	var methods = {
-		init : function(options) {
+		init : function(passedInOptions) {
 			// merge default options and passed in options (overwrite the default)
-			var options = $.extend(true, {}, $.fn.fbWidget.options, options);
+			var options = $.extend(true, {}, $.fn.fbWidget.options, passedInOptions);
 			
 			log ('options.icon = ' + options.icon);
 			log ('options.name = ' + options.name);
@@ -84,7 +84,7 @@
 				// Namespacing FTW
 				$(window).unbind('.' + data.options.name);
 				$this.removeData(pluginName); */
-			})
+			});
 
 		},
 		click: function() {

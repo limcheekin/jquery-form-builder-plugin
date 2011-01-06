@@ -33,9 +33,9 @@
 	};
 
 	var methods = {
-		init : function(options) {
+		init : function(passedInOptions) {
 			// merge default options and passed in options (overwrite the default)
-			var options = $.extend(true, {}, $.fn.pluginName.options, options);
+			var options = $.extend(true, {}, $.fn.pluginName.options, passedInOptions);
 			
 			return this.each(function() {
 
@@ -75,7 +75,7 @@
 				$(window).unbind('.tooltip');
 				data.tooltip.remove();
 				$this.removeData(pluginName);
-			})
+			});
 
 		},
 		reposition : function() {
