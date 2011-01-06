@@ -11,7 +11,6 @@
  *
  * Date: 
  */
-
 (function($) {
 	// plugin's private variables and functions
 	var pluginName = 'formbuilder';
@@ -19,6 +18,17 @@
 	// for production
 	function log($message) { if (window.console && window.console.log) window.console.log($message); };
 
+	// From: http://stackoverflow.com/questions/359788/javascript-function-name-as-a-string
+	function executeFunctionByName (functionName, context /*, args */) {
+	    var args = Array.prototype.slice.call(arguments, 2);
+	    var namespaces = functionName.split(".");
+	    var func = namespaces.pop();
+	    for (var i = 0; i < namespaces.length; i++) {
+	        context = context[namespaces[i]];
+	    }
+	    return context[func].apply(context, args);
+	}	
+	
 	$.fn.formbuilder = function(method) {
 		if (methods[method]) {
 			return methods[method].apply(this, Array.prototype.slice.call(
@@ -34,12 +44,10 @@
 	// Default options. Plugin user can override the default option externally
 	// e.g. $.fn.formbuilder.options.firstOption = '1st option'
 	$.fn.formbuilder.options = {
-		widgets : {
-			standard : ['Single Line Text', 'Number', 'Email Address', 'Web Address'],
-			fancy : ['Phone Number', 'Plain Text']
-		},
-		name : 'widgetName',
-		text : 'Widget Text'
+		widgets : ['PlainText'],
+		builderPanel: '#builderPanel',
+		standardFieldsPanel: '#standardFields',
+		fancyFieldsPanel: '#fancyFields'
 	};
 
 	var methods = {
@@ -64,17 +72,16 @@
 			});
 			
 			$('#paletteTabs').tabs();
-			var length = options.widgets.standard.length;
-			var i;
+			var length = options.widgets.length;
+			var widgetOptions;
+			var widget;
 		  for (i = 0; i < length; i++) {
-		    $('<a href = "#" class="fbWidget">' + options.widgets.standard[i] + '</a>').appendTo('#standardFields');
-		    $('.fbWidget').button();
+			  widgetOptions = $['ui']['fb' + options.widgets[i]].prototype.options;
+			  widget = $('<a href = "#" class="fbWidget">' + widgetOptions.name + '</a>');
+		    widget.button().appendTo(widgetOptions.belongsTo);
+		    executeFunctionByName("FormBuilder." + options.widgets[i], window, widget) ;
 		    }				
-			length = options.widgets.fancy.length;
-		  for (i = 0; i < length; i++) {
-		    $('<a href = "#" class="fbWidget">' + options.widgets.fancy[i] + '</a>').appendTo('#fancyFields');
-		    $('.fbWidget').button();
-		    }	
+
 		  
 			return this.each(function() {
 				var $this = $(this);
@@ -103,7 +110,7 @@
 				 */
 			});
 
-		},
+		},	
 		click : function() {
 			log('click run properly');
 		},

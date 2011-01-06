@@ -11,92 +11,28 @@
  *
  * Date: 
  */
+//inherits from ui.button
+var FbWidget = {
+  options: { // default options. values are stored in widget's prototype
+	  option1: "FbWidget.optionValue"		
+    },
+  // logging to the firebug's console, put in 1 line so it can be removed easily for production
+  log: function($message) { if (window.console && window.console.log) window.console.log($message); },
+	_create: function() {
+	  this.log('FbWidget._create called. this.options.option1 = ' + this.options.option1);
+	  this.element.click(this.createWidget);
+    },
+  _init: function() {
+    this.log('FbWidget._init called.');
+    },        
+	destroy: function() {
+	  this.log('FbWidget.destroy called.');
+	  this.element.button('destroy');
+    },
+	createWidget: function(event) { // to be override by subclass
+		alert('FbWidget.createWidget called. Plugin inherited from this plugin required to implement createWidget. \n' + 
+				  'event.type = ' + event.type + ', event.target.id = ' + $(event.target).parent().attr('id'));
+    }
+};
 
-(function($) {
-	// plugin's private variables and functions
-	var pluginName = 'fbWidget';
-	// for logging to the firebug console, put in 1 line so it can easily remove for production
-	function log($message) { if (window.console && window.console.log) window.console.log($message); };
-	
-	$.fn.fbWidget = function(method) {
-		if (methods[method]) {
-			return methods[method].apply(this, Array.prototype.slice.call(
-					arguments, 1));
-		} else if (typeof method === 'object' || !method) {
-			return methods.init.apply(this, arguments);
-		} else {
-			$.error('Method ' + method + ' does not exist on jQuery.' + pluginName);
-		}
-	};
-	
-	$.fn.fbWidget.name = pluginName;
-	// Default options. Plugin user can override the default option externally
-	// e.g. $.fn.fbWidget.options.firstOption = '1st option'	
-	$.fn.fbWidget.options = {
-		icon : 'iconClass',
-		name : 'widgetName',
-		text : 'Widget Text',
-		groupedOptions : {
-				optionA : 'default value',
-				optionB : 100,
-				optionC : true
-		}			
-	};
-
-	var methods = {
-		init : function(passedInOptions) {
-			// merge default options and passed in options (overwrite the default)
-			var options = $.extend(true, {}, $.fn.fbWidget.options, passedInOptions);
-			
-			log ('options.icon = ' + options.icon);
-			log ('options.name = ' + options.name);
-			log ('options.text = ' + options.text);
-			log ('options.groupedOptions.optionA = ' + options.groupedOptions.optionA);
-			return this.each(function() {
-
-				var $this = $(this);
-				$this.button()
-				.css('width', '200px')
-				.css('text-align', 'left')
-				.click(methods.click);
-				/*$(window).click('click.' + options.name, methods.click);
-				var data = $this.data(pluginName);
-
-				// If the plugin hasn't been initialized yet
-				if (!data) {	
-					// store the widget specific options
-					$(this).data(pluginName, {
-						target : $this,
-						options : options
-					});
-
-				} */
-				
-			});
-		},
-		destroy : function() {
-
-			return this.each(function() {
-
-				var $this = $(this);
-				/*var data = $this.data(pluginName);
-
-				// Namespacing FTW
-				$(window).unbind('.' + data.options.name);
-				$this.removeData(pluginName); */
-			});
-
-		},
-		click: function() {
-			log('click run properly');
-		},
-		show : function() {
-		},
-		hide : function() {
-		},
-		update : function(content) {
-		}
-	};
-
-
-})(jQuery);
+$.widget('ui.fbWidget', FbWidget);

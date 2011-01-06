@@ -16,7 +16,7 @@
 (function($) {
 	// plugin's private variables and functions
 	var pluginName = 'pluginName';
-	// for logging to the firebug console, put in 1 line so it can easily remove for production
+	// logging to the firebug's console, put in 1 line so it can easily remove for production
 	function log($message) { if (window.console && window.console.log) window.console.log($message); };
 
 	$.fn.pluginName.name = pluginName;

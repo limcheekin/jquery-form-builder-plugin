@@ -5,8 +5,11 @@
 <title>JQuery Form Builder Plugin</title>
 <script type="text/javascript" src="../lib/js/jquery-1.4.4.min.js"></script>
 <script type="text/javascript" src="../lib/js/jquery-ui-1.8.7.custom.min.js"></script>
+<script type="text/javascript" src="../lib/js/jquery.json-2.2.min.js"></script>
+<!--DEV--><script type="text/javascript" src="js/jquery.formbuilder.header.js"></script>
 <!--DEV--><script type="text/javascript" src="js/jquery.formbuilder.core.js"></script>
 <!--DEV--><script type="text/javascript" src="js/jquery.formbuilder.widget.js"></script>
+<!--DEV--><script type="text/javascript" src="js/jquery.formbuilder.plaintext.js"></script>
 <!--PROD.JS-->
 <link type="text/css" href="../lib/css/smoothness/jquery-ui-1.8.7.custom.css" media="screen" rel="stylesheet" /> 
 <link type="text/css" href="../lib/css/uni-form.css" media="screen" rel="stylesheet" />  
@@ -66,12 +69,19 @@ $(function() {
 			margin-top: 50px;
 			color: grey;
 			font-size: 20px;
-			display: block;
+			display: none;
 		}
 		
 		.uniForm {
-		  display: none;
+		  display: block;
 		}
+		
+		.uniForm .ctrlHolder{ padding: 1em; border-bottom: 1px solid #efefef; } /*  */
+		.uniForm .textHolder{ border-bottom: 0; }
+		.uniForm .top { padding-top: 0; padding-bottom: 2em; }
+		.uniForm .bottom { padding-top: 2em; padding-bottom: 0; }
+		.uniForm .right { text-align: right; }
+		.uniForm .center { text-align: center; }
 		
 </style>
 </head>
