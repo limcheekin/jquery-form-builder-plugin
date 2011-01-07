@@ -11,15 +11,57 @@
  *
  * Date: 
  */
-(function($) {
-	// plugin's private variables and functions
-	var pluginName = 'formbuilder';
-	// for logging to the firebug console, put in 1 line so it can easily remove
-	// for production
-	function log($message) { if (window.console && window.console.log) window.console.log($message); };
 
+var FormBuilder = {
+  options: { // default options. values are stored in widget's prototype
+		widgets : ['PlainText'],
+		builderForm: '#builderForm fieldset',
+		emptyBuilderPanel: '#emptyBuilderPanel',
+		standardFieldsPanel: '#standardFields',
+		fancyFieldsPanel: '#fancyFields'
+    },
+  _create: function() {
+    	// called on construction
+    this.log('FormBuilder._create called. this.options.widgets = ' + this.options.widgets);
+		// REF: http://www.webresourcesdepot.com/smart-floating-banners/
+		$(window).scroll(
+		function() {
+			if ($(window).scrollTop() > $(".floatingPanelIdentifier").position({scroll : false}).top) {
+				$(".floatingPanel").css("position", "fixed");
+				$(".floatingPanel").css("top", "0");
+			}
+			
+			if ($(window).scrollTop() <= $(".floatingPanelIdentifier").position({scroll : false}).top) {
+				$(".floatingPanel").css("position", "relative");
+				$(".floatingPanel").css("top",
+						$(".floatingPanelIdentifier").position);
+			}
+		});
+		
+		$('#paletteTabs').tabs();
+		var widgets = this.options.widgets;
+		var length = widgets.length;
+		var widgetOptions;
+		var widget;
+		var i;
+	  for (i = 0; i < length; i++) {
+		  widgetOptions = $['ui']['fb' + widgets[i]].prototype.options;
+		  widget = $('<a href = "#" class="fbWidget">' + widgetOptions.name + '</a>');
+	    widget.button().appendTo(widgetOptions.belongsTo);
+	    this._executeFunctionByName("FormBuilderInit." + widgets[i], window, widget) ;
+	    }		
+    },
+	_init: function() {
+			// called on construction and re-initialization
+		this.log('FormBuilder._init called.');
+		this.method1('calling from FormBuilder._init');
+	},        
+	destroy: function() {
+        // called on removal
+		this.log('FormBuilder.destroy called.');
+    },
 	// From: http://stackoverflow.com/questions/359788/javascript-function-name-as-a-string
-	function executeFunctionByName (functionName, context /*, args */) {
+	_executeFunctionByName: function(functionName, context /*, args */) {
 	    var args = Array.prototype.slice.call(arguments, 2);
 	    var namespaces = functionName.split(".");
 	    var func = namespaces.pop();
@@ -27,99 +69,13 @@
 	        context = context[namespaces[i]];
 	    }
 	    return context[func].apply(context, args);
-	}	
-	
-	$.fn.formbuilder = function(method) {
-		if (methods[method]) {
-			return methods[method].apply(this, Array.prototype.slice.call(
-					arguments, 1));
-		} else if (typeof method === 'object' || !method) {
-			return methods.init.apply(this, arguments);
-		} else {
-			$.error('Method ' + method + ' does not exist on jQuery.' + pluginName);
-		}
-	};
+	},	    
+  // logging to the firebug's console, put in 1 line so it can be removed easily for production
+  log: function($message) { if (window.console && window.console.log) window.console.log($message); },
+	method1: function(params) {
+    	// plugin specific method
+		this.log('FormBuilder.method1 called. params = ' + params);
+    }
+};
 
-	$.fn.formbuilder.name = pluginName;
-	// Default options. Plugin user can override the default option externally
-	// e.g. $.fn.formbuilder.options.firstOption = '1st option'
-	$.fn.formbuilder.options = {
-		widgets : ['PlainText'],
-		builderPanel: '#builderPanel',
-		standardFieldsPanel: '#standardFields',
-		fancyFieldsPanel: '#fancyFields'
-	};
-
-	var methods = {
-		init : function(passedInOptions) {
-			// merge default options and passed in options (overwrite the
-			// default)
-			var options = $.extend(true, {}, $.fn.formbuilder.options, passedInOptions);
-
-			// REF: http://www.webresourcesdepot.com/smart-floating-banners/
-			$(window).scroll(
-			function() {
-				if ($(window).scrollTop() > $(".floatingPanelIdentifier").position({scroll : false}).top) {
-					$(".floatingPanel").css("position", "fixed");
-					$(".floatingPanel").css("top", "0");
-				}
-				
-				if ($(window).scrollTop() <= $(".floatingPanelIdentifier").position({scroll : false}).top) {
-					$(".floatingPanel").css("position", "relative");
-					$(".floatingPanel").css("top",
-							$(".floatingPanelIdentifier").position);
-				}
-			});
-			
-			$('#paletteTabs').tabs();
-			var length = options.widgets.length;
-			var widgetOptions;
-			var widget;
-		  for (i = 0; i < length; i++) {
-			  widgetOptions = $['ui']['fb' + options.widgets[i]].prototype.options;
-			  widget = $('<a href = "#" class="fbWidget">' + widgetOptions.name + '</a>');
-		    widget.button().appendTo(widgetOptions.belongsTo);
-		    executeFunctionByName("FormBuilder." + options.widgets[i], window, widget) ;
-		    }				
-
-		  
-			return this.each(function() {
-				var $this = $(this);
-				
-				/*
-				 * $(window).click('click.' + options.name, methods.click); var
-				 * data = $this.data(pluginName);
-				 *  // If the plugin hasn't been initialized yet if (!data) { //
-				 * store the widget specific options $(this).data(pluginName, {
-				 * target : $this, options : options });
-				 *  }
-				 */
-
-			});
-		},
-		
-		destroy : function() {
-
-			return this.each(function() {
-
-				var $this = $(this);
-				/*
-				 * var data = $this.data(pluginName);
-				 *  // Namespacing FTW $(window).unbind('.' +
-				 * data.options.name); $this.removeData(pluginName);
-				 */
-			});
-
-		},	
-		click : function() {
-			log('click run properly');
-		},
-		show : function() {
-		},
-		hide : function() {
-		},
-		update : function(content) {
-		}
-	};
-
-})(jQuery);
+$.widget('ui.formbuilder', FormBuilder);

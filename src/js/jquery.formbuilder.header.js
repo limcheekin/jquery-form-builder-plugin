@@ -11,7 +11,7 @@
  *
  * Date: 
  */
-FormBuilder = {
+FormBuilderInit = {
 	PlainText: function (element) {
 			element.fbPlainText();
 	}

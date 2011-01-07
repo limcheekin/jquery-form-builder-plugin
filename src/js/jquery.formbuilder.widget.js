@@ -29,10 +29,23 @@ var FbWidget = {
 	  this.log('FbWidget.destroy called.');
 	  this.element.button('destroy');
     },
-	createWidget: function(event) { // to be override by subclass
-		alert('FbWidget.createWidget called. Plugin inherited from this plugin required to implement createWidget. \n' + 
-				  'event.type = ' + event.type + ', event.target.id = ' + $(event.target).parent().attr('id'));
-    }
+  createField: function(name, widget, options) {
+	  var formBuilderOptions = $.ui.formbuilder.prototype.options;
+	  widget.append($.ui.fbWidget.prototype._createFieldProperties.call(this, name, options));
+	  $(formBuilderOptions.emptyBuilderPanel).hide();
+	  $(formBuilderOptions.builderForm).append(widget);
+    },    
+	_createFieldProperties: function(name, options) {
+		// alert('name = ' + name + ', options.type = '+ options.type);
+		var index = $('div.fieldProperties').size();
+		return '<div class="fieldProperties"> \
+		<input type="hidden" id="fields[' + index + '].name" name="fields[' + index + '].name" value="' + name + '" /> \
+		<input type="hidden" id="fields[' + index + '].type" name="fields[' + index + '].type" value="' + options.type + '" /> \
+		<input type="hidden" id="fields[' + index + '].settings" name="fields[' + index + '].settings" value="' + $.toJSON(options.settings) + '" /> \
+		<input type="hidden" id="fields[' + index + '].sequence" name="fields[' + index + '].sequence" value="' + index + '" /> \
+		</div>';
+    },        
+	createWidget: function(event) { alert('createWidget(event) should be overriden by subclass'); }
 };
 
 $.widget('ui.fbWidget', FbWidget);

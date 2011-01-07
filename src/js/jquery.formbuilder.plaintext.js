@@ -15,13 +15,16 @@ var FbPlainText = $.extend({}, $.ui.fbWidget.prototype, {
   options: { // default options. values are stored in widget's prototype
 	  type: 'plainText',
 	  name: 'Plain Text',
+	  fontType: 'none', // browser default
+	  fontColor: 'none',
+	  backgroundColor: 'none',
+	  html: '<div class="ctrlHolder textHolder topAlign"></div>',
+		belongsTo: $.ui.formbuilder.prototype.options.fancyFieldsPanel,  	  
 	  settings: {
 	    text: 'Plain Text Value',
-	    horizontalAlignment: 'left',
-	    verticalAlignment: 'top'
-	    },
-	  html: '<div class="ctrlHolder textHolder top"></div>',
-		belongsTo: $.fn.formbuilder.options.fancyFieldsPanel  
+	    horizontalAlignment: 'leftAlign',
+	    verticalAlignment: 'topAlign'
+	    }
     },
 	_create: function() {
 	  $.ui.fbWidget.prototype._create.call(this); // call the superclass's _create function
@@ -39,13 +42,17 @@ var FbPlainText = $.extend({}, $.ui.fbWidget.prototype, {
 	  $.ui.fbWidget.prototype.destroy.call(this); // call the superclass's destroy function
     },
   createWidget: function(event) {
+	  var name = $.ui.fbPlainText.prototype.getName();
 	  var options = $.ui.fbPlainText.prototype.options;
-	  var size = $('.' + options.type).size() + 1;
-	  var id = options.type + size;
-	  $(options.html).addClass(options.type).attr('id', id)
-	  .append('<input id="' + id + '.settings" type="hidden" value="' 
-			  + $.toJSON(options.settings) + '" />');
-    }
+	  var widget = $(options.html).addClass(options.type).attr('id', name).text(options.settings.text);
+	  $.ui.fbWidget.prototype.createField.call(this, name, widget, options);
+    },
+  getName: function() {
+	  var widgetType = $.ui.fbPlainText.prototype.options.type;
+	  var size = $('div.' + widgetType).size() + 1;
+	  var name = widgetType + size;
+	  return name;
+   }
 });
 
 $.widget('ui.fbPlainText', FbPlainText);

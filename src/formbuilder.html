@@ -18,7 +18,7 @@
 <script type="text/javascript">
 $(function() {
  $('#container').formbuilder();
-});
+ });
 </script>
 <style type="text/css">
     /* REF: http://www.thesitewizard.com/css/design-2-column-layout.shtml */
@@ -69,7 +69,7 @@ $(function() {
 			margin-top: 50px;
 			color: grey;
 			font-size: 20px;
-			display: none;
+			display: block;
 		}
 		
 		.uniForm {
@@ -78,10 +78,10 @@ $(function() {
 		
 		.uniForm .ctrlHolder{ padding: 1em; border-bottom: 1px solid #efefef; } /*  */
 		.uniForm .textHolder{ border-bottom: 0; }
-		.uniForm .top { padding-top: 0; padding-bottom: 2em; }
-		.uniForm .bottom { padding-top: 2em; padding-bottom: 0; }
-		.uniForm .right { text-align: right; }
-		.uniForm .center { text-align: center; }
+		.uniForm .topAlign { padding-top: 0; padding-bottom: 2em; }
+		.uniForm .bottomAlign { padding-top: 2em; padding-bottom: 0; }
+		.uniForm .rightAlign { text-align: right; }
+		.uniForm .centerAlign { text-align: center; }
 		
 </style>
 </head>
@@ -106,7 +106,7 @@ $(function() {
 				  <div id="fancyFields"></div>
 				</div>
 				<div id="fieldSettings">
-
+				
 				</div>
 				<div id="formSettings">
 
@@ -116,9 +116,10 @@ $(function() {
             
   </div>
   <div id="builderPanel">
-	  <div id="emptyBuilderPanel">Start adding some fields from the menu on the left.</div>
-		<form action="#" class="uniForm">
+		<form id="builderForm" action="#" class="uniForm">
+		  <div id="emptyBuilderPanel">Start adding some fields from the menu on the left.</div>
 		  <fieldset>
+		   <!-- 
 		    <div class="ctrlHolder">
 		      <label for="">Single Line Text</label>
 		      <input type="text" id="" name="" value="" size="35" class="textInput">
@@ -148,6 +149,7 @@ $(function() {
 		      <input type="text" id="" name="" value="" size="35" class="textInput">
 		      <p class="formHint">This is a form hint.</p>
 		    </div>
+		     -->
 		  </fieldset>
 		</form>	  
   </div>
