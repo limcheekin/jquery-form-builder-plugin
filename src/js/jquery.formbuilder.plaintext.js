@@ -13,7 +13,7 @@
 // extends/inherits from superclass: FbWidget
 var FbPlainText = $.extend({}, $.ui.fbWidget.prototype, {
   options: { // default options. values are stored in widget's prototype
-	  type: 'plainText',
+	  type: 'PlainText',
 	  name: 'Plain Text',
 	  fontType: 'none', // browser default
 	  fontColor: 'none',

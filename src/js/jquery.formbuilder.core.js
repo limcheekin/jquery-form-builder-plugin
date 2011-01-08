@@ -46,9 +46,8 @@ var FormBuilder = {
 		var i;
 	  for (i = 0; i < length; i++) {
 		  widgetOptions = $['ui']['fb' + widgets[i]].prototype.options;
-		  widget = $('<a href = "#" class="fbWidget">' + widgetOptions.name + '</a>');
+		  widget = $('<a href = "#" class="fbWidget">' + widgetOptions.name + '</a>')['fb' + widgetOptions.type]();
 	    widget.button().appendTo(widgetOptions.belongsTo);
-	    this._executeFunctionByName("FormBuilderInit." + widgets[i], window, widget) ;
 	    }		
     },
 	_init: function() {
@@ -60,16 +59,6 @@ var FormBuilder = {
         // called on removal
 		this.log('FormBuilder.destroy called.');
     },
-	// From: http://stackoverflow.com/questions/359788/javascript-function-name-as-a-string
-	_executeFunctionByName: function(functionName, context /*, args */) {
-	    var args = Array.prototype.slice.call(arguments, 2);
-	    var namespaces = functionName.split(".");
-	    var func = namespaces.pop();
-	    for (var i = 0; i < namespaces.length; i++) {
-	        context = context[namespaces[i]];
-	    }
-	    return context[func].apply(context, args);
-	},	    
   // logging to the firebug's console, put in 1 line so it can be removed easily for production
   log: function($message) { if (window.console && window.console.log) window.console.log($message); },
 	method1: function(params) {
