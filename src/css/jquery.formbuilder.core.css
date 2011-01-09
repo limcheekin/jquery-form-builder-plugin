@@ -1,0 +1,108 @@
+/*
+ * Styles of main component of JQuery Form Builder plugin, 
+ * the Form Builder container itself. 
+ * 
+ * Revision: @REVISION
+ * Version: @VERSION
+ * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
+ *
+ * Licensed under Apache v2.0 http://www.apache.org/licenses/LICENSE-2.0.html
+ *
+ * Date: 
+ */
+ 
+   /* REF: http://www.thesitewizard.com/css/design-2-column-layout.shtml */
+#builderPalette {
+  float: left;
+  width: 320px;
+  padding: 0;
+}  
+  
+#builderPanel {
+  margin-left: 340px;
+  margin-right: 5px;
+  border: 1px solid #C0C0C0;  
+  height: 490px	  
+}
+
+#footer {
+	clear: both;
+	text-align: center;
+	margin-top: 5px;
+}
+
+#header {
+	/* text-align: center; */
+}
+
+.floatingPanel {
+
+}		
+
+#addField, #fieldSettings, #formSettings {
+  height: 430px
+}
+
+#paletteTabs {
+		font-size: 12px;
+		margin: 0;
+		width: 320px;		
+}
+
+/* Add Field Panel */
+.fbWidget {
+   margin: 5px;
+   width: 130px;
+}
+
+/* Builder Panel */
+#emptyBuilderPanel {
+	text-align: center;
+	margin-top: 50px;
+	color: grey;
+	font-size: 20px;
+	display: block;
+}
+
+div.ctrlHolder a.closeButton {
+  float: right;
+}
+
+/* Field Settings Panel */
+#fieldSettings {
+	padding: 1em;
+}
+
+#fieldSettings fieldset.language { padding: 1em; border: 1px solid #C0C0C0; margin-bottom: 1em }
+
+#fieldSettings div.general { padding: 0; margin: 0 }
+
+/*#builderPalette fieldset div.legend { text-align: right }*/
+
+div.2cols { clear: both; padding:0; margin: 0;}
+  	
+div.labelOnTop { padding-top: 0em; padding-bottom: 2.5em; } /*border-bottom: 1px solid #C0C0C0;*/
+
+.clear {
+  clear: both;
+   }
+
+div.labelOnTop label {
+   float: left;
+    }
+    
+ div.labelOnTop input, div.labelOnTop select {
+   float: left;
+   width: 98%;
+    }
+    
+div.col1 {
+ float: left;
+ width: 48%;
+  }     
+  
+div.noPaddingBottom { padding-bottom: 0; }
+
+div.col2 {
+   margin-left: 52%;
+  } 

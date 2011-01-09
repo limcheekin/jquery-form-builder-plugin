@@ -31,6 +31,7 @@ var FbWidget = {
     },
   createField: function(name, widget, options) {
 	  var formBuilderOptions = $.ui.formbuilder.prototype.options;
+	  $('<a class="ui-corner-all closeButton" href="#"><span class="ui-icon ui-icon-close">close</span></a>').prependTo(widget);
 	  widget.append($.ui.fbWidget.prototype._createFieldProperties.call(this, name, options));
 	  $(formBuilderOptions.emptyBuilderPanel).hide();
 	  $(formBuilderOptions.builderForm).append(widget);

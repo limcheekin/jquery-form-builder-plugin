@@ -1,3 +1,15 @@
+<!--
+* jquery-form-builder-plugin - JQuery WYSIWYG Web Form Builder
+* http://code.google.com/p/jquery-form-builder-plugin/
+*
+* Revision: @REVISION
+* Version: @VERSION
+* Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
+*
+* Licensed under Apache v2.0 http://www.apache.org/licenses/LICENSE-2.0.html
+*
+* Date:  
+ -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -13,6 +25,8 @@
 <link type="text/css" href="../lib/css/smoothness/jquery-ui-1.8.7.custom.css" media="screen" rel="stylesheet" /> 
 <link type="text/css" href="../lib/css/uni-form.css" media="screen" rel="stylesheet" />  
 <link type="text/css" href="../lib/css/default.uni-form.css" media="screen" rel="stylesheet" />  
+<!--DEV--><link type="text/css" href="css/jquery.formbuilder.core.css" media="screen" rel="stylesheet" />  
+<!--DEV--><link type="text/css" href="css/jquery.formbuilder.plaintext.css" media="screen" rel="stylesheet" />  
 <!--PROD.CSS-->
 <script type="text/javascript">
 $(function() {
@@ -20,72 +34,12 @@ $(function() {
  });
 </script>
 <style type="text/css">
-    /* REF: http://www.thesitewizard.com/css/design-2-column-layout.shtml */
-		#builderPalette {
-		  float: left;
-		  width: 320px;
-      padding: 0;
-		}  
-		  
-		#builderPanel {
-		  margin-left: 340px;
-		  margin-right: 5px;
-		  border: 1px solid #C0C0C0;  
-		  height: 490px	  
-		}
-		
-		#footer {
-			clear: both;
-			text-align: center;
-			margin-top: 5px;
-		}
-		
-		#header {
-			/* text-align: center; */
-		}
-		
-		.floatingPanel {
 
-		}		
-		
-		#addField, #fieldSettings, #formSettings {
-		  height: 430px
-		}
-		
-		#paletteTabs {
-				font-size: 12px;
-				margin: 0;
-				width: 320px;		
-		}
-		
-		.fbWidget {
-		   margin: 5px;
-		   width: 130px;
-		}
-		
-		#emptyBuilderPanel {
-			text-align: center;
-			margin-top: 50px;
-			color: grey;
-			font-size: 20px;
-			display: block;
-		}
-		
-		.uniForm {
-		  display: block;
-		}
-		
-		.uniForm .ctrlHolder{ padding: 1em; border-bottom: 1px solid #efefef; } /*  */
-		.uniForm .textHolder{ border-bottom: 0; }
-		.uniForm .topAlign { padding-top: 0; padding-bottom: 2em; }
-		.uniForm .bottomAlign { padding-top: 2em; padding-bottom: 0; }
-		.uniForm .rightAlign { text-align: right; }
-		.uniForm .centerAlign { text-align: center; }
 		
 </style>
 </head>
-<body>
 
+<body>
 <div id="container">
   <div id="header"><h1>JQuery Form Builder Plugin</h1></div>
   <div id="builderPalette">
@@ -105,6 +59,11 @@ $(function() {
 				  <div id="fancyFields"></div>
 				</div>
 				<div id="fieldSettings">
+					<fieldset class="language">
+					<legend>Language: <select><option value="en">English</option></select></legend>
+					</fieldset>
+					<div class="general">
+					</div>				
 				</div>
 				<div id="formSettings">
 

@@ -1,0 +1,31 @@
+#fontselector {
+  width: 150px;
+  height: 18px;
+  padding: 1px;
+  border: solid 1px #cecece;
+  background-color: #ffffee;
+  font-family: Tahoma;
+  color: #444444;
+  cursor: pointer;
+  text-align: center;
+  margin: 0px;
+}
+
+#fontbox {
+  width: 150px;    
+  text-align: center;
+  border: solid 1px #cecece;
+  background-color: #ffffee;
+  font-family: Tahoma;
+  font-size: 12px;
+  color: #444444;
+  cursor: pointer;  
+  margin: 0px;
+  padding: 1px;
+}
+
+.singlefont {
+  padding-top: 1px;
+  padding-bottom: 1px;
+}
+

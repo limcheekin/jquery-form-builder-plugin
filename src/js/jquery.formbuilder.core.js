@@ -47,7 +47,7 @@ var FormBuilder = {
 	  for (i = 0; i < length; i++) {
 		  widgetOptions = $['ui']['fb' + widgets[i]].prototype.options;
 		  widget = $('<a href = "#" class="fbWidget">' + widgetOptions.name + '</a>')['fb' + widgetOptions.type]();
-	    widget.button().appendTo(widgetOptions.belongsTo);
+      widget.button().appendTo(widgetOptions.belongsTo);
 	    }		
     },
 	_init: function() {
