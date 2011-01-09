@@ -1,0 +1,92 @@
+<!--
+* Widget Name Field Settings panel design.
+*
+* Revision: @REVISION
+* Version: @VERSION
+* Copyright 2011 Author Name (author@email.com)
+*
+* Licensed under Apache v2.0 http://www.apache.org/licenses/LICENSE-2.0.html
+*
+* Date:  
+ -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Widget Name Field Settings</title>
+<script type="text/javascript" src="../lib/js/jquery-1.4.4.min.js"></script>
+<script type="text/javascript" src="../lib/js/jquery-ui-1.8.7.custom.min.js"></script>
+<script type="text/javascript" src="../lib/js/jquery.fontpicker-regios.js"></script>
+<script type="text/javascript" src="../lib/js/jquery.colourPicker.min.js"></script>
+<link type="text/css" href="../lib/css/smoothness/jquery-ui-1.8.7.custom.css" media="screen" rel="stylesheet" /> 
+<link type="text/css" href="css/jquery.formbuilder.core.css" media="screen" rel="stylesheet" />  
+<link type="text/css" href="css/jquery.formbuilder.plaintext.css" media="screen" rel="stylesheet" />  
+<link type="text/css" href="../lib/css/fontpicker.css" media="screen" rel="stylesheet" /> 
+<link type="text/css" href="../lib/css/jquery.colourPicker.css" media="screen" rel="stylesheet" /> 
+
+<script type="text/javascript">
+$(function(){
+	$('#paletteTabs').tabs();
+});
+</script>
+
+<style type="text/css">
+/* Widget specific styles here */
+
+</style>
+</head>
+<body>
+<div id="container">
+  <div id="header"><h1>Widget Name Field Settings</h1></div>
+  <div id="builderPalette">
+     <div class="floatingPanel">
+			<div id="paletteTabs">
+				<ul>
+					<li><a href="#fieldSettings">Field Settings</a></li>
+				</ul>
+				<div id="fieldSettings">
+					<fieldset class="language">
+					<legend>Language: <select><option value="en">English</option></select></legend>
+					<div class="clear labelOnTop">
+						<label for="text">Text (?)</label><br/>
+						<input type="text" id="text" />
+					</div>
+					<div class="2cols">
+						<div class="labelOnTop col1 noPaddingBottom">
+							<label for="horizontalAlignment">Horizontal Align (?)</label><br/>
+							<select id="horizontalAlignment">
+								<option value="leftAlign">left</option>
+								<option value="centerAlign">center</option>
+								<option value="rightAlign">right</option>
+							</select>
+						</div>
+						<div class="labelOnTop col2 noPaddingBottom">
+							<label for="verticalAlignment">Vertical Align (?)</label><br/>
+							<select id="verticalAlignment">
+								<option value="topAlign">top</option>
+								<option value="middleAlign">middle</option>
+								<option value="bottomAlign">bottom</option>
+							</select>
+						</div>	
+					</div>
+					</fieldset>
+					<div class="general">
+						<div class="2cols">
+							<div class="labelOnTop col1 noPaddingBottom">
+								<label for="name">Name (?)</label><br/>
+					      <input type="text" id="name" />
+							</div>
+							<div class="labelOnTop col2">
+								<label for="backgroundColor">Background Color (?)</label><br/>
+					      <select id="backgroundColor" class="colorPicker">
+					      </select>
+							</div>	
+						</div>
+					</div>				
+				</div>
+			</div>     
+     </div>
+  </div>
+</div>
+</body>
+</html>
