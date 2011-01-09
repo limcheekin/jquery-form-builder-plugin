@@ -28,21 +28,28 @@ var FbWidget = {
 	destroy: function() {
 	  this.log('FbWidget.destroy called.');
 	  this.element.button('destroy');
+
+	  // call the base destroy function.
+		$.Widget.prototype.destroy.call(this);
+
     },
   createField: function(name, widget, options) {
 	  var formBuilderOptions = $.ui.formbuilder.prototype.options;
-	  $('<a class="ui-corner-all closeButton" href="#"><span class="ui-icon ui-icon-close">close</span></a>').prependTo(widget);
-	  widget.append($.ui.fbWidget.prototype._createFieldProperties.call(this, name, options));
-	  $(formBuilderOptions.emptyBuilderPanel).hide();
+	  var index = $('div.fieldProperties').size();
+	  
+	  $('<a class="ui-corner-all closeButton" href="#"><span class="ui-icon ui-icon-close">delete this widget</span></a>').prependTo(widget);
+	  widget.attr('rel', index);
+	  widget.append($.ui.fbWidget.prototype._createFieldProperties(name, options, index));
+	  widget.find("input[id$='fields[" + index + "].settings']").val($.toJSON(options.settings));
+	  $(formBuilderOptions.emptyBuilderPanel + ':visible').hide();
 	  $(formBuilderOptions.builderForm).append(widget);
     },    
-	_createFieldProperties: function(name, options) {
+	_createFieldProperties: function(name, options, index) {
 		// alert('name = ' + name + ', options.type = '+ options.type);
-		var index = $('div.fieldProperties').size();
 		return '<div class="fieldProperties"> \
 		<input type="hidden" id="fields[' + index + '].name" name="fields[' + index + '].name" value="' + name + '" /> \
 		<input type="hidden" id="fields[' + index + '].type" name="fields[' + index + '].type" value="' + options.type + '" /> \
-		<input type="hidden" id="fields[' + index + '].settings" name="fields[' + index + '].settings" value="' + $.toJSON(options.settings) + '" /> \
+		<input type="hidden" id="fields[' + index + '].settings" name="fields[' + index + '].settings" /> \
 		<input type="hidden" id="fields[' + index + '].sequence" name="fields[' + index + '].sequence" value="' + index + '" /> \
 		</div>';
     },        

@@ -23,7 +23,7 @@ var NameSpace = {
     options: { // default options. values are stored in widget's prototype
       option1: "optionValue"		
     },
-    _create: function() {
+  _create: function() {
     	// called on construction
     	this.log('NameSpace.ClassName._create called. this.options.option1 = ' + this.options.option1);
     },
@@ -35,6 +35,10 @@ var NameSpace = {
 	destroy: function() {
         // called on removal
 		this.log('NameSpace.ClassName.destroy called.');
+		
+		// From: http://blog.nemikor.com/2010/05/15/building-stateful-jquery-plugins/
+		// call the base destroy function.
+		$.Widget.prototype.destroy.call(this);		
     },
     // logging to the firebug's console, put in 1 line so it can be removed easily for production
     log: function($message) { if (window.console && window.console.log) window.console.log($message); },

@@ -18,8 +18,10 @@ var FormBuilder = {
 		builderForm: '#builderForm fieldset',
 		emptyBuilderPanel: '#emptyBuilderPanel',
 		standardFieldsPanel: '#standardFields',
-		fancyFieldsPanel: '#fancyFields'
-    },
+		fancyFieldsPanel: '#fancyFields',
+    fieldSettingsLanguageSection: '#fieldSettings fieldset.language:first',
+    fieldSettingsGeneralSection: '#fieldSettings div.general:first'
+  },
   _create: function() {
     	// called on construction
     this.log('FormBuilder._create called. this.options.widgets = ' + this.options.widgets);
@@ -46,7 +48,7 @@ var FormBuilder = {
 		var i;
 	  for (i = 0; i < length; i++) {
 		  widgetOptions = $['ui']['fb' + widgets[i]].prototype.options;
-		  widget = $('<a href = "#" class="fbWidget">' + widgetOptions.name + '</a>')['fb' + widgetOptions.type]();
+		  widget = $('<a id="' + widgetOptions.type +  '" href="#" class="fbWidget">' + widgetOptions.name + '</a>')['fb' + widgetOptions.type]();
       widget.button().appendTo(widgetOptions.belongsTo);
 	    }		
     },
@@ -56,8 +58,11 @@ var FormBuilder = {
 		this.method1('calling from FormBuilder._init');
 	},        
 	destroy: function() {
-        // called on removal
+    // called on removal
 		this.log('FormBuilder.destroy called.');
+
+    // call the base destroy function.
+		$.Widget.prototype.destroy.call(this);		
     },
   // logging to the firebug's console, put in 1 line so it can be removed easily for production
   log: function($message) { if (window.console && window.console.log) window.console.log($message); },
