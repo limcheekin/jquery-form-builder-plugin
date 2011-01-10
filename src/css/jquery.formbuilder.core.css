@@ -64,8 +64,13 @@
 	display: block;
 }
 
-div.ctrlHolder a.closeButton {
-  float: right;
+.uniForm .ctrlHolder {
+	 position:relative;
+}
+.uniForm .ctrlHolder .closeButton {
+	 position:absolute;
+	 top:1px;
+	 right:1px;
 }
 
 /* Field Settings Panel */

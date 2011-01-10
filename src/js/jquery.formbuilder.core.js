@@ -15,16 +15,16 @@
 var FormBuilder = {
   options: { // default options. values are stored in widget's prototype
 		widgets : ['PlainText'],
-		builderForm: '#builderForm fieldset',
-		emptyBuilderPanel: '#emptyBuilderPanel',
-		standardFieldsPanel: '#standardFields',
-		fancyFieldsPanel: '#fancyFields',
-    fieldSettingsLanguageSection: '#fieldSettings fieldset.language:first',
-    fieldSettingsGeneralSection: '#fieldSettings div.general:first'
+		_builderForm: '#builderForm fieldset',
+		_emptyBuilderPanel: '#emptyBuilderPanel',
+		_standardFieldsPanel: '#standardFields',
+		_fancyFieldsPanel: '#fancyFields',
+    _fieldSettingsLanguageSection: '#fieldSettings fieldset.language:first',
+    _fieldSettingsGeneralSection: '#fieldSettings div.general:first'
   },
   _create: function() {
     	// called on construction
-    this.log('FormBuilder._create called. this.options.widgets = ' + this.options.widgets);
+    this._log('FormBuilder._create called. this.options.widgets = ' + this.options.widgets);
 		// REF: http://www.webresourcesdepot.com/smart-floating-banners/
 		$(window).scroll(
 		function() {
@@ -47,29 +47,29 @@ var FormBuilder = {
 		var widget;
 		var i;
 	  for (i = 0; i < length; i++) {
-		  widgetOptions = $['ui']['fb' + widgets[i]].prototype.options;
+		  widgetOptions = $['fb']['fb' + widgets[i]].prototype.options;
 		  widget = $('<a id="' + widgetOptions.type +  '" href="#" class="fbWidget">' + widgetOptions.name + '</a>')['fb' + widgetOptions.type]();
       widget.button().appendTo(widgetOptions.belongsTo);
 	    }		
     },
 	_init: function() {
-			// called on construction and re-initialization
-		this.log('FormBuilder._init called.');
+	  // called on construction and re-initialization
+		this._log('FormBuilder._init called.');
 		this.method1('calling from FormBuilder._init');
 	},        
 	destroy: function() {
     // called on removal
-		this.log('FormBuilder.destroy called.');
+		this._log('FormBuilder.destroy called.');
 
     // call the base destroy function.
 		$.Widget.prototype.destroy.call(this);		
     },
-  // logging to the firebug's console, put in 1 line so it can be removed easily for production
-  log: function($message) { if (window.console && window.console.log) window.console.log($message); },
+  // _logging to the firebug's console, put in 1 line so it can be removed easily for production
+  _log: function($message) { if (window.console && window.console.log) window.console.log($message); },
 	method1: function(params) {
     	// plugin specific method
-		this.log('FormBuilder.method1 called. params = ' + params);
+		this._log('FormBuilder.method1 called. params = ' + params);
     }
 };
 
-$.widget('ui.formbuilder', FormBuilder);
+$.widget('fb.formbuilder', FormBuilder);

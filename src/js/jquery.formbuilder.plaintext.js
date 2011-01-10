@@ -11,56 +11,61 @@
  */
 
 // extends/inherits from superclass: FbWidget
-var FbPlainText = $.extend({}, $.ui.fbWidget.prototype, {
+var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
   options: { // default options. values are stored in widget's prototype
 	  type: 'PlainText',
 	  name: 'Plain Text',
-	  fontType: 'none', // browser default
-	  fontColor: 'none',
-	  backgroundColor: 'none',
-	  html: '<div class="ctrlHolder textHolder topAlign"></div>',
-		belongsTo: $.ui.formbuilder.prototype.options.fancyFieldsPanel,  	  
+	  html: '<div class="ctrlHolder textHolder"><div class="text topAlign"></div></div>',
+		belongsTo: $.fb.formbuilder.prototype.options._fancyFieldsPanel,  	  
 	  settings: {
 	    text: 'Plain Text Value',
-	    horizontalAlignment: 'leftAlign',
-	    verticalAlignment: 'topAlign'
+	    classes: ['leftAlign', 'topAlign'],
+	    styles: {
+	  	  fontFamily: 'none', // browser default
+		    color: 'none',
+		    backgroundColor: 'none'	    	
+	        }
 	    }
     },
 	_create: function() {
-	  $.ui.fbWidget.prototype._create.call(this); // call the superclass's _create function
+	  $.fb.fbWidget.prototype._create.call(this); // call the superclass's _create function
 	  // FbPlainText's construction code here
-	  this.log('FbPlainText._create called. this.options.text = ' + this.options.text);
+	  this._log('FbPlainText._create called. this.options.text = ' + this.options.settings.text);
     },
   _init: function() {
-	  $.ui.fbWidget.prototype._init.call(this); // call the superclass's _init function
+	  $.fb.fbWidget.prototype._init.call(this); // call the superclass's _init function
 	  // FbPlainText's construction and re-initialization code here	
-      this.log('FbPlainText._init called.');
+      this._log('FbPlainText._init called.');
     },        
 	destroy: function() {
 	  // FbPlainText's destroy code here
-	  this.log('FbPlainText.destroy called.');
-	  $.ui.fbWidget.prototype.destroy.call(this); // call the superclass's destroy function
+	  this._log('FbPlainText.destroy called.');
+	  $.fb.fbWidget.prototype.destroy.call(this); // call the superclass's destroy function
     },
   createWidget: function(event) {
-	  var $plainTextHandle = $(event.target).parent().data('fbPlainText'); // direct access to plugin instance
-	  var size = $('div.' + $plainTextHandle.options.type).size() + 1;
-	  var name = $plainTextHandle.options.type + size;	  
-	  
-	  var widget = $($plainTextHandle.options.html).addClass($plainTextHandle.options.type).attr('id', name);
-	  // TODO: remembered to remove it when user click on "delete this widget" button
-	  // Clone an instance of plugin's option. From: http://stackoverflow.com/questions/122102/what-is-the-most-efficient-way-to-clone-a-javascript-object 
-	  widget.data('options', jQuery.extend(true, {}, $plainTextHandle.options));  
-	  var widgetOptions = widget.data('options');
-	  widgetOptions.settings.text = widgetOptions.settings.text + ' ' + size;
-	  widget.text(widgetOptions.settings.text).click($plainTextHandle.getFieldSettings);
-	  $plainTextHandle.createField(name, widget, widgetOptions);
+	  var $plainText = $(event.target).parent().data('fbPlainText'); // direct access to plugin instance
+	  var size = $('div.' + $plainText.options.type).size() + 1;
+	  var name = $plainText.propertyName($plainText.options.type + size);
+	  var text = $plainText.options.settings.text + ' ' + size;
+	  var $widget = $($plainText.options.html).addClass($plainText.options.type)
+	              .attr('id', name).click($plainText.getFieldSettings);
+	  // Clone an instance of plugin's option settings. 
+	  // From: http://stackoverflow.com/questions/122102/what-is-the-most-efficient-way-to-clone-a-javascript-object 	  
+	  var settings = jQuery.extend(true, {}, $plainText.options.settings);
+	  settings.text = text;
+	  $widget.find('div.text').text(text);
+	  $plainText.createField(name, $widget, $plainText.options, settings);
     },
  getFieldSettings: function(event) { 
-	 var $plainTextElement = $(event.target);
-	 $.ui.fbWidget.prototype.log('PlainText.getFieldSettings. id = ' + $plainTextElement.attr('id') + ', ' + $plainTextElement.attr('rel'));	
-	 $.ui.fbWidget.prototype.log('settings = ' + $plainTextElement.find("input[id$='fields[" + $plainTextElement.attr('rel') + "].settings']").val());
-	 var settings = $.parseJSON($plainTextElement.find("input[id$='fields[" + $plainTextElement.attr('rel') + "].settings']").val());
-	 var languageSection = '<div class="clear labelOnTop"> \
+	 var $plainTextElement = $(event.target).parent();
+	 var formBuilderOptions = $.fb.formbuilder.prototype.options;
+	 var index = $plainTextElement.attr('rel');
+	 var $settings = $plainTextElement.find("input[id$='fields[" + index + "].settings']");
+	 var settings = $.parseJSON($settings.val());
+	 
+	 $.fb.fbWidget.prototype._log('PlainText.getFieldSettings. id = ' + $plainTextElement.attr('id') + ', ' + $plainTextElement.attr('rel'));	
+	 $.fb.fbWidget.prototype._log('settings = ' + $plainTextElement.find("input[id$='fields[" + index + "].settings']").val());
+	 var languageSectionSettings = '<div class="clear labelOnTop"> \
 		<label for="text">Text (?)</label><br /> \
 		<input type="text" id="text" /> \
 	</div> \
@@ -82,24 +87,62 @@ var FbPlainText = $.extend({}, $.ui.fbWidget.prototype, {
 			</select> \
 	  </div> \
 	</div>';
-	 
-	var $languageSection = $($.ui.formbuilder.prototype.options.fieldSettingsLanguageSection); 
+	var $languageSectionSettings = $(languageSectionSettings); 
+	$languageSectionSettings.find('input#text')
+													.val($plainTextElement.find('div.text').text())
+													.change(function(event) {
+														var value = $(event.target).val();
+														$plainTextElement.find('div.text').text(value);
+														settings.text = value;
+														$settings.val($.toJSON(settings));
+													});
+	$languageSectionSettings.find('select#horizontalAlignment')
+													.val(settings.classes[0])
+													.change(function(event) {
+														var $text = $plainTextElement.find('div.text');
+														var value = $(event.target).val();
+														$text.removeClass(settings.classes[0]).addClass(value);
+														settings.classes[0] = value;
+														$settings.val($.toJSON(settings));
+														// alert('$text.class = ' + $text.attr('class'));
+														// alert('$settings.val() = ' + $settings.val());
+													});					
+	$languageSectionSettings.find('select#verticalAlignment')
+													.val(settings.classes[1])
+													.change(function(event) {
+														var $text = $plainTextElement.find('div.text');
+														var value = $(event.target).val();
+														$text.removeClass(settings.classes[1]).addClass(value);
+														settings.classes[1] = value;
+														$settings.val($.toJSON(settings));
+														// alert('$text.class = ' + $text.attr('class'));
+														// alert('$settings.val() = ' + $settings.val());
+													});				
+
+	
+	var $languageSection = $(formBuilderOptions._fieldSettingsLanguageSection); 
 	// remote all child nodes
 	$languageSection.children().remove();  
-	$languageSection.append(languageSection);
-	$languageSection.find('input#text').val(settings.text);
+	$languageSection.append($languageSectionSettings);
+	
 	
 	// general section
-	var $generalSection = $($.ui.formbuilder.prototype.options.fieldSettingsGeneralSection); 
-	// remote all child nodes 
-	$generalSection.children().remove();  
-	var generalSection = '<div class="2cols"> \
+	var generalSectionSettings = '<div class="2cols"> \
 		<div class="labelOnTop col1 noPaddingBottom"> \
 			<label for="name">Name (?)</label><br/> \
 		  <input type="text" id="name" /> \
 		</div> \
 	</div>';
-	$generalSection.append(generalSection);
+	var $generalSectionSettings = $(generalSectionSettings);
+	$generalSectionSettings.find('input#name')
+	                       .val($plainTextElement.find("input[id$='fields[" + index + "].name']").val())
+												 .change(function(event) {
+														$plainTextElement.find("input[id$='fields[" + index + "].name']").val($(event.target).val());
+													});		
+	var $generalSection = $(formBuilderOptions._fieldSettingsGeneralSection); 
+	// remote all child nodes 
+	$generalSection.children().remove();  	
+	$generalSection.append($generalSectionSettings);
 	
 	
 	
@@ -109,4 +152,4 @@ var FbPlainText = $.extend({}, $.ui.fbWidget.prototype, {
     
 });
 
-$.widget('ui.fbPlainText', FbPlainText);
+$.widget('fb.fbPlainText', FbPlainText);

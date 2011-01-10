@@ -19,8 +19,10 @@
 <script type="text/javascript" src="../lib/js/jquery.fontpicker-regios.js"></script>
 <script type="text/javascript" src="../lib/js/jquery.colourPicker.min.js"></script>
 <link type="text/css" href="../lib/css/smoothness/jquery-ui-1.8.7.custom.css" media="screen" rel="stylesheet" /> 
-<link type="text/css" href="css/jquery.formbuilder.core.css" media="screen" rel="stylesheet" />  
-<link type="text/css" href="css/jquery.formbuilder.plaintext.css" media="screen" rel="stylesheet" />  
+<link type="text/css" href="../lib/css/uni-form.css" media="screen" rel="stylesheet" />  
+<link type="text/css" href="../lib/css/default.uni-form.css" media="screen" rel="stylesheet" />  
+<!--DEV--><link type="text/css" href="css/jquery.formbuilder.core.css" media="screen" rel="stylesheet" />  
+<!--DEV--><link type="text/css" href="css/jquery.formbuilder.plaintext.css" media="screen" rel="stylesheet" />  
 <link type="text/css" href="../lib/css/fontpicker.css" media="screen" rel="stylesheet" /> 
 <link type="text/css" href="../lib/css/jquery.colourPicker.css" media="screen" rel="stylesheet" /> 
 
@@ -49,6 +51,9 @@ function changeFont(fontFamily)
   #backgroundColor {
     width:85%
     }
+/*#container { width: 100%; height: 100%; display: table; }*/
+#position { display: table-cell; vertical-align: middle; }
+    
 </style>
 </head>
 <body>
@@ -177,6 +182,34 @@ function changeFont(fontFamily)
 			</div>     
      </div>
   </div>
+  <div id="builderPanel">
+		<form id="builderForm" action="#" class="uniForm">
+		  <fieldset>
+
+				<div class="textHolder ctrlHolder">
+				<a href="#" class="ui-corner-all closeButton"><span	class="ui-icon ui-icon-close">delete this widget</span></a>
+				<div class="text topAlign">
+				Lorem ipsum dolor sit amet, consectetuer
+				adipiscing elit. Donec.
+				</div>
+				</div>
+				<div class="textHolder ctrlHolder">
+				<a href="#" class="ui-corner-all closeButton"><span	class="ui-icon ui-icon-close">delete this widget</span></a>
+				<div class="text bottomAlign">
+				Lorem ipsum dolor sit amet, consectetuer
+				adipiscing elit. Donec.
+				</div>
+				</div>	
+				<div class="textHolder ctrlHolder">
+				<a href="#" class="ui-corner-all closeButton"><span	class="ui-icon ui-icon-close">delete this widget</span></a>
+				<div class="text middleAlign">
+				Lorem ipsum dolor sit amet, consectetuer
+				adipiscing elit. Donec.
+				</div>
+				</div>							
+</fieldset>
+		</form>	  
+  </div>		    
 </div>
 </body>
 </html>
