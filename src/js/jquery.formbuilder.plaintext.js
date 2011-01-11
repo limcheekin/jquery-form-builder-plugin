@@ -15,11 +15,17 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
   options: { // default options. values are stored in widget's prototype
 	  type: 'PlainText',
 	  name: 'Plain Text',
-	  html: '<div class="ctrlHolder textHolder"><div class="text topAlign"></div></div>',
+	  html: '<div class="ctrlHolder textHolder"><div class="text"></div></div>',
 		belongsTo: $.fb.formbuilder.prototype.options._fancyFieldsPanel,  	  
 	  settings: {
-	    text: 'Plain Text Value',
-	    classes: ['leftAlign', 'topAlign'],
+		  en: {
+		    text: 'Plain Text Value',
+		    classes: ['leftAlign', 'topAlign']
+		    },
+			zh: {
+				text: '無格式文字',
+				classes: ['rightAlign', 'topAlign']
+		    },		    
 	    styles: {
 	  	  fontFamily: 'none', // browser default
 		    color: 'none',
@@ -30,7 +36,7 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 	_create: function() {
 	  $.fb.fbWidget.prototype._create.call(this); // call the superclass's _create function
 	  // FbPlainText's construction code here
-	  this._log('FbPlainText._create called. this.options.text = ' + this.options.settings.text);
+	  this._log('FbPlainText._create called. this.options.text = ' + this.options.settings.en.text);
     },
   _init: function() {
 	  $.fb.fbWidget.prototype._init.call(this); // call the superclass's _init function
@@ -46,14 +52,15 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 	  var $plainText = $(event.target).parent().data('fbPlainText'); // direct access to plugin instance
 	  var size = $('div.' + $plainText.options.type).size() + 1;
 	  var name = $plainText.propertyName($plainText.options.type + size);
-	  var text = $plainText.options.settings.text + ' ' + size;
+		var language = $('#language').val();	  
+	  var text = $plainText.options.settings[language].text + ' ' + size;
 	  var $widget = $($plainText.options.html).addClass($plainText.options.type)
 	              .attr('id', name).click($plainText.getFieldSettings);
 	  // Clone an instance of plugin's option settings. 
 	  // From: http://stackoverflow.com/questions/122102/what-is-the-most-efficient-way-to-clone-a-javascript-object 	  
 	  var settings = jQuery.extend(true, {}, $plainText.options.settings);
-	  settings.text = text;
-	  $widget.find('div.text').text(text);
+	  settings[language].text = text;
+	  $widget.find('div.text').text(text).addClass(settings[language].classes.join(' '));
 	  $plainText.createField(name, $widget, $plainText.options, settings);
     },
  getFieldSettings: function(event) { 
@@ -88,41 +95,46 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 	  </div> \
 	</div>';
 	var $languageSectionSettings = $(languageSectionSettings); 
+	var $languageSection = $(formBuilderOptions._fieldSettingsLanguageSection);
+	var $language = $('#language');
+	var language = $language.val();
+	$('legend', $languageSection).text('Language: ' + $language.find('option:selected').text());
+	$.fb.fbWidget.prototype._log('language = ' + language + ", " + $language.find('option:selected').text());
 	$languageSectionSettings.find('input#text')
 													.val($plainTextElement.find('div.text').text())
 													.change(function(event) {
 														var value = $(event.target).val();
 														$plainTextElement.find('div.text').text(value);
-														settings.text = value;
-														$settings.val($.toJSON(settings));
+														settings[language].text = value;
+														$settings.val($.toJSON(settings)).trigger('change');
 													});
 	$languageSectionSettings.find('select#horizontalAlignment')
-													.val(settings.classes[0])
+													.val(settings[language].classes[0])
 													.change(function(event) {
 														var $text = $plainTextElement.find('div.text');
 														var value = $(event.target).val();
-														$text.removeClass(settings.classes[0]).addClass(value);
-														settings.classes[0] = value;
-														$settings.val($.toJSON(settings));
+														$text.removeClass(settings[language].classes[0]).addClass(value);
+														settings[language].classes[0] = value;
+														$settings.val($.toJSON(settings)).trigger('change');
 														// alert('$text.class = ' + $text.attr('class'));
 														// alert('$settings.val() = ' + $settings.val());
 													});					
 	$languageSectionSettings.find('select#verticalAlignment')
-													.val(settings.classes[1])
+													.val(settings[language].classes[1])
 													.change(function(event) {
 														var $text = $plainTextElement.find('div.text');
 														var value = $(event.target).val();
-														$text.removeClass(settings.classes[1]).addClass(value);
-														settings.classes[1] = value;
-														$settings.val($.toJSON(settings));
+														$text.removeClass(settings[language].classes[1]).addClass(value);
+														settings[language].classes[1] = value;
+														$settings.val($.toJSON(settings)).trigger('change');
 														// alert('$text.class = ' + $text.attr('class'));
 														// alert('$settings.val() = ' + $settings.val());
 													});				
 
 	
-	var $languageSection = $(formBuilderOptions._fieldSettingsLanguageSection); 
+	
 	// remote all child nodes
-	$languageSection.children().remove();  
+	$languageSection.children(':not(legend)').remove();  
 	$languageSection.append($languageSectionSettings);
 	
 	
@@ -137,7 +149,7 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 	$generalSectionSettings.find('input#name')
 	                       .val($plainTextElement.find("input[id$='fields[" + index + "].name']").val())
 												 .change(function(event) {
-														$plainTextElement.find("input[id$='fields[" + index + "].name']").val($(event.target).val());
+														$plainTextElement.find("input[id$='fields[" + index + "].name']").val($(event.target).val()).trigger('change');
 													});		
 	var $generalSection = $(formBuilderOptions._fieldSettingsGeneralSection); 
 	// remote all child nodes 
