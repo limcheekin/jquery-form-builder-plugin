@@ -42,19 +42,13 @@ var FbWidget = {
 		   var $ctrlHolders = $('#builderForm div.ctrlHolder');
 		   var size = $ctrlHolders.size();
 		   var i, $sequence;
-		   $widget.find("input[id$='fields[" + index + "].name']").val('#DEL');
+		   $widget.find("input[id$='fields[" + index + "].status']").val('D');
 		   $widget.hide();
-		   // TODO: i should start from index + 1, but surprisingly it doesn't work properly
-		   // optimizing needed
-		   for (i = index; i < size; i++) {
-			   $sequence = $ctrlHolders.find("input[id$='fields[" + i + "].sequence']");
-			   // alert('$sequence['+i+'].val() = ' + $sequence.val());
-			   $sequence.val($sequence.val() - 1);
-		   }
+		   event.stopPropagation();
 	    });
 	  widget.attr('rel', index);
-	  widget.append($.fb.fbWidget.prototype._createFieldProperties(name, options, index));
-	  widget.find("input[id$='fields[" + index + "].settings']").val($.toJSON(settings));
+	  widget.append($.fb.fbWidget.prototype._createFieldProperties(name, options, settings, index));
+	  
 	  $(formBuilderOptions._emptyBuilderPanel + ':visible').hide();
 	  $(formBuilderOptions._builderForm).append(widget).sortable('refresh');
     }, 
@@ -64,15 +58,23 @@ var FbWidget = {
   	propertyName = propertyName.charAt(0).toLowerCase() + propertyName.substring(1);
   	return propertyName;
   	},    
-	_createFieldProperties: function(name, options, index) {
+	_createFieldProperties: function(name, options, settings, index) {
 		// alert('name = ' + name + ', options.type = '+ options.type);
-		return '<div class="fieldProperties"> \
+		var $fieldProperties = $('<div class="fieldProperties"> \
 		<input type="hidden" id="fields[' + index + '].name" name="fields[' + index + '].name" value="' + name + '" /> \
 		<input type="hidden" id="fields[' + index + '].type" name="fields[' + index + '].type" value="' + options.type + '" /> \
 		<input type="hidden" id="fields[' + index + '].settings" name="fields[' + index + '].settings" /> \
 		<input type="hidden" id="fields[' + index + '].sequence" name="fields[' + index + '].sequence" value="' + index + '" /> \
-		</div>';
+		<input type="hidden" id="fields[' + index + '].status" name="fields[' + index + '].status" /> \
+		</div>');
+		$fieldProperties.find("input[id$='fields[" + index + "].settings']").val($.toJSON(settings));
+		return $fieldProperties;
     },        
+  _updateStatus: function(event) {
+	  $widget = $(event.target);
+	  $.fb.fbWidget.prototype._log($widget.attr('id') + " updated");
+	  $widget.parent().find('input:last').val('U');
+  },
 	createWidget: function(event) { alert('createWidget(event) should be overriden by subclass'); }
 };
 

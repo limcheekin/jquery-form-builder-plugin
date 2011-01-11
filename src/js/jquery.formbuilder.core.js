@@ -26,7 +26,7 @@ var FormBuilder = {
     	// called on construction
     this._log('FormBuilder._create called. this.options.widgets = ' + this.options.widgets);
     this._initBuilderPalette();
-	  this._initSortableWidgets();
+    this._initBuilderPanel();
     },
   _initBuilderPalette: function() {
 		// REF: http://www.webresourcesdepot.com/smart-floating-banners/
@@ -56,6 +56,21 @@ var FormBuilder = {
       widget.button().appendTo(widgetOptions.belongsTo);
 	    }			  
    },
+  _initBuilderPanel: function() {
+	  this._initSortableWidgets();
+	  this._initWidgetsEventBinder();
+   },
+ _initWidgetsEventBinder: function() { // for existing widgets loaded from server
+	  var $ctrlHolders = $('#builderForm div.ctrlHolder');
+	  var size = $ctrlHolders.size();
+		var fieldsUpdateStatus = ['name', 'settings', 'sequence'];
+		for (var i = 0; i < size; i++) {
+			for (var j = 0; j < fieldsUpdateStatus.length; j++) {
+				$ctrlHolders.find("input[id$='fields[" + i + "]." + fieldsUpdateStatus[j] + "']")
+				                  .change($.fb.fbWidget.prototype._updateStatus);
+			}	  
+		}
+  } ,
   _initSortableWidgets: function() {
 	  var $builderFormFieldset = $(this.options._builderForm);
 		$builderFormFieldset.sortable({ 
@@ -87,7 +102,7 @@ var FormBuilder = {
 					} else {
 						// set next widget's sequence as my sequence
 						$.fb.formbuilder.prototype._getSequence($uiItem).val(
-						    $.fb.formbuilder.prototype._getSequence($uiItem.next()).val());						
+						    $.fb.formbuilder.prototype._getSequence($uiItem.next()).val()).trigger('change');						
 						$elements = $uiItem.nextUntil('#' + ui.item.prevId);  
 						$elements.each(function(index) {
 						  $.fb.formbuilder.prototype._increaseSequence($(this));
@@ -121,7 +136,7 @@ var FormBuilder = {
   _moveDown: function($widget, $elements) {
 		// set previous widget's sequence as my sequence
 		$.fb.formbuilder.prototype._getSequence($widget).val(
-		    $.fb.formbuilder.prototype._getSequence($widget.prev()).val());
+		    $.fb.formbuilder.prototype._getSequence($widget.prev()).val()).trigger('change');
 	  $elements.each(function(index) {
 		  $.fb.formbuilder.prototype._decreaseSequence($(this));
 	    });	
@@ -130,12 +145,18 @@ var FormBuilder = {
     	return $widget.find("input[id$='fields[" + $widget.attr('rel') + "].sequence']");
     },
   _increaseSequence: function($widget) {
-	  var $sequence = $.fb.formbuilder.prototype._getSequence($widget);
-	  $sequence.val($sequence.val() * 1 + 1);
+	  if ($widget.is(":visible")) {
+		  var $sequence = $.fb.formbuilder.prototype._getSequence($widget);
+		  $sequence.val($sequence.val() * 1 + 1);
+		  $sequence.trigger('change');
+	    }
    },
   _decreaseSequence: function($widget) {
-	  var $sequence = $.fb.formbuilder.prototype._getSequence($widget);
-	  $sequence.val($sequence.val() - 1);
+	  if ($widget.is(":visible")) {
+	    var $sequence = $.fb.formbuilder.prototype._getSequence($widget);
+	    $sequence.val($sequence.val() - 1);
+	    $sequence.trigger('change');
+	  }
    },  
 	method1: function(params) {
     	// plugin specific method
