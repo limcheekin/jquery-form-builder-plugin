@@ -1,0 +1,18 @@
+<plugin name='jquery-form-builder' version='0.1' grailsVersion='1.2.2 &gt; *'>
+  <author>Lim Chee Kin</author>
+  <authorEmail>limcheekin@vobject.com</authorEmail>
+  <title>JQuery Form Builder Plugin - JQuery WYSIWYG Web Form Builder</title>
+  <description> The WYSIWYG Web Form Builder implemented in JQuery and JQuery UI allowed you 
+ to create online forms in web browser without any programming knowledge.
+</description>
+  <documentation>http://grails.org/plugin/jquery-form-builder</documentation>
+  <resources>
+    <resource>BuildConfig</resource>
+    <resource>Config</resource>
+    <resource>DataSource</resource>
+    <resource>UrlMappings</resource>
+    <resource>org.grails.jquery.formbuilder.JQueryFormBuilderTagLib</resource>
+  </resources>
+  <dependencies />
+  <behavior />
+</plugin>

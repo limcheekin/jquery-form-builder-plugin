@@ -16,7 +16,7 @@
 	<property name="JQUERY_FORM_BUILDER_IMG" value="${DIST_DIR}/images" />
 	<property name="JQUERY_FORM_BUILDER_ZIP" value="${DIST_DIR}/jquery-formbuilder-${version}.zip" />
 
-	<property name="PLUGINS" value="" />
+	<property name="PLUGINS" value="PlainText" />
 	
 	<property name="APPENGINE_SDK_DIR" location="/opt/dev/lib/appengine-java-sdk/1.4.0" />
 	<import file="${APPENGINE_SDK_DIR}/config/user/ant-macros.xml" />
@@ -53,7 +53,7 @@
 		 	   String pluginJavaScriptFiles = ''
 		 	   String pluginCssFiles = ''
 		 	   pluginNames.each { name ->
-			      name = name.trim()
+			      name = name.trim().toLowerCase()
 		 	      pluginJavaScriptFiles += "${jsDir}/jquery.formbuilder.${name}.js "
 		 	      pluginCssFiles += "${cssDir}/jquery.formbuilder.${name}.css "
 		 	      }
@@ -183,9 +183,7 @@
 
 		<mkdir dir="${JQUERY_FORM_BUILDER_IMG}" />
 		<copy todir="${JQUERY_FORM_BUILDER_IMG}">
-			<fileset dir="${IMG_DIR}">
-				<include name="**/*.png" />
-			</fileset>
+			<fileset dir="${IMG_DIR}" />
 		</copy>
 
 		<echo message="${JQUERY_FORM_BUILDER_IMG} built." />
@@ -210,7 +208,7 @@
 	  <zip destfile="${JQUERY_FORM_BUILDER_ZIP}" basedir="${DIST_DIR}" />
   </target>
 	
-  <target name="copy" depends="all" description="Copies the App Engine JARs to the WAR.">
+  <target name="copyToWar" depends="all" description="Copy form builder resources to the WAR.">
   	<delete dir="war" />
   	<mkdir dir="war/WEB-INF" />
   	<copy todir="war" overwrite="true">
@@ -235,7 +233,7 @@
   		replace="&lt;link type=&quot;text/css&quot; href=&quot;css/jquery-formbuilder-${version}.css&quot; media=&quot;screen&quot; rel=&quot;stylesheet&quot; /&gt;" />
   </target>	
 	
-  <target name="copyjars" depends="copy" description="Copies the App Engine JARs to the WAR.">
+  <target name="copyjars" depends="copyToWar" description="Copies the App Engine JARs to the WAR.">
     <copy todir="war/WEB-INF/lib" flatten="true">
       <fileset dir="${APPENGINE_SDK_DIR}/lib/user">
         <include name="**/*.jar" />
@@ -243,7 +241,16 @@
     </copy>
   </target>
 
-	<target name="deploy" depends="copyjars" description="Uploads the application to App Engine.">
+	<target name="appengine" depends="copyjars" description="Uploads the application to App Engine.">
 	    <appcfg action="update" war="war" />
 	</target>
+	
+  <target name="copyToGrails" depends="all" description="Copy form builder resources to the Grails plugin.">
+  	<copy file="${JQUERY_FORM_BUILDER}" todir="grails-plugin/web-app/js" overwrite="true" />
+  	<copy file="${JQUERY_FORM_BUILDER_MIN}" todir="grails-plugin/web-app/js" overwrite="true" />
+  	<copy file="${JQUERY_FORM_BUILDER_CSS}" todir="grails-plugin/web-app/css" overwrite="true" />
+  	<copy todir="grails-plugin/web-app/images" overwrite="true">
+      <fileset dir="${JQUERY_FORM_BUILDER_IMG}" />
+    </copy>
+  </target>		
 </project>
