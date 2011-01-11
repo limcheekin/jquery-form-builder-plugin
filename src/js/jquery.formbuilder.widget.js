@@ -56,7 +56,7 @@ var FbWidget = {
 	  widget.append($.fb.fbWidget.prototype._createFieldProperties(name, options, index));
 	  widget.find("input[id$='fields[" + index + "].settings']").val($.toJSON(settings));
 	  $(formBuilderOptions._emptyBuilderPanel + ':visible').hide();
-	  $(formBuilderOptions._builderForm).append(widget);
+	  $(formBuilderOptions._builderForm).append(widget).sortable('refresh');
     }, 
   propertyName: function (value) {
   	var propertyName;
@@ -67,7 +67,6 @@ var FbWidget = {
 	_createFieldProperties: function(name, options, index) {
 		// alert('name = ' + name + ', options.type = '+ options.type);
 		return '<div class="fieldProperties"> \
-		<input type="hidden" id="fields[' + index + '].id" name="fields[' + index + '].id" /> \
 		<input type="hidden" id="fields[' + index + '].name" name="fields[' + index + '].name" value="' + name + '" /> \
 		<input type="hidden" id="fields[' + index + '].type" name="fields[' + index + '].type" value="' + options.type + '" /> \
 		<input type="hidden" id="fields[' + index + '].settings" name="fields[' + index + '].settings" /> \

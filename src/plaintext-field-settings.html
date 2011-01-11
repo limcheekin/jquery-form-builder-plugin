@@ -38,6 +38,48 @@ $(function(){
 	    ico:    '../images/jquery.colourPicker.gif', 
 	    title:    false
 	});	
+	
+	var $builderFormFieldset = $('#builderForm fieldset');
+	$builderFormFieldset.sortable({ 
+		/*placeholder: 'ui-state-highlight',*/
+		axis: 'y',
+		cursor: 'move',
+		helper: function (event, ui) {
+			return $(ui).clone().css({
+				opacity: 0.6,
+				border: "3px solid #cccccc"
+			});
+		},
+		start: function (event, ui) {
+			var $previousElement = $(ui.item).prev();
+			if ($previousElement.attr('id')) {
+				ui.item.prevId = $previousElement.attr('id');
+				ui.item.originalPositionTop = $previousElement.position().top;
+				// alert('ui.item.originalPositionTop = ' + ui.item.originalPositionTop);
+			}
+		},
+		update: function (event, ui) {
+			alert('ui.position.top = ' + ui.position.top + ', ui.offset.top = ' + ui.offset.top);
+			var $uiItem = $(ui.item);
+			var $elements;
+			var moveDown = ui.position.top > ui.item.originalPositionTop;
+			if (ui.item.prevId) {
+				if (moveDown) {
+			    $elements = $uiItem.prevUntil('#' + ui.item.prevId);
+				} else {
+					$elements = $uiItem.nextUntil('#' + ui.item.prevId);
+					// process the last one $('#' + ui.item.prevId) 
+				}
+			} else {
+				$elements = $uiItem.prevAll();
+			}
+			$elements.each(function(index) {
+				alert($(this).find('.text').text());
+			});			
+		}	
+	});
+	// Making text elements, or elements that contain text, not text-selectable.
+	$builderFormFieldset.disableSelection();
 });
 
 function changeFont(fontFamily)
@@ -51,9 +93,7 @@ function changeFont(fontFamily)
   #backgroundColor {
     width:85%
     }
-/*#container { width: 100%; height: 100%; display: table; }*/
-#position { display: table-cell; vertical-align: middle; }
-    
+  .ui-state-highlight { height: 4.3em; line-height: 4em; }    
 </style>
 </head>
 <body>
@@ -185,26 +225,22 @@ function changeFont(fontFamily)
   <div id="builderPanel">
 		<form id="builderForm" action="#" class="uniForm">
 		  <fieldset>
-
-				<div class="textHolder ctrlHolder">
+				<div id="plainText1" class="textHolder ctrlHolder">
 				<a href="#" class="ui-corner-all closeButton"><span	class="ui-icon ui-icon-close">delete this widget</span></a>
 				<div class="text topAlign">
-				Lorem ipsum dolor sit amet, consectetuer
-				adipiscing elit. Donec.
+			  Panel 1
 				</div>
 				</div>
-				<div class="textHolder ctrlHolder">
+				<div id="plainText2" class="textHolder ctrlHolder">
 				<a href="#" class="ui-corner-all closeButton"><span	class="ui-icon ui-icon-close">delete this widget</span></a>
 				<div class="text bottomAlign">
-				Lorem ipsum dolor sit amet, consectetuer
-				adipiscing elit. Donec.
+        Panel 2
 				</div>
 				</div>	
-				<div class="textHolder ctrlHolder">
+				<div id="plainText3" class="textHolder ctrlHolder">
 				<a href="#" class="ui-corner-all closeButton"><span	class="ui-icon ui-icon-close">delete this widget</span></a>
 				<div class="text middleAlign">
-				Lorem ipsum dolor sit amet, consectetuer
-				adipiscing elit. Donec.
+Panel 3
 				</div>
 				</div>							
 </fieldset>

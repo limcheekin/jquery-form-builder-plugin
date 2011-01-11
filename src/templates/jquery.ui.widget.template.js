@@ -4,8 +4,8 @@
  * 1) Understanding jQuery UI widgets: A tutorial - http://bililite.com/blog/understanding-jquery-ui-widgets-a-tutorial/
  * 
  * Usage: 
- * $(selector).className({option1: "Option of className"});
- * $(selector).extendedClassName({option1: "Option of extendedClassName"});
+ * $(selector).className({publicOption: "Option of className"});
+ * $(selector).extendedClassName({publicOption: "Option of extendedClassName"});
  * $(selector).className("method1", "123");
  * $(selector).extendedClassName("method1", "12345"); 
  * 
