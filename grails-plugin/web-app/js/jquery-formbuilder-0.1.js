@@ -2,13 +2,13 @@
 * jquery-form-builder-plugin - JQuery WYSIWYG Web Form Builder
 * http://code.google.com/p/jquery-form-builder-plugin/
 *
-* Revision: 24
+* Revision: 25
 * Version: 0.1
 * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
 *
 * Licensed under Apache v2.0 http://www.apache.org/licenses/LICENSE-2.0.html
 *
-* Date: Thu Jan 13 10:35:18 GMT+08:00 2011
+* Date: Thu Jan 13 17:37:48 GMT+08:00 2011
 */
 
 /*
@@ -16,7 +16,7 @@
  * consists of builder palette contains widgets supported by the form builder and 
  * builder panel where the constructed form display. 
  * 
- * Revision: 24
+ * Revision: 25
  * Version: 0.1
  * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
  *
@@ -192,7 +192,7 @@ var FormBuilder = {
 $.widget('fb.formbuilder', FormBuilder);/*
  * Base widget plugin of JQuery Form Builder plugin, all Form Builder widgets should extend from this plugin. 
  * 
- * Revision: 24
+ * Revision: 25
  * Version: 0.1
  * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
  *
@@ -267,7 +267,7 @@ var FbWidget = {
 $.widget('fb.fbWidget', FbWidget);/*
  * JQuery Form Builder - Plain Text plugin.
  * 
- * Revision: 24
+ * Revision: 25
  * Version: 0.1
  * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
  *
@@ -281,7 +281,7 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
   options: { // default options. values are stored in widget's prototype
 	  type: 'PlainText',
 	  name: 'Plain Text',
-	  html: '<div class="ctrlHolder"><div class="plainText"></div></div>',
+	  html: '<div class="ctrlHolder"><div class="PlainText"></div></div>',
 		belongsTo: $.fb.formbuilder.prototype.options._fancyFieldsPanel,  	  
 	  settings: {
 		  en: {
@@ -293,9 +293,9 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 				classes: ['rightAlign', 'topAlign']
 		    },		    
 	    styles: {
-	  	  fontFamily: 'none', // browser default
-		    color: 'none',
-		    backgroundColor: 'none'	    	
+	  	  fontFamily: 'default', // browser default
+		    color: 'default',
+		    backgroundColor: 'default'	    	
 	        }
 	    }
     },
@@ -317,14 +317,14 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 	  var name = $plainText.propertyName($plainText.options.type + size);
 		var language = $('#language').val();	  
 	  var text = $plainText.options.settings[language].text + ' ' + size;
-	  var $widget = $($plainText.options.html).addClass($plainText.options.type)
+	  var $widget = $($plainText.options.html)
 	              .addClass($plainText.options.settings[language].classes[1])
 	              .attr('id', name).click($plainText.getFieldSettings);
 	  // Clone an instance of plugin's option settings. 
 	  // From: http://stackoverflow.com/questions/122102/what-is-the-most-efficient-way-to-clone-a-javascript-object 	  
 	  var settings = jQuery.extend(true, {}, $plainText.options.settings);
 	  settings[language].text = text;
-	  $widget.find('div.plainText').text(text).addClass(settings[language].classes[0]);
+	  $widget.find('div.PlainText').text(text).addClass(settings[language].classes[0]);
 	  $plainText.createField(name, $widget, $plainText.options, settings);
     },
  getFieldSettings: function(event) { 
@@ -362,17 +362,17 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 	var language = $language.val();
 	$('legend', $languageSection).text('Language: ' + $language.find('option:selected').text());
 	$languageSectionSettings.find('input#text')
-													.val($plainTextElement.find('div.plainText').text())
+													.val($plainTextElement.find('div.PlainText').text())
 													.change(function(event) {
 														var value = $(event.target).val();
-														$plainTextElement.find('div.plainText').text(value);
+														$plainTextElement.find('div.PlainText').text(value);
 														settings[language].text = value;
 														$settings.val($.toJSON(settings)).trigger('change');
 													});
 	$languageSectionSettings.find('select#horizontalAlignment')
 													.val(settings[language].classes[0])
 													.change(function(event) {
-														var $text = $plainTextElement.find('div.plainText');
+														var $text = $plainTextElement.find('div.PlainText');
 														var value = $(event.target).val();
 														$text.removeClass(settings[language].classes[0]).addClass(value);
 														settings[language].classes[0] = value;
@@ -383,7 +383,7 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 	$languageSectionSettings.find('select#verticalAlignment')
 													.val(settings[language].classes[1])
 													.change(function(event) {
-														var $text = $plainTextElement.find('div.plainText');
+														var $text = $plainTextElement.find('div.PlainText');
 														var value = $(event.target).val();
 														$plainTextElement.removeClass(settings[language].classes[1]).addClass(value);
 														settings[language].classes[1] = value;
