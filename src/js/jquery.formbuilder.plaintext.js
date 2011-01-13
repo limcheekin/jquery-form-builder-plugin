@@ -55,12 +55,13 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 		var language = $('#language').val();	  
 	  var text = $plainText.options.settings[language].text + ' ' + size;
 	  var $widget = $($plainText.options.html).addClass($plainText.options.type)
+	              .addClass($plainText.options.settings[language].classes[1])
 	              .attr('id', name).click($plainText.getFieldSettings);
 	  // Clone an instance of plugin's option settings. 
 	  // From: http://stackoverflow.com/questions/122102/what-is-the-most-efficient-way-to-clone-a-javascript-object 	  
 	  var settings = jQuery.extend(true, {}, $plainText.options.settings);
 	  settings[language].text = text;
-	  $widget.find('div.text').text(text).addClass(settings[language].classes.join(' '));
+	  $widget.find('div.text').text(text).addClass(settings[language].classes[0]);
 	  $plainText.createField(name, $widget, $plainText.options, settings);
     },
  getFieldSettings: function(event) { 
@@ -124,7 +125,7 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 													.change(function(event) {
 														var $text = $plainTextElement.find('div.text');
 														var value = $(event.target).val();
-														$text.removeClass(settings[language].classes[1]).addClass(value);
+														$plainTextElement.removeClass(settings[language].classes[1]).addClass(value);
 														settings[language].classes[1] = value;
 														$settings.val($.toJSON(settings)).trigger('change');
 														// alert('$text.class = ' + $text.attr('class'));

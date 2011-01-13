@@ -9,10 +9,11 @@
  *
  * Date: 
  */
-.uniForm .textHolder { border-bottom: 0; } 
+.uniForm .textHolder {  } 
+.uniForm .noBorderBottom { border-bottom: 0; } 
+.uniForm .textHolder .text { padding-top: 0; padding-bottom: 0 } 
 .uniForm .topAlign { padding-top: 0; padding-bottom: 2em; }
 .uniForm .bottomAlign { padding-top: 2em; padding-bottom: 0; }
-.uniForm .middleAlign { padding-top: 1em; padding-bottom: 1em; }
 .uniForm .rightAlign { text-align: right; }
 .uniForm .centerAlign { text-align: center; }
 
