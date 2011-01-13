@@ -1,4 +1,4 @@
-/* Copyright 2010 the original author or authors.
+/* Copyright 2011 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,6 @@ class JQueryFormBuilderTagLib {
 		String type = attrs.remove("type")
 		def plugin = pluginManager.getGrailsPlugin('jqueryFormBuilder')
 		def version = plugin.version
-		
 		def minified = grailsApplication.config.jqueryFormBuilder.get('minified', true)
 		
 		if (!type) {
