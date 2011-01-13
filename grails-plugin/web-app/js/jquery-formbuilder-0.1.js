@@ -2,13 +2,13 @@
 * jquery-form-builder-plugin - JQuery WYSIWYG Web Form Builder
 * http://code.google.com/p/jquery-form-builder-plugin/
 *
-* Revision: 21
+* Revision: 24
 * Version: 0.1
 * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
 *
 * Licensed under Apache v2.0 http://www.apache.org/licenses/LICENSE-2.0.html
 *
-* Date: Tue Jan 11 18:12:01 GMT+08:00 2011
+* Date: Thu Jan 13 10:35:18 GMT+08:00 2011
 */
 
 /*
@@ -16,7 +16,7 @@
  * consists of builder palette contains widgets supported by the form builder and 
  * builder panel where the constructed form display. 
  * 
- * Revision: 21
+ * Revision: 24
  * Version: 0.1
  * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
  *
@@ -28,12 +28,16 @@
 var FormBuilder = {
   options: { // default options. values are stored in widget's prototype
 		widgets : ['PlainText'],
+		tabSelected: 0,
 		_builderForm: '#builderForm fieldset',
 		_emptyBuilderPanel: '#emptyBuilderPanel',
 		_standardFieldsPanel: '#standardFields',
 		_fancyFieldsPanel: '#fancyFields',
     _fieldSettingsLanguageSection: '#fieldSettings fieldset.language:first',
-    _fieldSettingsGeneralSection: '#fieldSettings div.general:first'
+    _fieldSettingsGeneralSection: '#fieldSettings div.general:first',
+    _formSettingsLanguageSection: '#formSettings fieldset.language:first',
+    _formSettingsGeneralSection: '#formSettings div.general:first'    	
+    	    	
   },
   _create: function() {
     	// called on construction
@@ -56,7 +60,7 @@ var FormBuilder = {
 			}
 		});
 		
-		$('#paletteTabs').tabs();
+		$('#paletteTabs').tabs({selected: this.options.tabSelected});
 		var widgets = this.options.widgets;
 		var length = widgets.length;
 		var widgetOptions;
@@ -69,8 +73,22 @@ var FormBuilder = {
 	    }			  
    },
   _initBuilderPanel: function() {
+	  this._initFormFields();
 	  this._initSortableWidgets();
 	  this._initWidgetsEventBinder();
+   },
+  _initFormFields: function() {
+	  var $builderForm = $(this.options._builderForm);
+	  var $name = $('#name', $builderForm);
+	  var $description = $('#description', $builderForm);
+	  var $formSettingsGeneralSection = $(this.options._formSettingsGeneralSection);
+	  
+	  $("input[id$='form.name']", $formSettingsGeneralSection).val($name.val()).change(function(event) {
+	       $name.val($(event.target).val());	
+	    });
+	  $("[id$='form.description']", $formSettingsGeneralSection).val($description.val()).change(function(event) {
+	       $description.val($(event.target).val());	
+	    });	  
    },
  _initWidgetsEventBinder: function() { // for existing widgets loaded from server
 	  var $ctrlHolders = $('#builderForm div.ctrlHolder');
@@ -174,7 +192,7 @@ var FormBuilder = {
 $.widget('fb.formbuilder', FormBuilder);/*
  * Base widget plugin of JQuery Form Builder plugin, all Form Builder widgets should extend from this plugin. 
  * 
- * Revision: 21
+ * Revision: 24
  * Version: 0.1
  * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
  *
@@ -249,7 +267,7 @@ var FbWidget = {
 $.widget('fb.fbWidget', FbWidget);/*
  * JQuery Form Builder - Plain Text plugin.
  * 
- * Revision: 21
+ * Revision: 24
  * Version: 0.1
  * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
  *
@@ -263,7 +281,7 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
   options: { // default options. values are stored in widget's prototype
 	  type: 'PlainText',
 	  name: 'Plain Text',
-	  html: '<div class="ctrlHolder textHolder"><div class="text"></div></div>',
+	  html: '<div class="ctrlHolder"><div class="plainText"></div></div>',
 		belongsTo: $.fb.formbuilder.prototype.options._fancyFieldsPanel,  	  
 	  settings: {
 		  en: {
@@ -300,12 +318,13 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 		var language = $('#language').val();	  
 	  var text = $plainText.options.settings[language].text + ' ' + size;
 	  var $widget = $($plainText.options.html).addClass($plainText.options.type)
+	              .addClass($plainText.options.settings[language].classes[1])
 	              .attr('id', name).click($plainText.getFieldSettings);
 	  // Clone an instance of plugin's option settings. 
 	  // From: http://stackoverflow.com/questions/122102/what-is-the-most-efficient-way-to-clone-a-javascript-object 	  
 	  var settings = jQuery.extend(true, {}, $plainText.options.settings);
 	  settings[language].text = text;
-	  $widget.find('div.text').text(text).addClass(settings[language].classes.join(' '));
+	  $widget.find('div.plainText').text(text).addClass(settings[language].classes[0]);
 	  $plainText.createField(name, $widget, $plainText.options, settings);
     },
  getFieldSettings: function(event) { 
@@ -343,17 +362,17 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 	var language = $language.val();
 	$('legend', $languageSection).text('Language: ' + $language.find('option:selected').text());
 	$languageSectionSettings.find('input#text')
-													.val($plainTextElement.find('div.text').text())
+													.val($plainTextElement.find('div.plainText').text())
 													.change(function(event) {
 														var value = $(event.target).val();
-														$plainTextElement.find('div.text').text(value);
+														$plainTextElement.find('div.plainText').text(value);
 														settings[language].text = value;
 														$settings.val($.toJSON(settings)).trigger('change');
 													});
 	$languageSectionSettings.find('select#horizontalAlignment')
 													.val(settings[language].classes[0])
 													.change(function(event) {
-														var $text = $plainTextElement.find('div.text');
+														var $text = $plainTextElement.find('div.plainText');
 														var value = $(event.target).val();
 														$text.removeClass(settings[language].classes[0]).addClass(value);
 														settings[language].classes[0] = value;
@@ -364,9 +383,9 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 	$languageSectionSettings.find('select#verticalAlignment')
 													.val(settings[language].classes[1])
 													.change(function(event) {
-														var $text = $plainTextElement.find('div.text');
+														var $text = $plainTextElement.find('div.plainText');
 														var value = $(event.target).val();
-														$text.removeClass(settings[language].classes[1]).addClass(value);
+														$plainTextElement.removeClass(settings[language].classes[1]).addClass(value);
 														settings[language].classes[1] = value;
 														$settings.val($.toJSON(settings)).trigger('change');
 														// alert('$text.class = ' + $text.attr('class'));

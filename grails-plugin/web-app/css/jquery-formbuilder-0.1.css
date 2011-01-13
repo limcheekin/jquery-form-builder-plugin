@@ -2,20 +2,20 @@
 * jquery-form-builder-plugin - JQuery WYSIWYG Web Form Builder
 * http://code.google.com/p/jquery-form-builder-plugin/
 *
-* Revision: 21
+* Revision: 24
 * Version: 0.1
 * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
 *
 * Licensed under Apache v2.0 http://www.apache.org/licenses/LICENSE-2.0.html
 *
-* Date: Tue Jan 11 18:12:01 GMT+08:00 2011
+* Date: Thu Jan 13 10:35:18 GMT+08:00 2011
 */
 
 /*
  * Styles of main component of JQuery Form Builder plugin, 
  * the Form Builder container itself. 
  * 
- * Revision: 21
+ * Revision: 24
  * Version: 0.1
  * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
  *
@@ -31,12 +31,23 @@
   padding: 0;
 }  
   
-#builderPanel {
+#builderForm {
   margin-left: 340px;
-  margin-right: 5px;
-  border: 1px solid #C0C0C0;  
-  height: 490px	  
 }
+
+#builderPanel {
+  border: 1px solid #ccc;  
+  height: 460px	  
+}
+
+.buttons {
+    border: 1px solid #ccc;
+    color: #666;
+    font-size: 10px;
+    margin-top: 5px;
+    overflow: hidden;
+    padding: 0;
+}       
 
 #footer {
 	clear: both;
@@ -86,14 +97,16 @@
 	 right:1px;
 }
 
+.uniForm .noBorderBottom { border-bottom: 0; }
+
 /* Field Settings Panel */
 #fieldSettings {
 	padding: 1em;
 }
 
-#fieldSettings fieldset.language { padding: 1em; border: 1px solid #C0C0C0; margin-bottom: 1em }
+#fieldSettings fieldset.language, #formSettings fieldset.language { padding: 1em; border: 1px solid #C0C0C0; margin-bottom: 1em }
 
-#fieldSettings div.general { padding: 0; margin: 0 }
+#fieldSettings div.general, #formSettings div.general { padding: 0; margin: 0 }
 
 /*#builderPalette fieldset div.legend { text-align: right }*/
 
@@ -109,7 +122,7 @@ div.labelOnTop label {
    float: left;
     }
     
- div.labelOnTop input, div.labelOnTop select {
+div.labelOnTop input, div.labelOnTop select, div.labelOnTop textarea {
    float: left;
    width: 98%;
     }
@@ -126,7 +139,7 @@ div.col2 {
   } /*
  * Styles of Plain Text widget. 
  * 
- * Revision: 21
+ * Revision: 24
  * Version: 0.1
  * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
  *
@@ -134,10 +147,9 @@ div.col2 {
  *
  * Date: 
  */
-.uniForm .textHolder { border-bottom: 0; } 
+.uniForm .ctrlHolder .plainText { padding-top: 0; padding-bottom: 0 } 
 .uniForm .topAlign { padding-top: 0; padding-bottom: 2em; }
 .uniForm .bottomAlign { padding-top: 2em; padding-bottom: 0; }
-.uniForm .middleAlign { padding-top: 1em; padding-bottom: 1em; }
 .uniForm .rightAlign { text-align: right; }
 .uniForm .centerAlign { text-align: center; }
 

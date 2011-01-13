@@ -18,12 +18,23 @@
   padding: 0;
 }  
   
-#builderPanel {
+#builderForm {
   margin-left: 340px;
-  margin-right: 5px;
-  border: 1px solid #C0C0C0;  
-  height: 490px	  
 }
+
+#builderPanel {
+  border: 1px solid #ccc;  
+  height: 460px	  
+}
+
+.buttons {
+    border: 1px solid #ccc;
+    color: #666;
+    font-size: 10px;
+    margin-top: 5px;
+    overflow: hidden;
+    padding: 0;
+}       
 
 #footer {
 	clear: both;
@@ -73,14 +84,16 @@
 	 right:1px;
 }
 
+.uniForm .noBorderBottom { border-bottom: 0; }
+
 /* Field Settings Panel */
 #fieldSettings {
 	padding: 1em;
 }
 
-#fieldSettings fieldset.language { padding: 1em; border: 1px solid #C0C0C0; margin-bottom: 1em }
+#fieldSettings fieldset.language, #formSettings fieldset.language { padding: 1em; border: 1px solid #C0C0C0; margin-bottom: 1em }
 
-#fieldSettings div.general { padding: 0; margin: 0 }
+#fieldSettings div.general, #formSettings div.general { padding: 0; margin: 0 }
 
 /*#builderPalette fieldset div.legend { text-align: right }*/
 
@@ -96,7 +109,7 @@ div.labelOnTop label {
    float: left;
     }
     
- div.labelOnTop input, div.labelOnTop select {
+div.labelOnTop input, div.labelOnTop select, div.labelOnTop textarea {
    float: left;
    width: 98%;
     }

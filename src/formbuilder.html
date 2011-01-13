@@ -31,6 +31,7 @@
 <script type="text/javascript">
 $(function() {
  $('#container').formbuilder();
+ $('div.buttons').children().button();
  });
 </script>
 <style type="text/css">
@@ -67,20 +68,35 @@ $(function() {
 					</div>				
 				</div>
 				<div id="formSettings">
+					<fieldset class="language">
+					<legend>
 					<label for="language">Language: </label>
 					<select id="language">
 					  <option value="zh">Chinese</option>
 					  <option value="en" selected>English</option>
 					</select>
+					</legend>
+					</fieldset>	
+					<div class="general">
+						<div class="clear labelOnTop">
+							<label for="text">Name (?)</label><br/>
+							<input type="text" id="form.name" />
+						</div>	
+						<div class="clear labelOnTop">
+							<label for="text">Description (?)</label><br/>
+							<textarea id="form.description"></textarea>
+						</div>												
+					</div>								
 				</div>
 			</div>     
      </div>
-            
   </div>
+  <form id="builderForm" action="#" class="uniForm">
   <div id="builderPanel">
-		<form id="builderForm" action="#" class="uniForm">
 		  <div id="emptyBuilderPanel">Start adding some fields from the menu on the left.</div>
 		  <fieldset>
+			  <input type="hidden" id="name" name="name" value="This is name"/>
+			  <input type="hidden" id="description" name="description" value="This is descr"/>		  
 		   <!-- 
 		    <div class="ctrlHolder">
 		      <label for="">Single Line Text</label>
@@ -113,8 +129,11 @@ $(function() {
 		    </div>
 		     -->
 		  </fieldset>
-		</form>	  
   </div>
+  <div class="buttons">
+		  <input type="submit" name="create" class="save" value="Create" id="create" />
+	</div>
+	</form>	  
   <div id="footer">&copy;2011 <a href="http://www.google.com/recaptcha/mailhide/d?k=01jTjzuFnxrUdgxzZaynYmkw==&amp;c=jsDnH9NCPyt5b09KmqvO1TZu2hgh2LxZya9yYaPRSPY=" onclick="window.open('http://www.google.com/recaptcha/mailhide/d?k\07501jTjzuFnxrUdgxzZaynYmkw\75\75\46c\75jsDnH9NCPyt5b09KmqvO1TZu2hgh2LxZya9yYaPRSPY\075', '', 'toolbar=0,scrollbars=0,location=0,statusbar=0,menubar=0,resizable=0,width=500,height=300'); return false;" title="Reveal my e-mail address">Lim, Chee Kin</a>  |  <a href="http://code.google.com/p/jquery-form-builder-plugin/">Project Home</a>  |  <a href="http://groups.google.com/group/jquery-form-builder-plugin">Discussion Group</a></div>
 </div>
 </body>

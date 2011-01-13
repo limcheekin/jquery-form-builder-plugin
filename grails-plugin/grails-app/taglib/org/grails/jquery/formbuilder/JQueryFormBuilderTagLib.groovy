@@ -22,6 +22,7 @@ package org.grails.jquery.formbuilder
  */
 class JQueryFormBuilderTagLib {
 	static namespace = "jqfb"
+	def pluginManager
 	
 	def resources = { attrs, body ->
 		String type = attrs.remove("type")

@@ -15,7 +15,7 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
   options: { // default options. values are stored in widget's prototype
 	  type: 'PlainText',
 	  name: 'Plain Text',
-	  html: '<div class="ctrlHolder textHolder"><div class="text"></div></div>',
+	  html: '<div class="ctrlHolder"><div class="plainText"></div></div>',
 		belongsTo: $.fb.formbuilder.prototype.options._fancyFieldsPanel,  	  
 	  settings: {
 		  en: {
@@ -61,7 +61,7 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 	  // From: http://stackoverflow.com/questions/122102/what-is-the-most-efficient-way-to-clone-a-javascript-object 	  
 	  var settings = jQuery.extend(true, {}, $plainText.options.settings);
 	  settings[language].text = text;
-	  $widget.find('div.text').text(text).addClass(settings[language].classes[0]);
+	  $widget.find('div.plainText').text(text).addClass(settings[language].classes[0]);
 	  $plainText.createField(name, $widget, $plainText.options, settings);
     },
  getFieldSettings: function(event) { 
@@ -102,17 +102,17 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 	$('legend', $languageSection).text('Language: ' + $language.find('option:selected').text());
 	$.fb.fbWidget.prototype._log('language = ' + language + ", " + $language.find('option:selected').text());
 	$languageSectionSettings.find('input#text')
-													.val($plainTextElement.find('div.text').text())
+													.val($plainTextElement.find('div.plainText').text())
 													.change(function(event) {
 														var value = $(event.target).val();
-														$plainTextElement.find('div.text').text(value);
+														$plainTextElement.find('div.plainText').text(value);
 														settings[language].text = value;
 														$settings.val($.toJSON(settings)).trigger('change');
 													});
 	$languageSectionSettings.find('select#horizontalAlignment')
 													.val(settings[language].classes[0])
 													.change(function(event) {
-														var $text = $plainTextElement.find('div.text');
+														var $text = $plainTextElement.find('div.plainText');
 														var value = $(event.target).val();
 														$text.removeClass(settings[language].classes[0]).addClass(value);
 														settings[language].classes[0] = value;
@@ -123,7 +123,7 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 	$languageSectionSettings.find('select#verticalAlignment')
 													.val(settings[language].classes[1])
 													.change(function(event) {
-														var $text = $plainTextElement.find('div.text');
+														var $text = $plainTextElement.find('div.plainText');
 														var value = $(event.target).val();
 														$plainTextElement.removeClass(settings[language].classes[1]).addClass(value);
 														settings[language].classes[1] = value;

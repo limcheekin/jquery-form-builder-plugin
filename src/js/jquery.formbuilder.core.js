@@ -15,12 +15,16 @@
 var FormBuilder = {
   options: { // default options. values are stored in widget's prototype
 		widgets : ['PlainText'],
+		tabSelected: 0,
 		_builderForm: '#builderForm fieldset',
 		_emptyBuilderPanel: '#emptyBuilderPanel',
 		_standardFieldsPanel: '#standardFields',
 		_fancyFieldsPanel: '#fancyFields',
     _fieldSettingsLanguageSection: '#fieldSettings fieldset.language:first',
-    _fieldSettingsGeneralSection: '#fieldSettings div.general:first'
+    _fieldSettingsGeneralSection: '#fieldSettings div.general:first',
+    _formSettingsLanguageSection: '#formSettings fieldset.language:first',
+    _formSettingsGeneralSection: '#formSettings div.general:first'    	
+    	    	
   },
   _create: function() {
     	// called on construction
@@ -44,7 +48,7 @@ var FormBuilder = {
 			}
 		});
 		
-		$('#paletteTabs').tabs();
+		$('#paletteTabs').tabs({selected: this.options.tabSelected});
 		var widgets = this.options.widgets;
 		var length = widgets.length;
 		var widgetOptions;
@@ -57,8 +61,22 @@ var FormBuilder = {
 	    }			  
    },
   _initBuilderPanel: function() {
+	  this._initFormFields();
 	  this._initSortableWidgets();
 	  this._initWidgetsEventBinder();
+   },
+  _initFormFields: function() {
+	  var $builderForm = $(this.options._builderForm);
+	  var $name = $('#name', $builderForm);
+	  var $description = $('#description', $builderForm);
+	  var $formSettingsGeneralSection = $(this.options._formSettingsGeneralSection);
+	  
+	  $("input[id$='form.name']", $formSettingsGeneralSection).val($name.val()).change(function(event) {
+	       $name.val($(event.target).val());	
+	    });
+	  $("[id$='form.description']", $formSettingsGeneralSection).val($description.val()).change(function(event) {
+	       $description.val($(event.target).val());	
+	    });	  
    },
  _initWidgetsEventBinder: function() { // for existing widgets loaded from server
 	  var $ctrlHolders = $('#builderForm div.ctrlHolder');
