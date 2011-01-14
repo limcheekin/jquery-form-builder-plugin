@@ -2,13 +2,13 @@
 * jquery-form-builder-plugin - JQuery WYSIWYG Web Form Builder
 * http://code.google.com/p/jquery-form-builder-plugin/
 *
-* Revision: 25
+* Revision: 26
 * Version: 0.1
 * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
 *
 * Licensed under Apache v2.0 http://www.apache.org/licenses/LICENSE-2.0.html
 *
-* Date: Thu Jan 13 17:37:48 GMT+08:00 2011
+* Date: Thu Jan 13 23:36:39 GMT+08:00 2011
 */
 
 /*
@@ -16,7 +16,7 @@
  * consists of builder palette contains widgets supported by the form builder and 
  * builder panel where the constructed form display. 
  * 
- * Revision: 25
+ * Revision: 26
  * Version: 0.1
  * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
  *
@@ -41,6 +41,7 @@ var FormBuilder = {
   },
   _create: function() {
     	// called on construction
+    this._log('FormBuilder._create called. this.options.widgets = ' + this.options.widgets);
     this._initBuilderPalette();
     this._initBuilderPanel();
     },
@@ -73,11 +74,11 @@ var FormBuilder = {
 	    }			  
    },
   _initBuilderPanel: function() {
-	  this._initFormFields();
+	  this._initFormSettings();
 	  this._initSortableWidgets();
 	  this._initWidgetsEventBinder();
    },
-  _initFormFields: function() {
+  _initFormSettings: function() {
 	  var $builderForm = $(this.options._builderForm);
 	  var $name = $('#name', $builderForm);
 	  var $description = $('#description', $builderForm);
@@ -90,17 +91,25 @@ var FormBuilder = {
 	       $description.val($(event.target).val());	
 	    });	  
    },
- _initWidgetsEventBinder: function() { // for existing widgets loaded from server
+ _initWidgetsEventBinder: function() { // for widgets loaded from server
 	  var $ctrlHolders = $('#builderForm div.ctrlHolder');
 	  var size = $ctrlHolders.size();
 		var fieldsUpdateStatus = ['name', 'settings', 'sequence'];
-		for (var i = 0; i < size; i++) {
-			for (var j = 0; j < fieldsUpdateStatus.length; j++) {
-				$ctrlHolders.find("input[id$='fields[" + i + "]." + fieldsUpdateStatus[j] + "']")
-				                  .change($.fb.fbWidget.prototype._updateStatus);
-			}	  
+		if (size > 0) { 
+			var $this, widget;
+			$(this.options._emptyBuilderPanel + ':visible').hide();
+			$ctrlHolders.each(function(i) {
+			    $this = $(this);
+			    widget = $this.find("input[id$='fields[" + i + "].type']").val();
+			    $this.click($['fb']['fb' + widget].prototype.getFieldSettings);				
+					for (var j = 0; j < fieldsUpdateStatus.length; j++) {
+						$this.find("input[id$='fields[" + i + "]." + fieldsUpdateStatus[j] + "']")
+						                  .change($.fb.fbWidget.prototype._updateStatus);
+					}	  
+			});
+			$ctrlHolders.find(".closeButton").click($.fb.fbWidget.prototype._deleteWidget);
 		}
-  } ,
+  },
   _initSortableWidgets: function() {
 	  var $builderFormFieldset = $(this.options._builderForm);
 		$builderFormFieldset.sortable({ 
@@ -124,6 +133,7 @@ var FormBuilder = {
 				var $uiItem = $(ui.item);
 				var $elements;
 				var moveDown = ui.position.top > ui.item.originalPositionTop;
+				$.fb.formbuilder.prototype._log('moveDown = ' + moveDown + ', ui.position.top = ' + ui.position.top + ", ui.item.originalPositionTop = " + ui.item.originalPositionTop);
 				if (ui.item.prevId) {
 					if (moveDown) {
 				    $elements = $uiItem.prevUntil('#' + ui.item.prevId);
@@ -150,15 +160,18 @@ var FormBuilder = {
   },
 	_init: function() {
 	  // called on construction and re-initialization
+		this._log('FormBuilder._init called.');
 		this.method1('calling from FormBuilder._init');
 	},        
 	destroy: function() {
     // called on removal
+		this._log('FormBuilder.destroy called.');
 
     // call the base destroy function.
 		$.Widget.prototype.destroy.call(this);		
     },
   // _logging to the firebug's console, put in 1 line so it can be removed easily for production
+  _log: function($message) { if (window.console && window.console.log) window.console.log($message); },
   _moveDown: function($widget, $elements) {
 		// set previous widget's sequence as my sequence
 		$.fb.formbuilder.prototype._getSequence($widget).val(
@@ -186,13 +199,14 @@ var FormBuilder = {
    },  
 	method1: function(params) {
     	// plugin specific method
+		this._log('FormBuilder.method1 called. params = ' + params);
     }
 };
 
 $.widget('fb.formbuilder', FormBuilder);/*
  * Base widget plugin of JQuery Form Builder plugin, all Form Builder widgets should extend from this plugin. 
  * 
- * Revision: 25
+ * Revision: 26
  * Version: 0.1
  * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
  *
@@ -203,15 +217,20 @@ $.widget('fb.formbuilder', FormBuilder);/*
 
 var FbWidget = {
   options: { // default options. values are stored in widget's prototype
-	  option1: "FbWidget.optionValue"		
+	  option1: "FbWidget.optionValue",
+	  _styleClass: "ctrlHolder"
     },
   // _logging to the firebug's console, put in 1 line so it can be removed easily for production
+  _log: function($message) { if (window.console && window.console.log) window.console.log($message); },
 	_create: function() {
+	  this._log('FbWidget._create called. this.options.option1 = ' + this.options.option1);
 	  this.element.click(this.createWidget);
     },
   _init: function() {
+    this._log('FbWidget._init called.');
     },        
 	destroy: function() {
+	  this._log('FbWidget.destroy called.');
 	  this.element.button('destroy');
 
 	  // call the base destroy function.
@@ -223,16 +242,7 @@ var FbWidget = {
 	  var index = $('#builderForm div.ctrlHolder').size();
 	  
 	  $('<a class="ui-corner-all closeButton" href="#"><span class="ui-icon ui-icon-close">delete this widget</span></a>')
-	  .prependTo(widget).click(function(event) {
-		   var $widget = $(event.target).parent().parent();
-		   var index = $widget.attr('rel');
-		   var $ctrlHolders = $('#builderForm div.ctrlHolder');
-		   var size = $ctrlHolders.size();
-		   var i, $sequence;
-		   $widget.find("input[id$='fields[" + index + "].status']").val('D');
-		   $widget.hide();
-		   event.stopPropagation();
-	    });
+	  .prependTo(widget).click($.fb.fbWidget.prototype._deleteWidget);
 	  widget.attr('rel', index);
 	  widget.append($.fb.fbWidget.prototype._createFieldProperties(name, options, settings, index));
 	  
@@ -245,6 +255,15 @@ var FbWidget = {
   	propertyName = propertyName.charAt(0).toLowerCase() + propertyName.substring(1);
   	return propertyName;
   	},    
+  _deleteWidget: function(event) {
+	   var $widget = $(event.target).parent().parent();
+	   var index = $widget.attr('rel');
+	   var $ctrlHolders = $('#builderForm div.ctrlHolder');
+	   var size = $ctrlHolders.size();
+	   $widget.find("input[id$='fields[" + index + "].status']").val('D');
+	   $widget.hide();
+	   event.stopPropagation();
+  },
 	_createFieldProperties: function(name, options, settings, index) {
 		// alert('name = ' + name + ', options.type = '+ options.type);
 		var $fieldProperties = $('<div class="fieldProperties"> \
@@ -259,6 +278,7 @@ var FbWidget = {
     },        
   _updateStatus: function(event) {
 	  $widget = $(event.target);
+	  $.fb.fbWidget.prototype._log($widget.attr('id') + " updated");
 	  $widget.parent().find('input:last').val('U');
   },
 	createWidget: function(event) { alert('createWidget(event) should be overriden by subclass'); }
@@ -267,7 +287,7 @@ var FbWidget = {
 $.widget('fb.fbWidget', FbWidget);/*
  * JQuery Form Builder - Plain Text plugin.
  * 
- * Revision: 25
+ * Revision: 26
  * Version: 0.1
  * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
  *
@@ -302,13 +322,16 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 	_create: function() {
 	  $.fb.fbWidget.prototype._create.call(this); // call the superclass's _create function
 	  // FbPlainText's construction code here
+	  this._log('FbPlainText._create called. this.options.text = ' + this.options.settings.en.text);
     },
   _init: function() {
 	  $.fb.fbWidget.prototype._init.call(this); // call the superclass's _init function
 	  // FbPlainText's construction and re-initialization code here	
+      this._log('FbPlainText._init called.');
     },        
 	destroy: function() {
 	  // FbPlainText's destroy code here
+	  this._log('FbPlainText.destroy called.');
 	  $.fb.fbWidget.prototype.destroy.call(this); // call the superclass's destroy function
     },
   createWidget: function(event) {
@@ -328,12 +351,17 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 	  $plainText.createField(name, $widget, $plainText.options, settings);
     },
  getFieldSettings: function(event) { 
-	 var $plainTextElement = $(event.target).parent();
+	 var $target = $(event.target);
+	 var $plainTextElement = $target.attr('class').indexOf($.fb.fbWidget.prototype.options._styleClass) > -1 ? $target : $target.parent();
 	 var formBuilderOptions = $.fb.formbuilder.prototype.options;
 	 var index = $plainTextElement.attr('rel');
 	 var $settings = $plainTextElement.find("input[id$='fields[" + index + "].settings']");
-	 var settings = $.parseJSON($settings.val());
+	 $.fb.fbWidget.prototype._log('settings = ' + $settings.val());
+	 $.fb.fbWidget.prototype._log('unescaped settings = ' + unescape($settings.val()));
+	 var settings = $.parseJSON(unescape($settings.val())); // settings is html encoded when return from server-side
 	 
+	 $.fb.fbWidget.prototype._log('PlainText.getFieldSettings. id = ' + $plainTextElement.attr('id') + ', ' + $plainTextElement.attr('rel'));	
+	
 	 var languageSectionSettings = '<div class="clear labelOnTop"> \
 		<label for="text">Text (?)</label><br /> \
 		<input type="text" id="text" /> \
@@ -361,6 +389,7 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 	var $language = $('#language');
 	var language = $language.val();
 	$('legend', $languageSection).text('Language: ' + $language.find('option:selected').text());
+	$.fb.fbWidget.prototype._log('language = ' + language + ", " + $language.find('option:selected').text());
 	$languageSectionSettings.find('input#text')
 													.val($plainTextElement.find('div.PlainText').text())
 													.change(function(event) {

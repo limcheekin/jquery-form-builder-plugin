@@ -61,11 +61,11 @@ var FormBuilder = {
 	    }			  
    },
   _initBuilderPanel: function() {
-	  this._initFormFields();
+	  this._initFormSettings();
 	  this._initSortableWidgets();
 	  this._initWidgetsEventBinder();
    },
-  _initFormFields: function() {
+  _initFormSettings: function() {
 	  var $builderForm = $(this.options._builderForm);
 	  var $name = $('#name', $builderForm);
 	  var $description = $('#description', $builderForm);
@@ -78,17 +78,25 @@ var FormBuilder = {
 	       $description.val($(event.target).val());	
 	    });	  
    },
- _initWidgetsEventBinder: function() { // for existing widgets loaded from server
+ _initWidgetsEventBinder: function() { // for widgets loaded from server
 	  var $ctrlHolders = $('#builderForm div.ctrlHolder');
 	  var size = $ctrlHolders.size();
 		var fieldsUpdateStatus = ['name', 'settings', 'sequence'];
-		for (var i = 0; i < size; i++) {
-			for (var j = 0; j < fieldsUpdateStatus.length; j++) {
-				$ctrlHolders.find("input[id$='fields[" + i + "]." + fieldsUpdateStatus[j] + "']")
-				                  .change($.fb.fbWidget.prototype._updateStatus);
-			}	  
+		if (size > 0) { 
+			var $this, widget;
+			$(this.options._emptyBuilderPanel + ':visible').hide();
+			$ctrlHolders.each(function(i) {
+			    $this = $(this);
+			    widget = $this.find("input[id$='fields[" + i + "].type']").val();
+			    $this.click($['fb']['fb' + widget].prototype.getFieldSettings);				
+					for (var j = 0; j < fieldsUpdateStatus.length; j++) {
+						$this.find("input[id$='fields[" + i + "]." + fieldsUpdateStatus[j] + "']")
+						                  .change($.fb.fbWidget.prototype._updateStatus);
+					}	  
+			});
+			$ctrlHolders.find(".closeButton").click($.fb.fbWidget.prototype._deleteWidget);
 		}
-  } ,
+  },
   _initSortableWidgets: function() {
 	  var $builderFormFieldset = $(this.options._builderForm);
 		$builderFormFieldset.sortable({ 

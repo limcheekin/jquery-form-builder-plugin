@@ -80,11 +80,11 @@
 		<echo message="Building ${JQUERY_FORM_BUILDER}" />
 
 		<concat destfile="${JQUERY_FORM_BUILDER}">
-			<filterchain>
+			<!--filterchain>
 				<linecontains negate="true">
-				  <contains value="log("/>
+				  <contains value="_log"/>
 				</linecontains>
-			</filterchain>
+			</filterchain-->
 			<fileset file="${SRC_JS_DIR}/../HEADER.txt" />
 			<!--fileset file="${SRC_JS_DIR}/intro.js" /-->
 			<fileset file="${SRC_JS_DIR}/jquery.formbuilder.core.js" />

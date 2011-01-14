@@ -65,14 +65,17 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 	  $plainText.createField(name, $widget, $plainText.options, settings);
     },
  getFieldSettings: function(event) { 
-	 var $plainTextElement = $(event.target).parent();
+	 var $target = $(event.target);
+	 var $plainTextElement = $target.attr('class').indexOf($.fb.fbWidget.prototype.options._styleClass) > -1 ? $target : $target.parent();
 	 var formBuilderOptions = $.fb.formbuilder.prototype.options;
 	 var index = $plainTextElement.attr('rel');
 	 var $settings = $plainTextElement.find("input[id$='fields[" + index + "].settings']");
-	 var settings = $.parseJSON($settings.val());
+	 $.fb.fbWidget.prototype._log('settings = ' + $settings.val());
+	 $.fb.fbWidget.prototype._log('unescaped settings = ' + unescape($settings.val()));
+	 var settings = $.parseJSON(unescape($settings.val())); // settings is html encoded when return from server-side
 	 
 	 $.fb.fbWidget.prototype._log('PlainText.getFieldSettings. id = ' + $plainTextElement.attr('id') + ', ' + $plainTextElement.attr('rel'));	
-	 $.fb.fbWidget.prototype._log('settings = ' + $plainTextElement.find("input[id$='fields[" + index + "].settings']").val());
+	
 	 var languageSectionSettings = '<div class="clear labelOnTop"> \
 		<label for="text">Text (?)</label><br /> \
 		<input type="text" id="text" /> \
