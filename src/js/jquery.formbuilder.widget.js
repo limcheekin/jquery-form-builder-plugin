@@ -53,28 +53,36 @@ var FbWidget = {
   _deleteWidget: function(event) {
 	   var $widget = $(event.target).parent().parent();
 	   var index = $widget.attr('rel');
-	   var $ctrlHolders = $('#builderForm div.ctrlHolder');
-	   var size = $ctrlHolders.size();
-	   $widget.find("input[id$='fields[" + index + "].status']").val('D');
-	   $widget.hide();
+	   // new record that not stored in database
+     if ($widget.find("input[id$='fields[" + index + "].id']").val() == 'null') { 
+    	 $widget.remove();
+     } else {
+  	   $widget.find("input[id$='fields[" + index + "].status']").val('D');
+	     $widget.hide();    	 
+     }
 	   event.stopPropagation();
   },
 	_createFieldProperties: function(name, options, settings, index) {
 		// alert('name = ' + name + ', options.type = '+ options.type);
+		var fieldId = 'fields[' + index + '].';
 		var $fieldProperties = $('<div class="fieldProperties"> \
-		<input type="hidden" id="fields[' + index + '].name" name="fields[' + index + '].name" value="' + name + '" /> \
-		<input type="hidden" id="fields[' + index + '].type" name="fields[' + index + '].type" value="' + options.type + '" /> \
-		<input type="hidden" id="fields[' + index + '].settings" name="fields[' + index + '].settings" /> \
-		<input type="hidden" id="fields[' + index + '].sequence" name="fields[' + index + '].sequence" value="' + index + '" /> \
-		<input type="hidden" id="fields[' + index + '].status" name="fields[' + index + '].status" /> \
+		<input type="hidden" id="' + fieldId + 'id" name="' + fieldId + 'id" value="null" /> \
+		<input type="hidden" id="' + fieldId + 'name" name="' + fieldId + 'name" value="' + name + '" /> \
+		<input type="hidden" id="' + fieldId + 'type" name="' + fieldId + 'type" value="' + options.type + '" /> \
+		<input type="hidden" id="' + fieldId + 'settings" name="' + fieldId + 'settings" /> \
+		<input type="hidden" id="' + fieldId + 'sequence" name="' + fieldId + 'sequence" value="' + index + '" /> \
+		<input type="hidden" id="' + fieldId + 'status" name="' + fieldId + 'status" /> \
 		</div>');
-		$fieldProperties.find("input[id$='fields[" + index + "].settings']").val($.toJSON(settings));
+		$fieldProperties.find("input[id$='" + fieldId + "settings']").val($.toJSON(settings));
 		return $fieldProperties;
     },        
   _updateStatus: function(event) {
 	  $widget = $(event.target);
 	  $.fb.fbWidget.prototype._log($widget.attr('id') + " updated");
-	  $widget.parent().find('input:last').val('U');
+	  if ($widget.parent().find('input:first').val() != 'null') {
+		  $.fb.fbWidget.prototype._log("field status updated");
+	    $widget.parent().find('input:last').val('U');
+	    }
   },
 	createWidget: function(event) { alert('createWidget(event) should be overriden by subclass'); }
 };

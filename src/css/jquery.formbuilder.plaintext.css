@@ -9,7 +9,7 @@
  *
  * Date: 
  */
-.uniForm .ctrlHolder .plainText { padding-top: 0; padding-bottom: 0 } 
+.uniForm .ctrlHolder .PlainText { padding-top: 0; padding-bottom: 0 }
 .uniForm .topAlign { padding-top: 0; padding-bottom: 2em; }
 .uniForm .bottomAlign { padding-top: 2em; padding-bottom: 0; }
 .uniForm .rightAlign { text-align: right; }

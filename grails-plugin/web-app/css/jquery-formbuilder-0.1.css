@@ -2,20 +2,20 @@
 * jquery-form-builder-plugin - JQuery WYSIWYG Web Form Builder
 * http://code.google.com/p/jquery-form-builder-plugin/
 *
-* Revision: 26
+* Revision: 27
 * Version: 0.1
 * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
 *
 * Licensed under Apache v2.0 http://www.apache.org/licenses/LICENSE-2.0.html
 *
-* Date: Thu Jan 13 23:36:39 GMT+08:00 2011
+* Date: Fri Jan 14 19:55:09 GMT+08:00 2011
 */
 
 /*
  * Styles of main component of JQuery Form Builder plugin, 
  * the Form Builder container itself. 
  * 
- * Revision: 26
+ * Revision: 27
  * Version: 0.1
  * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
  *
@@ -139,7 +139,7 @@ div.col2 {
   } /*
  * Styles of Plain Text widget. 
  * 
- * Revision: 26
+ * Revision: 27
  * Version: 0.1
  * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
  *
@@ -147,7 +147,7 @@ div.col2 {
  *
  * Date: 
  */
-.uniForm .ctrlHolder .plainText { padding-top: 0; padding-bottom: 0 } 
+.uniForm .ctrlHolder .PlainText { padding-top: 0; padding-bottom: 0 } 
 .uniForm .topAlign { padding-top: 0; padding-bottom: 2em; }
 .uniForm .bottomAlign { padding-top: 2em; padding-bottom: 0; }
 .uniForm .rightAlign { text-align: right; }

@@ -56,7 +56,7 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 	  var text = $plainText.options.settings[language].text + ' ' + size;
 	  var $widget = $($plainText.options.html)
 	              .addClass($plainText.options.settings[language].classes[1])
-	              .attr('id', name).click($plainText.getFieldSettings);
+	              .click($plainText.getFieldSettings);
 	  // Clone an instance of plugin's option settings. 
 	  // From: http://stackoverflow.com/questions/122102/what-is-the-most-efficient-way-to-clone-a-javascript-object 	  
 	  var settings = jQuery.extend(true, {}, $plainText.options.settings);
@@ -110,7 +110,7 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 														var value = $(event.target).val();
 														$plainTextElement.find('div.PlainText').text(value);
 														settings[language].text = value;
-														$settings.val($.toJSON(settings)).trigger('change');
+														$settings.val($.toJSON(settings)).change();
 													});
 	$languageSectionSettings.find('select#horizontalAlignment')
 													.val(settings[language].classes[0])
@@ -119,7 +119,7 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 														var value = $(event.target).val();
 														$text.removeClass(settings[language].classes[0]).addClass(value);
 														settings[language].classes[0] = value;
-														$settings.val($.toJSON(settings)).trigger('change');
+														$settings.val($.toJSON(settings)).change();
 														// alert('$text.class = ' + $text.attr('class'));
 														// alert('$settings.val() = ' + $settings.val());
 													});					
@@ -130,7 +130,7 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 														var value = $(event.target).val();
 														$plainTextElement.removeClass(settings[language].classes[1]).addClass(value);
 														settings[language].classes[1] = value;
-														$settings.val($.toJSON(settings)).trigger('change');
+														$settings.val($.toJSON(settings)).change();
 														// alert('$text.class = ' + $text.attr('class'));
 														// alert('$settings.val() = ' + $settings.val());
 													});				
@@ -153,7 +153,7 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 	$generalSectionSettings.find('input#name')
 	                       .val($plainTextElement.find("input[id$='fields[" + index + "].name']").val())
 												 .change(function(event) {
-														$plainTextElement.find("input[id$='fields[" + index + "].name']").val($(event.target).val()).trigger('change');
+														$plainTextElement.find("input[id$='fields[" + index + "].name']").val($(event.target).val()).change();
 													});		
 	var $generalSection = $(formBuilderOptions._fieldSettingsGeneralSection); 
 	// remote all child nodes 

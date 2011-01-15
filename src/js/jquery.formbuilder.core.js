@@ -110,8 +110,8 @@ var FormBuilder = {
 			},
 			start: function (event, ui) {
 				var $previousElement = $(ui.item).prev();
-				if ($previousElement.attr('id')) {
-					ui.item.prevId = $previousElement.attr('id');
+				if ($previousElement.attr('rel')) {
+					ui.item.prevIndex = $previousElement.attr('rel');
 					ui.item.originalPositionTop = $previousElement.position().top;
 					// alert('ui.item.originalPositionTop = ' + ui.item.originalPositionTop);
 				}
@@ -121,20 +121,21 @@ var FormBuilder = {
 				var $elements;
 				var moveDown = ui.position.top > ui.item.originalPositionTop;
 				$.fb.formbuilder.prototype._log('moveDown = ' + moveDown + ', ui.position.top = ' + ui.position.top + ", ui.item.originalPositionTop = " + ui.item.originalPositionTop);
-				if (ui.item.prevId) {
+				if (ui.item.prevIndex) {
+					var prevElementSelector = '[rel="' + ui.item.prevIndex + '"]';
 					if (moveDown) {
-				    $elements = $uiItem.prevUntil('#' + ui.item.prevId);
+				    $elements = $uiItem.prevUntil(prevElementSelector);
 				    $.fb.formbuilder.prototype._moveDown($uiItem, $elements);			    
 					} else {
 						// set next widget's sequence as my sequence
 						$.fb.formbuilder.prototype._getSequence($uiItem).val(
-						    $.fb.formbuilder.prototype._getSequence($uiItem.next()).val()).trigger('change');						
-						$elements = $uiItem.nextUntil('#' + ui.item.prevId);  
+						    $.fb.formbuilder.prototype._getSequence($uiItem.next()).val()).change();						
+						$elements = $uiItem.nextUntil(prevElementSelector);  
 						$elements.each(function(index) {
 						  $.fb.formbuilder.prototype._increaseSequence($(this));
 						 });		
 						// process the last one
-						$.fb.formbuilder.prototype._increaseSequence($('#' + ui.item.prevId));
+						$.fb.formbuilder.prototype._increaseSequence($(prevElementSelector));
 					}
 				} else {
 					$elements = $uiItem.prevAll();
@@ -162,7 +163,7 @@ var FormBuilder = {
   _moveDown: function($widget, $elements) {
 		// set previous widget's sequence as my sequence
 		$.fb.formbuilder.prototype._getSequence($widget).val(
-		    $.fb.formbuilder.prototype._getSequence($widget.prev()).val()).trigger('change');
+		    $.fb.formbuilder.prototype._getSequence($widget.prev()).val()).change();
 	  $elements.each(function(index) {
 		  $.fb.formbuilder.prototype._decreaseSequence($(this));
 	    });	
@@ -174,14 +175,14 @@ var FormBuilder = {
 	  if ($widget.is(":visible")) {
 		  var $sequence = $.fb.formbuilder.prototype._getSequence($widget);
 		  $sequence.val($sequence.val() * 1 + 1);
-		  $sequence.trigger('change');
+		  $sequence.change();
 	    }
    },
   _decreaseSequence: function($widget) {
 	  if ($widget.is(":visible")) {
 	    var $sequence = $.fb.formbuilder.prototype._getSequence($widget);
 	    $sequence.val($sequence.val() - 1);
-	    $sequence.trigger('change');
+	    $sequence.change();
 	  }
    },  
 	method1: function(params) {
