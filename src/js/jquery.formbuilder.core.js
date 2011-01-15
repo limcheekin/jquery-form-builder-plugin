@@ -16,6 +16,7 @@ var FormBuilder = {
   options: { // default options. values are stored in widget's prototype
 		widgets : ['PlainText'],
 		tabSelected: 0,
+		readOnly: false,
 		_builderForm: '#builderForm fieldset',
 		_emptyBuilderPanel: '#emptyBuilderPanel',
 		_standardFieldsPanel: '#standardFields',
@@ -61,8 +62,10 @@ var FormBuilder = {
 	    }			  
    },
   _initBuilderPanel: function() {
-	  this._initFormSettings();
-	  this._initSortableWidgets();
+	  if (!this.options.readOnly) {
+	    this._initFormSettings();
+	    this._initSortableWidgets();
+	    }
 	  this._initWidgetsEventBinder();
    },
   _initFormSettings: function() {
@@ -74,16 +77,19 @@ var FormBuilder = {
 	  $("input[id$='form.name']", $formSettingsGeneralSection).val($name.val()).change(function(event) {
 	       $name.val($(event.target).val());	
 	    });
+
 	  $("[id$='form.description']", $formSettingsGeneralSection).val($description.val()).change(function(event) {
 	       $description.val($(event.target).val());	
 	    });	  
+	 
    },
  _initWidgetsEventBinder: function() { // for widgets loaded from server
-	  var $ctrlHolders = $('#builderForm div.ctrlHolder');
+	  var $ctrlHolders = $('.' + $.fb.fbWidget.prototype.options._styleClass);
 	  var size = $ctrlHolders.size();
-		var fieldsUpdateStatus = ['name', 'settings', 'sequence'];
 		if (size > 0) { 
 			var $this, widget;
+			var fieldsUpdateStatus = ['name', 'settings', 'sequence'];
+			
 			$(this.options._emptyBuilderPanel + ':visible').hide();
 			$ctrlHolders.each(function(i) {
 			    $this = $(this);

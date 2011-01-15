@@ -2,13 +2,13 @@
 * jquery-form-builder-plugin - JQuery WYSIWYG Web Form Builder
 * http://code.google.com/p/jquery-form-builder-plugin/
 *
-* Revision: 27
+* Revision: 28
 * Version: 0.1
 * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
 *
 * Licensed under Apache v2.0 http://www.apache.org/licenses/LICENSE-2.0.html
 *
-* Date: Fri Jan 14 19:55:09 GMT+08:00 2011
+* Date: Sat Jan 15 16:30:39 GMT+08:00 2011
 */
 
 /*
@@ -16,7 +16,7 @@
  * consists of builder palette contains widgets supported by the form builder and 
  * builder panel where the constructed form display. 
  * 
- * Revision: 27
+ * Revision: 28
  * Version: 0.1
  * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
  *
@@ -29,6 +29,7 @@ var FormBuilder = {
   options: { // default options. values are stored in widget's prototype
 		widgets : ['PlainText'],
 		tabSelected: 0,
+		readOnly: false,
 		_builderForm: '#builderForm fieldset',
 		_emptyBuilderPanel: '#emptyBuilderPanel',
 		_standardFieldsPanel: '#standardFields',
@@ -74,8 +75,10 @@ var FormBuilder = {
 	    }			  
    },
   _initBuilderPanel: function() {
-	  this._initFormSettings();
-	  this._initSortableWidgets();
+	  if (!this.options.readOnly) {
+	    this._initFormSettings();
+	    this._initSortableWidgets();
+	    }
 	  this._initWidgetsEventBinder();
    },
   _initFormSettings: function() {
@@ -87,16 +90,19 @@ var FormBuilder = {
 	  $("input[id$='form.name']", $formSettingsGeneralSection).val($name.val()).change(function(event) {
 	       $name.val($(event.target).val());	
 	    });
+
 	  $("[id$='form.description']", $formSettingsGeneralSection).val($description.val()).change(function(event) {
 	       $description.val($(event.target).val());	
 	    });	  
+	 
    },
  _initWidgetsEventBinder: function() { // for widgets loaded from server
-	  var $ctrlHolders = $('#builderForm div.ctrlHolder');
+	  var $ctrlHolders = $('.' + $.fb.fbWidget.prototype.options._styleClass);
 	  var size = $ctrlHolders.size();
-		var fieldsUpdateStatus = ['name', 'settings', 'sequence'];
 		if (size > 0) { 
 			var $this, widget;
+			var fieldsUpdateStatus = ['name', 'settings', 'sequence'];
+			
 			$(this.options._emptyBuilderPanel + ':visible').hide();
 			$ctrlHolders.each(function(i) {
 			    $this = $(this);
@@ -207,7 +213,7 @@ var FormBuilder = {
 $.widget('fb.formbuilder', FormBuilder);/*
  * Base widget plugin of JQuery Form Builder plugin, all Form Builder widgets should extend from this plugin. 
  * 
- * Revision: 27
+ * Revision: 28
  * Version: 0.1
  * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
  *
@@ -286,7 +292,7 @@ var FbWidget = {
 	  $widget = $(event.target);
 	  $.fb.fbWidget.prototype._log($widget.attr('id') + " updated");
 	  if ($widget.parent().find('input:first').val() != 'null') {
-		  $.fb.fbWidget.prototype._log("status updated");
+		  $.fb.fbWidget.prototype._log("field status updated");
 	    $widget.parent().find('input:last').val('U');
 	    }
   },
@@ -296,7 +302,7 @@ var FbWidget = {
 $.widget('fb.fbWidget', FbWidget);/*
  * JQuery Form Builder - Plain Text plugin.
  * 
- * Revision: 27
+ * Revision: 28
  * Version: 0.1
  * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
  *
