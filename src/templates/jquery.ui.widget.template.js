@@ -46,9 +46,7 @@ var NameSpace = {
 	_clickHandler: function(event) {
 		$.ns.className.prototype._log('before subclassClickHandler(event)');
 		var type = $(this)['className']('option', 'type');
-		$(this)[type]('subclassClickHandler', event);
-		// TODO: prevent the click event being called twice. Is this a bug?
-		event.stopImmediatePropagation(); 
+		$(this).data(type).subclassClickHandler(event); // Alternative: $(this)[type]('subclassClickHandler', event);	 
 		$.ns.className.prototype._log('after subclassClickHandler(event)');
 	},
 	destroy: function() {
