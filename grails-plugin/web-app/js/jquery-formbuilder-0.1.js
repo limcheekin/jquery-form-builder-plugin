@@ -2,13 +2,13 @@
 * jquery-form-builder-plugin - JQuery WYSIWYG Web Form Builder
 * http://code.google.com/p/jquery-form-builder-plugin/
 *
-* Revision: 28
+* Revision: 32
 * Version: 0.1
 * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
 *
 * Licensed under Apache v2.0 http://www.apache.org/licenses/LICENSE-2.0.html
 *
-* Date: Sat Jan 15 16:30:39 GMT+08:00 2011
+* Date: Sun Jan 16 21:47:29 GMT+08:00 2011 
 */
 
 /*
@@ -16,13 +16,13 @@
  * consists of builder palette contains widgets supported by the form builder and 
  * builder panel where the constructed form display. 
  * 
- * Revision: 28
+ * Revision: 32
  * Version: 0.1
  * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
  *
  * Licensed under Apache v2.0 http://www.apache.org/licenses/LICENSE-2.0.html
  *
- * Date: 
+ * Date: 16-Jan-2011
  */
 
 var FormBuilder = {
@@ -30,10 +30,12 @@ var FormBuilder = {
 		widgets : ['PlainText'],
 		tabSelected: 0,
 		readOnly: false,
+		tabDisabled: [],
 		_builderForm: '#builderForm fieldset',
 		_emptyBuilderPanel: '#emptyBuilderPanel',
 		_standardFieldsPanel: '#standardFields',
 		_fancyFieldsPanel: '#fancyFields',
+		_fieldSettingsPanel: '#fieldSettings',
     _fieldSettingsLanguageSection: '#fieldSettings fieldset.language:first',
     _fieldSettingsGeneralSection: '#fieldSettings div.general:first',
     _formSettingsLanguageSection: '#formSettings fieldset.language:first',
@@ -62,7 +64,7 @@ var FormBuilder = {
 			}
 		});
 		
-		$('#paletteTabs').tabs({selected: this.options.tabSelected});
+		$('#paletteTabs').tabs({selected: this.options.tabSelected, disabled: this.options.tabDisabled});
 		var widgets = this.options.widgets;
 		var length = widgets.length;
 		var widgetOptions;
@@ -70,8 +72,8 @@ var FormBuilder = {
 		var i;
 	  for (i = 0; i < length; i++) {
 		  widgetOptions = $['fb']['fb' + widgets[i]].prototype.options;
-		  widget = $('<a id="' + widgetOptions.type +  '" href="#" class="fbWidget">' + widgetOptions.name + '</a>')['fb' + widgetOptions.type]();
-      widget.button().appendTo(widgetOptions.belongsTo);
+		  widget = $('<a id="' + widgetOptions._type +  '" href="#" class="fbWidget">' + widgetOptions.name + '</a>');
+      widget.button()['fb' + widgetOptions._type]({fbOptions: this.options}).appendTo(widgetOptions.belongsTo);
 	    }			  
    },
   _initBuilderPanel: function() {
@@ -107,13 +109,15 @@ var FormBuilder = {
 			$ctrlHolders.each(function(i) {
 			    $this = $(this);
 			    widget = $this.find("input[id$='fields[" + i + "].type']").val();
-			    $this.click($['fb']['fb' + widget].prototype.getFieldSettings);				
+			    $this.click($['fb']['fb' + widget].prototype._createFieldSettings);				
 					for (var j = 0; j < fieldsUpdateStatus.length; j++) {
 						$this.find("input[id$='fields[" + i + "]." + fieldsUpdateStatus[j] + "']")
 						                  .change($.fb.fbWidget.prototype._updateStatus);
 					}	  
 			});
-			$ctrlHolders.find(".closeButton").click($.fb.fbWidget.prototype._deleteWidget);
+			if (!this.options.readOnly) {
+			  $ctrlHolders.find(".closeButton").click($.fb.fbWidget.prototype._deleteWidget);
+			}
 		}
   },
   _initSortableWidgets: function() {
@@ -213,28 +217,28 @@ var FormBuilder = {
 $.widget('fb.formbuilder', FormBuilder);/*
  * Base widget plugin of JQuery Form Builder plugin, all Form Builder widgets should extend from this plugin. 
  * 
- * Revision: 28
+ * Revision: 32
  * Version: 0.1
  * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
  *
  * Licensed under Apache v2.0 http://www.apache.org/licenses/LICENSE-2.0.html
  *
- * Date: 
+ * Date: 16-Jan-2011
  */
 
 var FbWidget = {
   options: { // default options. values are stored in widget's prototype
-	  option1: "FbWidget.optionValue",
+	  fbOptions: "", // $.fb.formbuilder.prototype.options
 	  _styleClass: "ctrlHolder"
     },
-  // _logging to the firebug's console, put in 1 line so it can be removed easily for production
+  // logging to the firebug's console, put in 1 line so it can be removed easily for production
   _log: function($message) { if (window.console && window.console.log) window.console.log($message); },
 	_create: function() {
-	  this._log('FbWidget._create called. this.options.option1 = ' + this.options.option1);
-	  this.element.click(this.createWidget);
+	  this._log('FbWidget._create called.');
     },
   _init: function() {
     this._log('FbWidget._init called.');
+    this.element.click(this._createFbWidget);
     },        
 	destroy: function() {
 	  this._log('FbWidget.destroy called.');
@@ -244,7 +248,7 @@ var FbWidget = {
 		$.Widget.prototype.destroy.call(this);
 
     },
-  createField: function(name, widget, options, settings) {
+  _createField: function(name, widget, options, settings) {
 	  var formBuilderOptions = $.fb.formbuilder.prototype.options;
 	  var index = $('#builderForm div.ctrlHolder').size();
 	  
@@ -275,12 +279,12 @@ var FbWidget = {
 	   event.stopPropagation();
   },
 	_createFieldProperties: function(name, options, settings, index) {
-		// alert('name = ' + name + ', options.type = '+ options.type);
+		// alert('name = ' + name + ', options._type = '+ options._type);
 		var fieldId = 'fields[' + index + '].';
 		var $fieldProperties = $('<div class="fieldProperties"> \
 		<input type="hidden" id="' + fieldId + 'id" name="' + fieldId + 'id" value="null" /> \
 		<input type="hidden" id="' + fieldId + 'name" name="' + fieldId + 'name" value="' + name + '" /> \
-		<input type="hidden" id="' + fieldId + 'type" name="' + fieldId + 'type" value="' + options.type + '" /> \
+		<input type="hidden" id="' + fieldId + 'type" name="' + fieldId + 'type" value="' + options._type + '" /> \
 		<input type="hidden" id="' + fieldId + 'settings" name="' + fieldId + 'settings" /> \
 		<input type="hidden" id="' + fieldId + 'sequence" name="' + fieldId + 'sequence" value="' + index + '" /> \
 		<input type="hidden" id="' + fieldId + 'status" name="' + fieldId + 'status" /> \
@@ -296,28 +300,150 @@ var FbWidget = {
 	    $widget.parent().find('input:last').val('U');
 	    }
   },
-	createWidget: function(event) { alert('createWidget(event) should be overriden by subclass'); }
+	_createFbWidget: function(event) {
+		$.fb.fbWidget.prototype._log('_createFbWidget executing');
+	  var type = 'fb' + $(this)['fbWidget']('option', '_type');
+	  $.fb.fbWidget.prototype._log('type = ' + type);		
+		var $this = $(this).data(type);
+		// Clone an instance of plugin's option settings. 
+		// From: http://stackoverflow.com/questions/122102/what-is-the-most-efficient-way-to-clone-a-javascript-object 	  
+		var settings = jQuery.extend(true, {}, $this.options.settings);
+		var counter = $this.getCounter($this);
+		var languages = $this.options._languages;
+		for (var i=0; i < languages.length; i++) {
+			settings[languages[i]][$this.options._counterField] += ' ' + counter;
+			$this._log(settings[languages[i]][$this.options._counterField]);
+		}
+		var $ctrlHolder = $('<div class="' + $this.options._styleClass + '"></div>');
+		$this._log("b4. text = " + settings[$('#language').val()].text);
+		var $widget = $this.getWidget($this, settings[$('#language').val()], $ctrlHolder);
+		$this._log("at. text = " + settings[$('#language').val()].text);
+		var name = $this.propertyName($this.options._type + counter);
+		$widget.click($this._createFieldSettings);
+		$ctrlHolder.append($widget);
+		$this._createField(name, $ctrlHolder, $this.options, settings);		
+		$this._log('_createFbWidget executed');
+    },
+  _createFieldSettings: function(event) { 
+	  $.fb.fbWidget.prototype._log('_createFieldSettings executing.');
+		var $widget = $(this);	  
+		$widget = $widget.attr('class').indexOf($.fb.fbWidget.prototype.options._styleClass) > -1 ? $widget : $widget.parent();
+		var type = $widget.find("input[id$='fields[" + $widget.attr('rel') + "].type']").val();
+		$.fb.fbWidget.prototype._log('type = ' + type);
+		$this = $('#' + type).data('fb' + type);
+		var formbuilderOptions = $this.options.fbOptions;
+		$this._log('$widget.text() = ' + $widget.text() + ", formbuilderOptions.readOnly = " + formbuilderOptions.readOnly);
+		var $settings = $widget.find("input[id$='fields[" + $widget.attr('rel') + "].settings']");
+		$this._log('settings = ' + $settings.val());
+		$this._log('unescaped settings = ' + unescape($settings.val()));
+		var settings = $.parseJSON(unescape($settings.val())); // settings is JavaScript encoded when return from server-side
+		$widget.data('fbWidget', settings);
+		var $languageSection = $(formbuilderOptions._fieldSettingsLanguageSection);
+		var $language = $('#language');
+		$('legend', $languageSection).text('Language: ' + $language.find('option:selected').text());		 		
+		var fieldSettings = $this.getFieldSettingsLanguageSection($this, $widget, settings[$language.val()]);
+		// remote all child nodes except legend
+		$languageSection.children(':not(legend)').remove();  
+		for (var i=0; i<fieldSettings.length; i++) {
+			$languageSection.append(fieldSettings[i]);
+		} 
+		
+		fieldSettings = $this.getFieldSettingsGeneralSection($this, $widget, settings[$language.val()]);
+		$this._log('fieldSettings.length = ' + fieldSettings.length);
+		var $generalSection = $(formbuilderOptions._fieldSettingsGeneralSection); 
+		// remote all child nodes 
+		$generalSection.children().remove();  	
+		for (var i=0; i<fieldSettings.length; i++) {
+			$this._log(fieldSettings[i].html());
+		  $generalSection.append(fieldSettings[i]);
+		}
+		// activate field settings tab
+		if (formbuilderOptions.readOnly) {	
+			//var $fieldSettingsPanel = $(formbuilderOptions._fieldSettingsPanel);
+		  $('input:not(div.buttons input)').attr("disabled", true);
+		  $('select').attr("disabled", true);
+		}
+		$('#paletteTabs').tabs('select', 1);	
+  	$.fb.fbWidget.prototype._log('_createFieldSettings executed.');
+    },
+  updateSettings: function($widget, settings) {
+  	var fullSettings = $widget.data('fbWidget');
+  	var $settings = $widget.find("input[id$='fields[" + $widget.attr('rel') + "].settings']");
+  	fullSettings[$('#language').val()] = settings;
+  	$settings.val($.toJSON(fullSettings)).change();
+   	} ,          
+  twoColumns: function($e1, $e2) {
+	  var $ui = $('<div class="2cols"> \
+		<div class="labelOnTop col1 noPaddingBottom"></div> \
+	  <div class="labelOnTop col2"></div> \
+    </div>');
+	  $ui.find(".col1").append($e1);
+	  $ui.find(".col2").append($e2);
+	  return $ui;
+ 	} ,      
+  oneColumn: function($e) {
+	  return $('<div class="clear labelOnTop"></div>').append($e);
+ 	} ,    	
+ 	horizontalAlignment: function() {
+		return $('<label for="field.horizontalAlignment">Horizontal Align (?)</label><br /> \
+		<select id="field.horizontalAlignment"> \
+			<option value="leftAlign">left</option> \
+			<option value="centerAlign">center</option> \
+			<option value="rightAlign">right</option> \
+		</select>');  		
+ 	},
+ 	verticalAlignment: function() {
+ 		return $('<label for="field.verticalAlignment">Vertical Align (?)</label><br /> \
+			<select id="field.verticalAlignment"> \
+				<option value="topAlign">top</option> \
+				<option value="middleAlign">middle</option> \
+				<option value="bottomAlign">bottom</option> \
+			</select>');
+ 	},
+ 	name: function($widget) {
+ 		var index = $widget.attr('rel');
+ 		var $name = $('<label for="field.name">Name (?)</label><br/> \
+ 				  <input type="text" id="field.name" />');
+		("input[id$='field.name']", $name)
+		.val($widget.find("input[id$='fields[" + index + "].name']").val())
+		.change(function(event) {
+		  $widget.find("input[id$='fields[" + index + "].name']")
+				     .val($(event.target).val()).change();
+		});		
+ 		return $name;		 
+ 	}, 	
+  getWidget: function($this, settings, $ctrlHolder) {
+  	 $.fb.fbWidget.prototype._log('getWidget($this, settings, ctrlHolder) should be overriden by subclass.');
+   },
+  getFieldSettingsLanguageSection: function($this, $widget, settings) {
+	   $.fb.fbWidget.prototype._log('getFieldSettingsLanguageSection($this, $widget, settings) should be overriden by subclass.');
+	},
+	getFieldSettingsGeneralSection: function($this, $widget, settings) {
+	   $.fb.fbWidget.prototype._log('getFieldSettingsLanguageSection($this, $widget, settings) should be overriden by subclass.');
+	}    	
 };
 
 $.widget('fb.fbWidget', FbWidget);/*
  * JQuery Form Builder - Plain Text plugin.
  * 
- * Revision: 28
+ * Revision: 32
  * Version: 0.1
  * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
  *
  * Licensed under Apache v2.0 http://www.apache.org/licenses/LICENSE-2.0.html
  *
- * Date: 
+ * Date: 16-Jan-2011
  */
 
 // extends/inherits from superclass: FbWidget
 var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
   options: { // default options. values are stored in widget's prototype
-	  type: 'PlainText',
 	  name: 'Plain Text',
-	  html: '<div class="ctrlHolder"><div class="PlainText"></div></div>',
-		belongsTo: $.fb.formbuilder.prototype.options._fancyFieldsPanel,  	  
+		belongsTo: $.fb.formbuilder.prototype.options._fancyFieldsPanel, 
+		_type: 'PlainText',
+		_html: '<div class="PlainText"></div>',
+		_counterField: 'text',
+		_languages: ['en', 'zh'],
 	  settings: {
 		  en: {
 		    text: 'Plain Text Value',
@@ -337,7 +463,9 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 	_create: function() {
 	  $.fb.fbWidget.prototype._create.call(this); // call the superclass's _create function
 	  // FbPlainText's construction code here
+	  this.options = $.extend({}, $.fb.fbWidget.prototype.options, this.options);
 	  this._log('FbPlainText._create called. this.options.text = ' + this.options.settings.en.text);
+	  this._log('FbPlainText._create called. this.options.option1 = ' + this.options.option1);
     },
   _init: function() {
 	  $.fb.fbWidget.prototype._init.call(this); // call the superclass's _init function
@@ -349,123 +477,47 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 	  this._log('FbPlainText.destroy called.');
 	  $.fb.fbWidget.prototype.destroy.call(this); // call the superclass's destroy function
     },
-  createWidget: function(event) {
-	  var $plainText = $(event.target).parent().data('fbPlainText'); // direct access to plugin instance
-	  var size = $('div.' + $plainText.options.type).size() + 1;
-	  var name = $plainText.propertyName($plainText.options.type + size);
-		var language = $('#language').val();	  
-	  var text = $plainText.options.settings[language].text + ' ' + size;
-	  var $widget = $($plainText.options.html)
-	              .addClass($plainText.options.settings[language].classes[1])
-	              .click($plainText.getFieldSettings);
-	  // Clone an instance of plugin's option settings. 
-	  // From: http://stackoverflow.com/questions/122102/what-is-the-most-efficient-way-to-clone-a-javascript-object 	  
-	  var settings = jQuery.extend(true, {}, $plainText.options.settings);
-	  settings[language].text = text;
-	  $widget.find('div.PlainText').text(text).addClass(settings[language].classes[0]);
-	  $plainText.createField(name, $widget, $plainText.options, settings);
+  getWidget: function($this, settings, $ctrlHolder) {
+	  $ctrlHolder.addClass(settings.classes[1]); // vertical alignment
+	  return $($this.options._html).text(settings.text).addClass(settings.classes[0]);
     },
- getFieldSettings: function(event) { 
-	 var $target = $(event.target);
-	 var $plainTextElement = $target.attr('class').indexOf($.fb.fbWidget.prototype.options._styleClass) > -1 ? $target : $target.parent();
-	 var formBuilderOptions = $.fb.formbuilder.prototype.options;
-	 var index = $plainTextElement.attr('rel');
-	 var $settings = $plainTextElement.find("input[id$='fields[" + index + "].settings']");
-	 $.fb.fbWidget.prototype._log('settings = ' + $settings.val());
-	 $.fb.fbWidget.prototype._log('unescaped settings = ' + unescape($settings.val()));
-	 var settings = $.parseJSON(unescape($settings.val())); // settings is html encoded when return from server-side
-	 
-	 $.fb.fbWidget.prototype._log('PlainText.getFieldSettings. id = ' + $plainTextElement.attr('id') + ', ' + $plainTextElement.attr('rel'));	
-	
-	 var languageSectionSettings = '<div class="clear labelOnTop"> \
-		<label for="text">Text (?)</label><br /> \
-		<input type="text" id="text" /> \
-	</div> \
-	<div class="2cols"> \
-		<div class="labelOnTop col1 noPaddingBottom"> \
-			<label for="horizontalAlignment">Horizontal Align (?)</label><br /> \
-			<select id="horizontalAlignment"> \
-				<option value="leftAlign">left</option> \
-				<option value="centerAlign">center</option> \
-				<option value="rightAlign">right</option> \
-			</select> \
-		</div> \
-		<div class="labelOnTop col2"> \
-		<label for="verticalAlignment">Vertical Align (?)</label><br /> \
-			<select id="verticalAlignment"> \
-				<option value="topAlign">top</option> \
-				<option value="middleAlign">middle</option> \
-				<option value="bottomAlign">bottom</option> \
-			</select> \
-	  </div> \
-	</div>';
-	var $languageSectionSettings = $(languageSectionSettings); 
-	var $languageSection = $(formBuilderOptions._fieldSettingsLanguageSection);
-	var $language = $('#language');
-	var language = $language.val();
-	$('legend', $languageSection).text('Language: ' + $language.find('option:selected').text());
-	$.fb.fbWidget.prototype._log('language = ' + language + ", " + $language.find('option:selected').text());
-	$languageSectionSettings.find('input#text')
-													.val($plainTextElement.find('div.PlainText').text())
-													.change(function(event) {
-														var value = $(event.target).val();
-														$plainTextElement.find('div.PlainText').text(value);
-														settings[language].text = value;
-														$settings.val($.toJSON(settings)).change();
-													});
-	$languageSectionSettings.find('select#horizontalAlignment')
-													.val(settings[language].classes[0])
-													.change(function(event) {
-														var $text = $plainTextElement.find('div.PlainText');
-														var value = $(event.target).val();
-														$text.removeClass(settings[language].classes[0]).addClass(value);
-														settings[language].classes[0] = value;
-														$settings.val($.toJSON(settings)).change();
-														// alert('$text.class = ' + $text.attr('class'));
-														// alert('$settings.val() = ' + $settings.val());
-													});					
-	$languageSectionSettings.find('select#verticalAlignment')
-													.val(settings[language].classes[1])
-													.change(function(event) {
-														var $text = $plainTextElement.find('div.PlainText');
-														var value = $(event.target).val();
-														$plainTextElement.removeClass(settings[language].classes[1]).addClass(value);
-														settings[language].classes[1] = value;
-														$settings.val($.toJSON(settings)).change();
-														// alert('$text.class = ' + $text.attr('class'));
-														// alert('$settings.val() = ' + $settings.val());
-													});				
+  getCounter: function($this) {
+  	return $('div.' + $this.options._type).size() + 1;
+   },
+  getFieldSettingsLanguageSection: function($this, $widget, settings) {
+		var $text = $('<label for="field.text">Text (?)</label><br /> \
+	                 <input type="text" id="field.text" />')
+	                .val($widget.find('div.PlainText').text())
+									.change(function(event) {
+										var value = $(this).val();
+										$widget.find('div.PlainText').text(value);
+										settings.text = value;
+										$this.updateSettings($widget, settings);
+									});
+    var $verticalAlignment = $this.verticalAlignment()
+															.val(settings.classes[1])
+															.change(function(event) {
+																var value = $(this).val();
+																$widget.removeClass(settings.classes[1]).addClass(value);
+																settings.classes[1] = value;
+																$this.updateSettings($widget, settings);
+															});			    
+    var $horizontalAlignment = $this.horizontalAlignment()
+																.val(settings.classes[0])
+																.change(function(event) {
+																	var $text = $widget.find('div.PlainText');
+																	var value = $(this).val();
+																	$text.removeClass(settings.classes[0]).addClass(value);
+																	settings.classes[0] = value;
+																	$this.updateSettings($widget, settings);
+																});	    
+    return [$this.oneColumn($text), 
+            $this.twoColumns($verticalAlignment, $horizontalAlignment)];
+	},   
+	getFieldSettingsGeneralSection: function($this, $widget, settings) {	
+		return [$this.oneColumn($this.name($widget))];
+	}
 
-	
-	
-	// remote all child nodes
-	$languageSection.children(':not(legend)').remove();  
-	$languageSection.append($languageSectionSettings);
-	
-	
-	// general section
-	var generalSectionSettings = '<div class="2cols"> \
-		<div class="labelOnTop col1 noPaddingBottom"> \
-			<label for="name">Name (?)</label><br/> \
-		  <input type="text" id="name" /> \
-		</div> \
-	</div>';
-	var $generalSectionSettings = $(generalSectionSettings);
-	$generalSectionSettings.find('input#name')
-	                       .val($plainTextElement.find("input[id$='fields[" + index + "].name']").val())
-												 .change(function(event) {
-														$plainTextElement.find("input[id$='fields[" + index + "].name']").val($(event.target).val()).change();
-													});		
-	var $generalSection = $(formBuilderOptions._fieldSettingsGeneralSection); 
-	// remote all child nodes 
-	$generalSection.children().remove();  	
-	$generalSection.append($generalSectionSettings);
-	
-	
-	
-	// activate field settings tab
-	$('#paletteTabs').tabs('select', 1);
- }
     
 });
 

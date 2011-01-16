@@ -9,7 +9,7 @@
  *
  * Licensed under Apache v2.0 http://www.apache.org/licenses/LICENSE-2.0.html
  *
- * Date: 
+ * Date: 16-Jan-2011
  */
 
 var FormBuilder = {
@@ -17,10 +17,12 @@ var FormBuilder = {
 		widgets : ['PlainText'],
 		tabSelected: 0,
 		readOnly: false,
+		tabDisabled: [],
 		_builderForm: '#builderForm fieldset',
 		_emptyBuilderPanel: '#emptyBuilderPanel',
 		_standardFieldsPanel: '#standardFields',
 		_fancyFieldsPanel: '#fancyFields',
+		_fieldSettingsPanel: '#fieldSettings',
     _fieldSettingsLanguageSection: '#fieldSettings fieldset.language:first',
     _fieldSettingsGeneralSection: '#fieldSettings div.general:first',
     _formSettingsLanguageSection: '#formSettings fieldset.language:first',
@@ -49,7 +51,7 @@ var FormBuilder = {
 			}
 		});
 		
-		$('#paletteTabs').tabs({selected: this.options.tabSelected});
+		$('#paletteTabs').tabs({selected: this.options.tabSelected, disabled: this.options.tabDisabled});
 		var widgets = this.options.widgets;
 		var length = widgets.length;
 		var widgetOptions;
@@ -57,8 +59,8 @@ var FormBuilder = {
 		var i;
 	  for (i = 0; i < length; i++) {
 		  widgetOptions = $['fb']['fb' + widgets[i]].prototype.options;
-		  widget = $('<a id="' + widgetOptions.type +  '" href="#" class="fbWidget">' + widgetOptions.name + '</a>')['fb' + widgetOptions.type]();
-      widget.button().appendTo(widgetOptions.belongsTo);
+		  widget = $('<a id="' + widgetOptions._type +  '" href="#" class="fbWidget">' + widgetOptions.name + '</a>');
+      widget.button()['fb' + widgetOptions._type]({fbOptions: this.options}).appendTo(widgetOptions.belongsTo);
 	    }			  
    },
   _initBuilderPanel: function() {
@@ -94,13 +96,15 @@ var FormBuilder = {
 			$ctrlHolders.each(function(i) {
 			    $this = $(this);
 			    widget = $this.find("input[id$='fields[" + i + "].type']").val();
-			    $this.click($['fb']['fb' + widget].prototype.getFieldSettings);				
+			    $this.click($['fb']['fb' + widget].prototype._createFieldSettings);				
 					for (var j = 0; j < fieldsUpdateStatus.length; j++) {
 						$this.find("input[id$='fields[" + i + "]." + fieldsUpdateStatus[j] + "']")
 						                  .change($.fb.fbWidget.prototype._updateStatus);
 					}	  
 			});
-			$ctrlHolders.find(".closeButton").click($.fb.fbWidget.prototype._deleteWidget);
+			if (!this.options.readOnly) {
+			  $ctrlHolders.find(".closeButton").click($.fb.fbWidget.prototype._deleteWidget);
+			}
 		}
   },
   _initSortableWidgets: function() {
