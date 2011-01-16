@@ -36,7 +36,9 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 	_create: function() {
 	  $.fb.fbWidget.prototype._create.call(this); // call the superclass's _create function
 	  // FbPlainText's construction code here
+	  this.options = $.extend({}, $.fb.fbWidget.prototype.options, this.options);
 	  this._log('FbPlainText._create called. this.options.text = ' + this.options.settings.en.text);
+	  this._log('FbPlainText._create called. this.options.option1 = ' + this.options.option1);
     },
   _init: function() {
 	  $.fb.fbWidget.prototype._init.call(this); // call the superclass's _init function

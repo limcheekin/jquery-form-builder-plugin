@@ -4,10 +4,16 @@
  * 1) Understanding jQuery UI widgets: A tutorial - http://bililite.com/blog/understanding-jquery-ui-widgets-a-tutorial/
  * 
  * Usage: 
- * $(selector).className({publicOption: "Option of className"});
- * $(selector).extendedClassName({publicOption: "Option of extendedClassName"});
- * $(selector).className("method1", "123");
- * $(selector).extendedClassName("method1", "12345"); 
+ * 1) Add tag below to your <body> tag:
+ * <div id="test">This is Testing Div.</div>
+ * 2) Add the following JavaScript to your <script> tag: 
+ * $(function(){
+ *	 $('#test').className({publicOption: "Option of className"});
+ *	 $('#test').extendedClassName({publicOption: "Option of extendedClassName"});
+ *	 $('#test').className("method1", "123");
+ *	 $('#test').extendedClassName("method1", "12345");
+ *  });
+ * 3) This template is ready to run.
  * 
  * Revision: @REVISION
  * Version: @VERSION
@@ -15,14 +21,17 @@
  *
  * Licensed under Apache v2.0 http://www.apache.org/licenses/LICENSE-2.0.html
  *
- * Date: 
+ * Date: 16-Jan-2011
  */
 
 var NameSpace = {
   ClassName: {
     options: { // default options. values are stored in widget's prototype
       publicOption: "public option value",
-      _privateOption: "private option value"		
+      _privateOption: "private option value",
+      publicOptions: {
+    	  option1: "option1"
+      }
     },
   _create: function() {
     	// called on construction
@@ -32,7 +41,16 @@ var NameSpace = {
 			// called on construction and re-initialization
 		this._log('NameSpace.ClassName._init called.');
 		this.method1('calling from NameSpace.ClassName._init');
+		this.element.click(this._clickHandler);
 	},        
+	_clickHandler: function(event) {
+		$.ns.className.prototype._log('before subclassClickHandler(event)');
+		var type = $(this)['className']('option', 'type');
+		$(this)[type]('subclassClickHandler', event);
+		// TODO: prevent the click event being called twice. Is this a bug?
+		event.stopImmediatePropagation(); 
+		$.ns.className.prototype._log('after subclassClickHandler(event)');
+	},
 	destroy: function() {
         // called on removal
 		this._log('NameSpace.ClassName.destroy called.');
@@ -46,7 +64,10 @@ var NameSpace = {
 	method1: function(params) {
     	// plugin specific method
 		this._log('NameSpace.ClassName.method1 called. params = ' + params);
-    }
+    },
+	subclassClickHandler: function(event) {
+		$.ns.className.prototype._log('subclassClickHandler(event) should be overriden by subclass. event = ' + event.type);
+    }      
   }
 };
 
@@ -56,6 +77,7 @@ $.widget('ns.className', NameSpace.ClassName); // ns: namespace, don't use "ui" 
 var NameSpace = {
   ExtendedClassName: $.extend({}, $.ns.className.prototype, {
     options: { // default options. values are stored in widget's prototype
+    	type: "extendedClassName",
       publicOption: "public option value",
       _privateOption: "private option value"		
     },
@@ -67,7 +89,8 @@ var NameSpace = {
   _init: function() {
 	  $.ns.className.prototype._init.call(this); // call the superclass's _init function
 	  // ExtendedClassName's construction and re-initialization code here	
-      this._log('NameSpace.ExtendedClassName._init called.');
+	  this.options = $.extend({}, $.ns.className.prototype.options, this.options);
+    this._log('NameSpace.ExtendedClassName._init called. this.options.publicOptions.option1 = ' + this.options.publicOptions.option1);
     },        
 	destroy: function() {
 	  // ExtendedClassName's destroy code here
@@ -77,7 +100,10 @@ var NameSpace = {
 	method1: function(params) {
       // plugin specific method
 	  this._log('NameSpace.ExtendedClassName.method1 called. params = ' + params);
-    }
+    } ,
+	subclassClickHandler: function(event) {
+		$.ns.className.prototype._log("text = " + this.element.text() + ", event.type = " + event.type);
+    }         
   })
 };
 

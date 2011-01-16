@@ -18,7 +18,7 @@ var FbWidget = {
   // _logging to the firebug's console, put in 1 line so it can be removed easily for production
   _log: function($message) { if (window.console && window.console.log) window.console.log($message); },
 	_create: function() {
-	  this._log('FbWidget._create called. this.options.option1 = ' + this.options.option1);
+	  this._log('FbWidget._create called. this.options.type = ' + this.options.type);
 	  this.element.click(this.createWidget);
     },
   _init: function() {
