@@ -67,6 +67,10 @@ var FormBuilder = {
 	  if (!this.options.readOnly) {
 	    this._initFormSettings();
 	    this._initSortableWidgets();
+	  } else {
+			$('input:not(div.buttons input)').attr("disabled", true);
+			$('select').attr("disabled", true);
+			$('textarea').attr("disabled", true);	    	
 	    }
 	  this._initWidgetsEventBinder();
    },

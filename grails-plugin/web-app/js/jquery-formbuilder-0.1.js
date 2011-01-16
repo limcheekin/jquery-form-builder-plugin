@@ -2,13 +2,13 @@
 * jquery-form-builder-plugin - JQuery WYSIWYG Web Form Builder
 * http://code.google.com/p/jquery-form-builder-plugin/
 *
-* Revision: 32
+* Revision: 33
 * Version: 0.1
 * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
 *
 * Licensed under Apache v2.0 http://www.apache.org/licenses/LICENSE-2.0.html
 *
-* Date: Sun Jan 16 21:47:29 GMT+08:00 2011 
+* Date: Sun Jan 16 22:56:17 GMT+08:00 2011 
 */
 
 /*
@@ -16,7 +16,7 @@
  * consists of builder palette contains widgets supported by the form builder and 
  * builder panel where the constructed form display. 
  * 
- * Revision: 32
+ * Revision: 33
  * Version: 0.1
  * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
  *
@@ -80,6 +80,12 @@ var FormBuilder = {
 	  if (!this.options.readOnly) {
 	    this._initFormSettings();
 	    this._initSortableWidgets();
+	  } else {
+
+			$('input:not(div.buttons input)').attr("disabled", true);
+			$('select').attr("disabled", true);
+			$('textarea').attr("disabled", true);
+			//var $fieldSettingsPanel = $(formbuilderOptions._fieldSettingsPanel);	    	
 	    }
 	  this._initWidgetsEventBinder();
    },
@@ -217,7 +223,7 @@ var FormBuilder = {
 $.widget('fb.formbuilder', FormBuilder);/*
  * Base widget plugin of JQuery Form Builder plugin, all Form Builder widgets should extend from this plugin. 
  * 
- * Revision: 32
+ * Revision: 33
  * Version: 0.1
  * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
  *
@@ -357,12 +363,15 @@ var FbWidget = {
 			$this._log(fieldSettings[i].html());
 		  $generalSection.append(fieldSettings[i]);
 		}
-		// activate field settings tab
-		if (formbuilderOptions.readOnly) {	
-			//var $fieldSettingsPanel = $(formbuilderOptions._fieldSettingsPanel);
-		  $('input:not(div.buttons input)').attr("disabled", true);
-		  $('select').attr("disabled", true);
+		
+		if (formbuilderOptions.readOnly) {
+		  var $fieldSettingsPanel = $(formbuilderOptions._fieldSettingsPanel);
+		  $('input', $fieldSettingsPanel).attr("disabled", true);
+		  $('select', $fieldSettingsPanel).attr("disabled", true);
+		  $('textarea', $fieldSettingsPanel).attr("disabled", true);
 		}
+		
+		// activate field settings tab
 		$('#paletteTabs').tabs('select', 1);	
   	$.fb.fbWidget.prototype._log('_createFieldSettings executed.');
     },
@@ -426,7 +435,7 @@ var FbWidget = {
 $.widget('fb.fbWidget', FbWidget);/*
  * JQuery Form Builder - Plain Text plugin.
  * 
- * Revision: 32
+ * Revision: 33
  * Version: 0.1
  * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
  *

@@ -141,12 +141,15 @@ var FbWidget = {
 			$this._log(fieldSettings[i].html());
 		  $generalSection.append(fieldSettings[i]);
 		}
-		// activate field settings tab
-		if (formbuilderOptions.readOnly) {	
-			//var $fieldSettingsPanel = $(formbuilderOptions._fieldSettingsPanel);
-		  $('input:not(div.buttons input)').attr("disabled", true);
-		  $('select').attr("disabled", true);
+		
+		if (formbuilderOptions.readOnly) {
+		  var $fieldSettingsPanel = $(formbuilderOptions._fieldSettingsPanel);
+		  $('input', $fieldSettingsPanel).attr("disabled", true);
+		  $('select', $fieldSettingsPanel).attr("disabled", true);
+		  $('textarea', $fieldSettingsPanel).attr("disabled", true);
 		}
+		
+		// activate field settings tab
 		$('#paletteTabs').tabs('select', 1);	
   	$.fb.fbWidget.prototype._log('_createFieldSettings executed.');
     },
