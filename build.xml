@@ -75,26 +75,40 @@
 		<echo message="svn.info.lastRev: ${svn.info.lastRev}" />
 		<echo message="svn.info.lastDate: ${svn.info.lastDate}" />
 	</target>
-
-	<target name="formbuilder" depends="svninfo" description="Main jquery-form-builder-plugin build. Concatenates source and css files and replaces @VERSION/Date">
-		<echo message="Building ${JQUERY_FORM_BUILDER}" />
+	
+	<target name="formbuilderdev" depends="svninfo" description="Main jquery-form-builder-plugin build. Concatenates source and css files and replaces @VERSION/Date" if="dev">
+		<echo message="Building ${JQUERY_FORM_BUILDER} for development." />
 
 		<concat destfile="${JQUERY_FORM_BUILDER}">
-			<!--filterchain>
-				<linecontains negate="true">
-				  <contains value="_log"/>
-				</linecontains>
-			</filterchain-->
 			<fileset file="${SRC_JS_DIR}/../HEADER.txt" />
-			<!--fileset file="${SRC_JS_DIR}/intro.js" /-->
 			<fileset file="${SRC_JS_DIR}/jquery.formbuilder.core.js" />
 			<fileset file="${SRC_JS_DIR}/jquery.formbuilder.widget.js" />
 			<filelist files="${PLUGINS_JS}" />
-			<!--fileset file="${SRC_JS_DIR}/outro.js" /-->
 		</concat>
 		<replaceregexp match="@REVISION" replace="${svn.info.lastRev}" flags="g" byline="true" file="${JQUERY_FORM_BUILDER}" />
 		<replaceregexp match="@VERSION" replace="${version}" flags="g" byline="true" file="${JQUERY_FORM_BUILDER}" />
-		<replaceregexp match="Date: " replace="Date: ${svn.info.lastDate}" file="${JQUERY_FORM_BUILDER}" />
+		<replaceregexp match="Date:" replace="Date: ${svn.info.lastDate}" file="${JQUERY_FORM_BUILDER}" />
+
+		<echo message="${JQUERY_FORM_BUILDER} built." />
+	</target>	
+
+	<target name="formbuilder" depends="formbuilderdev" description="Main jquery-form-builder-plugin build. Concatenates source and css files and replaces @VERSION/Date" unless="dev">
+		<echo message="Building ${JQUERY_FORM_BUILDER} for production." />
+
+		<concat destfile="${JQUERY_FORM_BUILDER}">
+			<filterchain>
+				<linecontains negate="true">
+				  <contains value="_log"/>
+				</linecontains>
+			</filterchain>
+			<fileset file="${SRC_JS_DIR}/../HEADER.txt" />
+			<fileset file="${SRC_JS_DIR}/jquery.formbuilder.core.js" />
+			<fileset file="${SRC_JS_DIR}/jquery.formbuilder.widget.js" />
+			<filelist files="${PLUGINS_JS}" />
+		</concat>
+		<replaceregexp match="@REVISION" replace="${svn.info.lastRev}" flags="g" byline="true" file="${JQUERY_FORM_BUILDER}" />
+		<replaceregexp match="@VERSION" replace="${version}" flags="g" byline="true" file="${JQUERY_FORM_BUILDER}" />
+		<replaceregexp match="Date:" replace="Date: ${svn.info.lastDate}" file="${JQUERY_FORM_BUILDER}" />
 
 		<echo message="${JQUERY_FORM_BUILDER} built." />
 	</target>
