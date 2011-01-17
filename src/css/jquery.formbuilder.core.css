@@ -123,4 +123,7 @@ div.noPaddingBottom { padding-bottom: 0; }
 
 div.col2 {
    margin-left: 52%;
-  } 
+ }
+ 
+/* Color picker styles */
+#field\.backgroundColor { width: 10em } 

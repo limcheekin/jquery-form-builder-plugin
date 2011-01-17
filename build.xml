@@ -82,6 +82,7 @@
 		<concat destfile="${JQUERY_FORM_BUILDER}">
 			<fileset file="${SRC_JS_DIR}/../HEADER.txt" />
 			<fileset file="${SRC_JS_DIR}/jquery.formbuilder.core.js" />
+			<fileset file="${SRC_JS_DIR}/jquery.colorpicker.js" />		
 			<fileset file="${SRC_JS_DIR}/jquery.formbuilder.widget.js" />
 			<filelist files="${PLUGINS_JS}" />
 		</concat>
@@ -103,6 +104,7 @@
 			</filterchain>
 			<fileset file="${SRC_JS_DIR}/../HEADER.txt" />
 			<fileset file="${SRC_JS_DIR}/jquery.formbuilder.core.js" />
+			<fileset file="${SRC_JS_DIR}/jquery.colorpicker.js" />
 			<fileset file="${SRC_JS_DIR}/jquery.formbuilder.widget.js" />
 			<filelist files="${PLUGINS_JS}" />
 		</concat>
@@ -182,6 +184,7 @@
 		<concat destfile="${JQUERY_FORM_BUILDER_CSS}">
 			<fileset file="${SRC_CSS_DIR}/../HEADER.txt" />
 			<fileset file="${SRC_CSS_DIR}/jquery.formbuilder.core.css" />
+			<fileset file="${SRC_CSS_DIR}/jquery.colorpicker.css" />
 			<filelist files="${PLUGINS_CSS}" />
 		</concat>
 

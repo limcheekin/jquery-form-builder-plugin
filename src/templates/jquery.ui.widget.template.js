@@ -39,7 +39,7 @@ var NameSpace = {
 		},
 		_init : function() {
 			// called on construction and re-initialization
-			this._log('NameSpace.ClassName._init called.');
+			this._log('NameSpace.ClassName._init called. this.id = ' + this.element.attr('id'));
 			this.method1('calling from NameSpace.ClassName._init');
 			this.element.click(this._clickHandler);
 		},

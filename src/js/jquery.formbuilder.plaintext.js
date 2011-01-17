@@ -30,8 +30,8 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 			},
 			styles : {
 				fontFamily : 'default', // browser default
-				color : 'default',
-				backgroundColor : 'default'
+				color : '',
+				backgroundColor : ''
 			}
 		}
 	},
@@ -85,7 +85,7 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 				$this.twoColumns($verticalAlignment,$horizontalAlignment) ];
 	},
 	getFieldSettingsGeneralSection : function($this, $widget, settings) {
-		return [ $this.oneColumn($this.name($widget)) ];
+		return [ $this.oneColumn($this.colorPicker('Background Color', 'help', 'field.backgroundColor', settings.styles.backgroundColor)) ];
 	}
 });
 

@@ -15,7 +15,8 @@ var FbWidget = {
 	  fbOptions: "", // $.fb.formbuilder.prototype.options
 	  _styleClass: "ctrlHolder"
     },
-  // logging to the firebug's console, put in 1 line so it can be removed easily for production
+  // logging to the firebug's console, put in 1 line so it can be removed
+	// easily for production
   _log: function($message) { if (window.console && window.console.log) window.console.log($message); },
 	_create: function() {
 	  this._log('FbWidget._create called.');
@@ -93,8 +94,9 @@ var FbWidget = {
 	  var type = 'fb' + $(this)['fbWidget']('option', '_type');
 	  $.fb.fbWidget.prototype._log('type = ' + type);		
 		var $this = $(this).data(type);
-		// Clone an instance of plugin's option settings. 
-		// From: http://stackoverflow.com/questions/122102/what-is-the-most-efficient-way-to-clone-a-javascript-object 	  
+		// Clone an instance of plugin's option settings.
+		// From:
+		// http://stackoverflow.com/questions/122102/what-is-the-most-efficient-way-to-clone-a-javascript-object
 		var settings = jQuery.extend(true, {}, $this.options.settings);
 		var counter = $this._getCounter($this);
 		var languages = $this.options._languages;
@@ -124,7 +126,11 @@ var FbWidget = {
 		var $settings = $widget.find("input[id$='fields[" + $widget.attr('rel') + "].settings']");
 		$this._log('settings = ' + $settings.val());
 		$this._log('unescaped settings = ' + unescape($settings.val()));
-		var settings = $.parseJSON(unescape($settings.val())); // settings is JavaScript encoded when return from server-side
+		var settings = $.parseJSON(unescape($settings.val())); // settings is
+																// JavaScript
+																// encoded when
+																// return from
+																// server-side
 		$widget.data('fbWidget', settings);
 		var $languageSection = $(formbuilderOptions._fieldSettingsLanguageSection);
 		var $language = $('#language');
@@ -136,10 +142,10 @@ var FbWidget = {
 			$languageSection.append(fieldSettings[i]);
 		} 
 		
-		fieldSettings = $this.getFieldSettingsGeneralSection($this, $widget, settings[$language.val()]);
+		fieldSettings = $this.getFieldSettingsGeneralSection($this, $widget, settings);
 		$this._log('fieldSettings.length = ' + fieldSettings.length);
 		var $generalSection = $(formbuilderOptions._fieldSettingsGeneralSection); 
-		// remote all child nodes 
+		// remote all child nodes
 		$generalSection.children().remove();  	
 		for (var i=0; i<fieldSettings.length; i++) {
 			$this._log(fieldSettings[i].html());
@@ -226,6 +232,31 @@ var FbWidget = {
 		});		
  		return $name;		 
  	}, 	
+ 	colorPicker: function(label, help, name, value, type) {
+		//var $colorPicker = $(' \
+				//<input type="text" id="' + name + '" name="' + name + '" value="' + value + '" /> \
+				//<a href="#"><img border="0" src="../images/jquery.colourPicker.gif" alt="Open colour picker" /></a>'); 	
+ 		var $colorPicker = $('<div></div>');
+ 		if (!type || type == 'basic') {
+			$colorPicker.colorPicker({
+				name: name,
+				value: value,
+				ico: '../images/jquery.colourPicker.gif',
+			  title: 'Basic Colors'
+			});		
+		} else {
+			$colorPicker.colorPicker({
+				name: name,
+				value: value,
+				ico: '../images/jquery.colourPicker.gif',				
+			  title: 'Web Safe Colors',
+			  type: 'webSafe',
+			  width: 360
+			});		
+		}
+ 		$colorPicker.prepend('<label for="' + name + '">' + label + ' (?)</label><br/>');
+	  return $colorPicker;
+ 	},
   getWidget: function($this, settings, $ctrlHolder) {
   	 $.fb.fbWidget.prototype._log('getWidget($this, settings, ctrlHolder) should be overriden by subclass.');
    },
