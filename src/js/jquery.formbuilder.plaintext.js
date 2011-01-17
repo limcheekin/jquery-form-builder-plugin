@@ -54,9 +54,6 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 		return $($this.options._html).text(settings.text)
 				.addClass(settings.classes[0]);
 	},
-	getCounter : function($this) {
-		return $('div.' + $this.options._type).size() + 1;
-	},
 	getFieldSettingsLanguageSection : function($this, $widget, settings) {
 		var $text = $('<label for="field.text">Text (?)</label><br /> \
      <input type="text" id="field.text" />')

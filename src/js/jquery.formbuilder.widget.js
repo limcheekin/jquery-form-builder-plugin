@@ -44,7 +44,7 @@ var FbWidget = {
 	  $(formBuilderOptions._emptyBuilderPanel + ':visible').hide();
 	  $(formBuilderOptions._builderForm).append(widget).sortable('refresh');
     }, 
-  propertyName: function (value) {
+  _propertyName: function (value) {
   	var propertyName;
   	propertyName = value.replace(/ /gi,'');
   	propertyName = propertyName.charAt(0).toLowerCase() + propertyName.substring(1);
@@ -96,7 +96,7 @@ var FbWidget = {
 		// Clone an instance of plugin's option settings. 
 		// From: http://stackoverflow.com/questions/122102/what-is-the-most-efficient-way-to-clone-a-javascript-object 	  
 		var settings = jQuery.extend(true, {}, $this.options.settings);
-		var counter = $this.getCounter($this);
+		var counter = $this._getCounter($this);
 		var languages = $this.options._languages;
 		for (var i=0; i < languages.length; i++) {
 			settings[languages[i]][$this.options._counterField] += ' ' + counter;
@@ -106,7 +106,7 @@ var FbWidget = {
 		$this._log("b4. text = " + settings[$('#language').val()].text);
 		var $widget = $this.getWidget($this, settings[$('#language').val()], $ctrlHolder);
 		$this._log("at. text = " + settings[$('#language').val()].text);
-		var name = $this.propertyName($this.options._type + counter);
+		var name = $this._propertyName($this.options._type + counter);
 		$widget.click($this._createFieldSettings);
 		$ctrlHolder.append($widget);
 		$this._createField(name, $ctrlHolder, $this.options, settings);		
@@ -157,6 +157,29 @@ var FbWidget = {
 		$('#paletteTabs').tabs('select', 1);	
   	$.fb.fbWidget.prototype._log('_createFieldSettings executed.');
     },
+	_getCounter: function($this) {
+		  var $ctrlHolders = $('.' + $this.options._styleClass + ':visible');
+		  var counter = 1;
+		  if ($ctrlHolders.size() > 0) {
+		    	var $ctrlHolder, index, name, widgetCounter = 0;
+		    	var propertyName = $this._propertyName($this.options._type);
+					$ctrlHolders.each(function(i) {
+					    $ctrlHolder = $(this);
+					    index = $ctrlHolder.attr('rel');
+					    name = $ctrlHolder.find("input[id$='fields[" + index + "].name']").val();
+					    if (name.indexOf(propertyName) > -1) {
+					    	widgetCounter = name.substring(propertyName.length) * 1;
+					    	$this._log('widgetCounter = ' + widgetCounter);
+					    	if (widgetCounter > counter) {
+					    		counter = widgetCounter;
+					    	}
+					    }
+					});
+					if (widgetCounter > 0) counter++;
+		     }
+		  $this._log('counter = ' + counter);
+		  return counter;
+	},    
   updateSettings: function($widget, settings) {
   	var fullSettings = $widget.data('fbWidget');
   	var $settings = $widget.find("input[id$='fields[" + $widget.attr('rel') + "].settings']");

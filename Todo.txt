@@ -1,5 +1,10 @@
 1. Workout the Font Panel and Color Picker.
 2. Design and complete the Form Settings Panel
+Language Section
+- Name, Description and Horizontal Alignment
+General Section
+- Font Panel and Background Color.
+* Internal widget name and form name generated from English version, otherwise stick with default.
 3. Auto expand and auto scroll BuilderPanel when it is exceed the existing height.
 4. Highlight widget when it is created and selected.
 5. Document the architecture of JQuery Form Builder and How to create custom widget integrate with form builder.
