@@ -60,7 +60,11 @@ var FbWidget = {
   	   $widget.find("input[id$='fields[" + index + "].status']").val('D');
 	     $widget.hide();    	 
      }
-	   event.stopPropagation();
+     var $ctrlHolders = $('.' + $.fb.fbWidget.prototype.options._styleClass + ':visible');
+     if ($ctrlHolders.size() == 0) {
+    	 $($.fb.formbuilder.prototype.options._emptyBuilderPanel).show();
+     }
+     event.stopPropagation();
   },
 	_createFieldProperties: function(name, options, settings, index) {
 		// alert('name = ' + name + ', options._type = '+ options._type);
