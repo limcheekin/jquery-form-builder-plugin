@@ -25,84 +25,87 @@
  */
 
 var NameSpace = {
-  ClassName: {
-    options: { // default options. values are stored in widget's prototype
-      publicOption: "public option value",
-      _privateOption: "private option value",
-      publicOptions: {
-    	  option1: "option1"
-      }
-    },
-  _create: function() {
-    	// called on construction
-    	this._log('NameSpace.ClassName._create called. this.options.publicOption = ' + this.options.publicOption);
-    },
-	_init: function() {
+	ClassName : {
+		options : { // default options. values are stored in widget's prototype
+			publicOption : "public option value",
+			_privateOption : "private option value",
+			publicOptions : {
+				option1 : "option1"
+			}
+		},
+		_create : function() {
+			// called on construction
+			this._log('NameSpace.ClassName._create called. this.options.publicOption = ' + this.options.publicOption);
+		},
+		_init : function() {
 			// called on construction and re-initialization
-		this._log('NameSpace.ClassName._init called.');
-		this.method1('calling from NameSpace.ClassName._init');
-		this.element.click(this._clickHandler);
-	},        
-	_clickHandler: function(event) {
-		$.ns.className.prototype._log('before subclassClickHandler(event)');
-		var type = $(this)['className']('option', 'type');
-		$(this).data(type).subclassClickHandler(event); // Alternative: $(this)[type]('subclassClickHandler', event);	 
-		$.ns.className.prototype._log('after subclassClickHandler(event)');
-	},
-	destroy: function() {
-        // called on removal
-		this._log('NameSpace.ClassName.destroy called.');
-		
-		// From: http://blog.nemikor.com/2010/05/15/building-stateful-jquery-plugins/
-		// call the base destroy function.
-		$.Widget.prototype.destroy.call(this);		
-    },
-    // logging to the firebug's console, put in 1 line so it can be removed easily for production
-  _log: function($message) { if (window.console && window.console.log) window.console.log($message); },
-	method1: function(params) {
-    	// plugin specific method
-		this._log('NameSpace.ClassName.method1 called. params = ' + params);
-    },
-	subclassClickHandler: function(event) {
-		$.ns.className.prototype._log('subclassClickHandler(event) should be overriden by subclass. event = ' + event.type);
-    }      
-  }
+			this._log('NameSpace.ClassName._init called.');
+			this.method1('calling from NameSpace.ClassName._init');
+			this.element.click(this._clickHandler);
+		},
+		_clickHandler : function(event) {
+			$.ns.className.prototype._log('before subclassClickHandler(event)');
+			var type = $(this)['className']('option', 'type');
+			$(this).data(type).subclassClickHandler(event); // Alternative: $(this)[type]('subclassClickHandler', event);
+			$.ns.className.prototype._log('after subclassClickHandler(event)');
+		},
+		destroy : function() {
+			// called on removal
+			this._log('NameSpace.ClassName.destroy called.');
+
+			// From: http://blog.nemikor.com/2010/05/15/building-stateful-jquery-plugins/
+			// call the base destroy function.
+			$.Widget.prototype.destroy.call(this);
+		},
+		// logging to the firebug's console, put in 1 line so it can be removed
+		// easily for production
+		_log : function($message) { if (window.console && window.console.log) window.console.log($message);},
+		method1 : function(params) {
+			// plugin specific method
+			this._log('NameSpace.ClassName.method1 called. params = ' + params);
+		},
+		subclassClickHandler : function(event) {
+			$.ns.className.prototype._log('subclassClickHandler(event) should be overriden by subclass. event = ' + event.type);
+		}
+	}
 };
 
 $.widget('ns.className', NameSpace.ClassName); // ns: namespace, don't use "ui" as it was reserved by JQuery UI
 
 // extends/inherits from superclass: ClassName
 var NameSpace = {
-  ExtendedClassName: $.extend({}, $.ns.className.prototype, {
-    options: { // default options. values are stored in widget's prototype
-    	type: "extendedClassName",
-      publicOption: "public option value",
-      _privateOption: "private option value"		
-    },
-	_create: function() {
-	  $.ns.className.prototype._create.call(this); // call the superclass's _create function
-	  // ExtendedClassName's construction code here
-	  this._log('NameSpace.ExtendedClassName._create called. this.options.publicOption = ' + this.options.publicOption);
-    },
-  _init: function() {
-	  $.ns.className.prototype._init.call(this); // call the superclass's _init function
-	  // ExtendedClassName's construction and re-initialization code here	
-	  this.options = $.extend({}, $.ns.className.prototype.options, this.options);
-    this._log('NameSpace.ExtendedClassName._init called. this.options.publicOptions.option1 = ' + this.options.publicOptions.option1);
-    },        
-	destroy: function() {
-	  // ExtendedClassName's destroy code here
-	  this._log('NameSpace.ExtendedClassName.destroy called.');
-	  $.ns.className.prototype.destroy.call(this); // call the superclass's destroy function
-    },
-	method1: function(params) {
-      // plugin specific method
-	  this._log('NameSpace.ExtendedClassName.method1 called. params = ' + params);
-    } ,
-	subclassClickHandler: function(event) {
-		$.ns.className.prototype._log("text = " + this.element.text() + ", event.type = " + event.type);
-    }         
-  })
+	ExtendedClassName : $.extend({}, $.ns.className.prototype, {
+		options : { // default options. values are stored in
+					// widget's prototype
+			type : "extendedClassName",
+			publicOption : "public option value",
+			_privateOption : "private option value"
+		},
+		_create : function() {
+			$.ns.className.prototype._create.call(this); // call the superclass's _create function
+			// ExtendedClassName's construction code here
+			this._log('NameSpace.ExtendedClassName._create called. this.options.publicOption = ' + this.options.publicOption);
+		},
+		_init : function() {
+			$.ns.className.prototype._init.call(this); // call the superclass's _init function
+			// ExtendedClassName's construction and
+			// re-initialization code here
+			this.options = $.extend({}, $.ns.className.prototype.options, this.options);
+			this._log('NameSpace.ExtendedClassName._init called. this.options.publicOptions.option1 = ' + this.options.publicOptions.option1);
+		},
+		destroy : function() {
+			// ExtendedClassName's destroy code here
+			this._log('NameSpace.ExtendedClassName.destroy called.');
+			$.ns.className.prototype.destroy.call(this); // call the superclass's destroy function
+		},
+		method1 : function(params) {
+			// plugin specific method
+			this._log('NameSpace.ExtendedClassName.method1 called. params = ' + params);
+		},
+		subclassClickHandler : function(event) {
+			$.ns.className.prototype._log("text = " + this.element.text() + ", event.type = " + event.type);
+		}
+	})
 };
 
 $.widget('ns.extendedClassName', NameSpace.ExtendedClassName); // ns: namespace, don't use "ui" as it was reserved by JQuery UI
