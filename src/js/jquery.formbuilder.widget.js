@@ -193,7 +193,7 @@ var FbWidget = {
  				  <input type="text" id="field.name" />');
 		("input[id$='field.name']", $name)
 		.val($widget.find("input[id$='fields[" + index + "].name']").val())
-		.change(function(event) {
+		.keyup(function(event) {
 		  $widget.find("input[id$='fields[" + index + "].name']")
 				     .val($(event.target).val()).change();
 		});		

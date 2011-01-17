@@ -64,8 +64,8 @@ var FormBuilder = {
 	    }			  
    },
   _initBuilderPanel: function() {
+	  this._initFormSettings();
 	  if (!this.options.readOnly) {
-	    this._initFormSettings();
 	    this._initSortableWidgets();
 	  } else {
 			$('input:not(div.buttons input)').attr("disabled", true);
@@ -80,11 +80,13 @@ var FormBuilder = {
 	  var $description = $('#description', $builderForm);
 	  var $formSettingsGeneralSection = $(this.options._formSettingsGeneralSection);
 	  
-	  $("input[id$='form.name']", $formSettingsGeneralSection).val($name.val()).change(function(event) {
+	  $("input[id$='form.name']", $formSettingsGeneralSection).val($name.val())
+	  .keyup(function(event) {
 	       $name.val($(event.target).val());	
 	    });
 
-	  $("[id$='form.description']", $formSettingsGeneralSection).val($description.val()).change(function(event) {
+	  $("[id$='form.description']", $formSettingsGeneralSection).val($description.val())
+	  .keyup(function(event) {
 	       $description.val($(event.target).val());	
 	    });	  
 	 

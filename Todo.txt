@@ -1,6 +1,7 @@
-2. Multi-language support in option.settings property.
-3. Test in server-side
-4. Completing, re-factor and clean up plain text widget
+1. Workout the Font Panel and Color Picker.
+2. Design and complete the Form Settings Panel
+3. Auto expand and auto scroll BuilderPanel when it is exceed the existing height.
+4. Highlight widget when it is created and selected.
 5. Document the architecture of JQuery Form Builder and How to create custom widget integrate with form builder.
 6. Blog about it and RFC. Post it to Developing JQuery plugin forum, dzone.com and stackoverflow.com
  
