@@ -158,7 +158,7 @@ var ColorPicker = {
 		// When you click a color in the color picker panel
 		$('a', $colorPickerPanel).click(function (event) {
 			// The hex is stored in the link's rel-attribute
-			  var $colorInput = $('#' + $colorPickerPanel.attr('rel'));
+			  var $colorInput = $("input[id$='" + $colorPickerPanel.attr('rel') + "']");
 				var hex = $(this).attr('rel');
 				var options = $colorInput.parent().data('colorPicker').options;
 				if (options.showColorCode) {
