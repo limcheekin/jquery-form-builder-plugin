@@ -91,7 +91,7 @@
 	padding: 1em;
 }
 
-#fieldSettings fieldset.language, #formSettings fieldset.language { padding: 1em; border: 1px solid #C0C0C0; margin-bottom: 1em }
+#fieldSettings fieldset, #formSettings fieldset { padding: 1em; border: 1px solid #C0C0C0; margin-bottom: 1em }
 
 #fieldSettings div.general, #formSettings div.general { padding: 0; margin: 0 }
 

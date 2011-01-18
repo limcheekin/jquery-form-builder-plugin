@@ -34,11 +34,12 @@ $(function(){
 		callbackFunc: changeFont
 	});
 	
-	$('<input type="text" id="backgroundColor" size="6" value="000000"/>').appendTo('#colorPicker').colorPicker({
+	$('#backgroundColor').colorPicker({
 	    ico:    '../images/jquery.colourPicker.gif', 
 	    title:    "Basic Colors",
+	    type: 'basic'
 	});		
-	$('#fontColor').colorPicker({
+	$('#color').colorPicker({
 	    ico:    '../images/jquery.colourPicker.gif', 
 	    title:    "Web Safe Colors",
 	    type: 'webSafe',
@@ -136,26 +137,56 @@ function changeFont(fontFamily)
 					</div>
 					</fieldset>
 					<div class="general">
-						<div class="2cols">
-							<div class="labelOnTop col1 noPaddingBottom">
-								<label for="name">Name (?)</label><br/>
-					      <input type="text" id="name" />
-							</div>
-							<div class="labelOnTop col2">
-								<label for="backgroundColor">Background Color (?)</label><br/>
-								<div id="colorPicker"></div>
-							</div>	
-						</div>
-						<div class="2cols">
-							<div class="labelOnTop col1 noPaddingBottom">
-								<label for="name">Font (?)</label><br/>
-					      <div id="fontselector"></div>
-							</div>
-							<div class="labelOnTop col2">
-								<label for="fontColor">Font Color (?)</label><br/>
-					      <input id="fontColor" type="text" size="6" />
-							</div>	
-						</div>
+<fieldset>
+<legend>Fonts</legend>
+<!-- From: http://stackoverflow.com/questions/2611083/css-equivalent-of-table-rowspan-with-fluid-height -->
+<div style="display: table">
+  <div style="display: table-cell; width: 48%;">
+    <div>
+			<label for="fontFamily">Font (?)</label><br/>
+      <div id="fontselector"></div>
+    </div>
+    <div style="margin-top: 1em; margin-right: 2%">
+			<label for="fontSize">Size (?)</label>&nbsp;
+      <select id="fontSize">
+        <option value="9">9</option>
+        <option value="10">10</option>
+        <option value="11">11</option>
+        <option value="12">12</option>
+        <option value="13">13</option>
+        <option value="14">14</option>
+        <option value="15">15</option>
+        <option value="16">16</option>
+        <option value="17">17</option>
+        <option value="18">18</option>
+        <option value="20">20</option>
+        <option value="22">22</option>
+        <option value="24">24</option>
+        <option value="28">28</option>
+        <option value="32">32</option>
+      </select>		
+    </div>
+  </div>  
+  <div style="display: table-cell; vertical-align: middle; width: 48%; margin-left: 2%">
+	  <span style="float:left; clear:left"><input type="checkbox" id="bold" value="bold" />&nbsp;Bold</span><br/>
+    <span style="float:left; clear:left"><input type="checkbox" id="italic" value="italic" />&nbsp;Italic</span><br/>
+    <span style="float:left; clear:left"><input type="checkbox" id="underline" value="underline" />&nbsp;Underline</span>
+  </div>
+</div>					  
+</fieldset>
+<fieldset>
+<legend>Colors</legend>
+	<div class="2cols">
+		<div class="labelOnTop col1 noPaddingBottom">
+			<label for="color">Text (?)</label><br/>
+      <div id="color"></div>
+		</div>
+		<div class="labelOnTop col2 noPaddingBottom">
+			<label for="backgroundColor">Background (?)</label><br/>
+			<div id="backgroundColor"></div>
+		</div>	
+	</div>
+</fieldset>
 					</div>				
 				</div>
 			</div>     
