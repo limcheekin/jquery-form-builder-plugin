@@ -126,7 +126,8 @@ div.col2 {
  }
  
 /* Color panel: color picker styles */
-#field\.backgroundColor, #field\.color { width: 8em }
+#field\.backgroundColor, #field\.color, 
+#form\.backgroundColor, #form\.color  { width: 8em }
 
 /* Font styles */
 .floatClearLeft { float:left; clear:left }

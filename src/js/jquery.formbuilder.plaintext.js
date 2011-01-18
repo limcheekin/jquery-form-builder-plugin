@@ -73,7 +73,7 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 					settings.classes[1] = value;
 					$this.updateSettings($widget, settings);
 				});
-		var $horizontalAlignment = $this.horizontalAlignment()
+		var $horizontalAlignment = $this.horizontalAlignment('field.horizontalAlignment')
 				.val(settings.classes[0]).change(
 						function(event) {
 							var $text = $widget.find('div.PlainText');

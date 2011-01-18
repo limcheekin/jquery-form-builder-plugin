@@ -18,6 +18,26 @@ var FormBuilder = {
 		tabSelected: 0,
 		readOnly: false,
 		tabDisabled: [],
+		settings: {
+			en: {
+				name: 'Form',
+				classes: ['leftAlign'],
+				heading: 'h1',
+				fontStyles: [0]
+			},
+			zh: {
+				name: '表格',
+				classes: ['leftAlign'],
+				heading: 'h1',
+				fontStyles: []
+			},			
+			styles : {
+				color : 'default', // browser default
+				backgroundColor : 'default',
+				fontFamily: 'default', 
+				fontSize: 'default'				
+			}
+		},
 		_builderForm: '#builderForm fieldset',
 		_emptyBuilderPanel: '#emptyBuilderPanel',
 		_standardFieldsPanel: '#standardFields',
@@ -26,7 +46,8 @@ var FormBuilder = {
     _fieldSettingsLanguageSection: '#fieldSettings fieldset.language:first',
     _fieldSettingsGeneralSection: '#fieldSettings div.general:first',
     _formSettingsLanguageSection: '#formSettings fieldset.language:first',
-    _formSettingsGeneralSection: '#formSettings div.general:first'    
+    _formSettingsGeneralSection: '#formSettings div.general:first',
+    _languagesSupportIdGeneration: ['en']
   },
   _create: function() {
     	// called on construction
@@ -84,15 +105,38 @@ var FormBuilder = {
    },
   _initFormSettings: function() {
 	  var $builderForm = $(this.options._builderForm);
-	  var $name = $('#name', $builderForm);
 	  var $description = $('#description', $builderForm);
+	  var $formSettingsLanguageSection = $(this.options._formSettingsLanguageSection);
 	  var $formSettingsGeneralSection = $(this.options._formSettingsGeneralSection);
-	  
-	  $("input[id$='form.name']", $formSettingsGeneralSection).val($name.val())
-	  .keyup(function(event) {
-	       $name.val($(event.target).val());	
-	    });
-
+	  var language = $('#language').val();
+	  var options = this.options;
+	  var settings = options.settings[language];
+	  var $this = this;
+		var $name = $('<label for="form.name">Name (?)</label><br/> \
+				  <input type="text" id="form.name" />');
+		$("input[id$='form.name']", $name)
+		.val($('#name',$builderForm).val())
+		.keyup(function(event) {
+			if ($.inArray(language, options._languagesSupportIdGeneration) > -1) {
+				var name = $.fb.fbWidget.prototype._propertyName($(this).val());
+	      $('#name',$builderForm).val(name).change();
+			}
+		});			  
+		
+		var $horizontalAlignment = $.fb.fbWidget.prototype.horizontalAlignment('form.horizontalAlignment')
+		.val(settings.classes[0]).change(
+				function(event) {
+					var $heading = $('#formHeading',$builderForm);
+					var value = $(this).val();
+					$heading.removeClass(settings.classes[0]).addClass(value);
+					settings.classes[0] = value;
+					$this.updateSettings(options.settings);
+				});
+		
+		$formSettingsLanguageSection.append($.fb.fbWidget.prototype.twoColumns($name, $horizontalAlignment));
+		$formSettingsGeneralSection.append($.fb.fbWidget.prototype.colorPanel(
+				                                 options.settings.styles.color, 
+				                                 options.settings.styles.backgroundColor, 'form.'));
 	  $("[id$='form.description']", $formSettingsGeneralSection).val($description.val())
 	  .keyup(function(event) {
 	       $description.val($(event.target).val());	

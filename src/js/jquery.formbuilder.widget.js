@@ -201,9 +201,9 @@ var FbWidget = {
   oneColumn: function($e) {
 	  return $('<div class="clear labelOnTop"></div>').append($e);
  	} ,    	
- 	horizontalAlignment: function() {
-		return $('<label for="field.horizontalAlignment">Horizontal Align (?)</label><br /> \
-		<select id="field.horizontalAlignment"> \
+ 	horizontalAlignment: function(name) {
+		return $('<label for="' + name + '">Horizontal Align (?)</label><br /> \
+		<select id="' + name + '"> \
 			<option value="leftAlign">left</option> \
 			<option value="centerAlign">center</option> \
 			<option value="rightAlign">right</option> \
