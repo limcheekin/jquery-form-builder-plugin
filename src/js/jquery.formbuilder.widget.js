@@ -259,7 +259,7 @@ var FbWidget = {
 		$fontFamily =  $('input', $fontPicker);
 		this._log('$fontFamily.val() = ' + $fontFamily.val());
  		if ($fontFamily.val() == 'default') {
- 			$fontFamily.val($fontPicker.css('fontFamily'));
+ 			$fontFamily.val(this.options.fbOptions._fontFamily);
  			this._log('$fontFamily.val() = ' + $fontFamily.val());
  		}		
 		$('.fontPicker', $fontPicker).fontPickerRegios({ 
@@ -292,7 +292,7 @@ var FbWidget = {
 		    <option value="32">32</option> \
 		  </select></div>');			
 		  if (value == 'default') {
-			  $('select', $fontSize).val($fontSize.css('fontSize'));
+			  $('select', $fontSize).val(this.options.fbOptions._fontSize);
 		  } else {
 			  $('select', $fontSize).val(value);
 		  }
@@ -334,10 +334,10 @@ var FbWidget = {
 	  idPrefix = idPrefix ? idPrefix : '';	  
 	  var $colorPanel = $('<fieldset><legend>Colors</legend></fieldset>');
 	  if (textColorValue == 'default') {
-		  textColorValue = $colorPanel.css('color');
+		  textColorValue = this.options.fbOptions._color;
 	    } 	  
 	  if (backgroundColorValue == 'default') {
-		  backgroundColorValue = $colorPanel.css('backgroundColor');
+		  backgroundColorValue = this.options.fbOptions._backgroundColor;
 	    } 	 
 	  this._log('textColorValue = ' + textColorValue + ', backgroundColorValue = ' + backgroundColorValue);
 	  $colorPanel.append(this.twoColumns(this.colorPicker('Text', idPrefix + 'color', textColorValue),

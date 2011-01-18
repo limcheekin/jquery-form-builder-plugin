@@ -83,7 +83,7 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 							$this.updateSettings($widget, settings);
 						});
 		return [$this.oneColumn($text),
-				$this.twoColumns($verticalAlignment,$horizontalAlignment) ];
+				$this.twoColumns($horizontalAlignment, $verticalAlignment) ];
 	},
 	getFieldSettingsGeneralSection : function($this, $widget, settings) {
 		var $fontPanel = $this.fontPanel(settings.styles.fontFamily, settings.styles.fontSize, [1,2], 'field.');

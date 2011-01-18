@@ -26,15 +26,23 @@ var FormBuilder = {
     _fieldSettingsLanguageSection: '#fieldSettings fieldset.language:first',
     _fieldSettingsGeneralSection: '#fieldSettings div.general:first',
     _formSettingsLanguageSection: '#formSettings fieldset.language:first',
-    _formSettingsGeneralSection: '#formSettings div.general:first'    	
-    	    	
+    _formSettingsGeneralSection: '#formSettings div.general:first'    
   },
   _create: function() {
     	// called on construction
     this._log('FormBuilder._create called. this.options.widgets = ' + this.options.widgets);
+    this._initBrowserDefaultSettings();
     this._initBuilderPalette();
     this._initBuilderPanel();
     },
+  _initBrowserDefaultSettings: function() {
+	  var $html = $('html');
+	  var options = this.options;
+	  options._fontFamily = $html.css('fontFamily');
+	  options._fontSize = $html.css('fontSize');
+	  options._color = $html.css('color');
+	  options._backgroundColor = $html.css('backgroundColor');
+  },
   _initBuilderPalette: function() {
 		// REF: http://www.webresourcesdepot.com/smart-floating-banners/
 		$(window).scroll(
