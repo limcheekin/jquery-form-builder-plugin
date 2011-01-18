@@ -87,9 +87,10 @@ var ColorPicker = {
 		this._log('ColorPicker._init called.');
 		// Add the colour-picker dialogue if not added
 		this.element.append('<input type="text" id="' + this.options.name + '" name="' + this.options.name + '" /> \
-				<a href="#"><img border="0" src="' + this.options.ico + '" alt="' + this.options.openTxt + '" /></a>');
+				<a href="#" rel="' + this.options.name + '"><img border="0" src="' + this.options.ico + '" alt="' + this.options.openTxt + '"/></a>');
 		var $colorPickerInput = $('input', this.element).attr('readonly', true);
 		var $this = this.element.data('colorPicker');
+		var id = "colorpicker_" + this.options.type;
 		
 		if ($this.options.showColorCode) {
 			  $colorPickerInput.val(this.options.value);
@@ -97,34 +98,37 @@ var ColorPicker = {
 				$colorPickerInput.attr('title', this.options.value).attr('disabled', 'true');
 		}
 		
+		var $colorPickerPanel = $('#' + id);
 
-		var loc = '';
-		var colors = this.options[this.options.type + 'Colors'];
-		var color;
-		for (var i = 0; i < colors.length; i++) {
-			color = colors[i];
-	    if (color!='')
-				loc += '<li><a href="#" title="' 
-						+ color 
-						+ '" rel="' 
-						+ color 
-						+ '" style="background: #' 
-						+ color 
-						+ '; color: ' 
-						+ this._hexInvert(color) 
-						+ ';">' 
-						+ color 
-						+ '</a></li>';		
-		}			
-		var heading	= this.options.title ? '<h2>' + this.options.title + '</h2>' : '';
-		$colorPickerPanel = $('<div class="colorPicker">' + heading + '<ul>' + loc + '</ul>' + '</div>').appendTo(document.body).hide();
-
-		// Remove the colour-picker panel if you click outside it (on body)
-		$(document.body).click(function(event) {
-			if (!($(event.target).is('.colorPicker') || $(event.target).parents('.colorPicker').length)) {
-				$colorPickerPanel.hide($this.options.speed);
-			}
-		});
+		if ($colorPickerPanel.length == 0) {
+			var loc = '';
+			var colors = this.options[this.options.type + 'Colors'];
+			var color;
+			for (var i = 0; i < colors.length; i++) {
+				color = colors[i];
+		    if (color!='')
+					loc += '<li><a href="#" title="' 
+							+ color 
+							+ '" rel="' 
+							+ color 
+							+ '" style="background: #' 
+							+ color 
+							+ '; color: ' 
+							+ this._hexInvert(color) 
+							+ ';">' 
+							+ color 
+							+ '</a></li>';		
+			}			
+			var heading	= this.options.title ? '<h2>' + this.options.title + '</h2>' : '';
+			$colorPickerPanel = $('<div id="' + id + '" class="colorPicker">' + heading + '<ul>' + loc + '</ul>' + '</div>').appendTo(document.body).hide();
+	
+			// Remove the colour-picker panel if you click outside it (on body)
+			$(document.body).click(function(event) {
+				if (!($(event.target).is('.colorPicker') || $(event.target).parents('.colorPicker').length)) {
+					$colorPickerPanel.hide($this.options.speed);
+				}
+			});
+		}
 
 		var $colorPickerIcon	= $('a', this.element);
 
@@ -147,32 +151,35 @@ var ColorPicker = {
 				left: iconPos.left + 'px', 
 				top: iconPos.top + 'px',
 				width: $this.options.width + 'px'
-			}).show($this.options.speed);
+			}).show($this.options.speed).attr('rel', $colorPickerIcon.attr('rel'));
 			return false;
 		});
 
 		// When you click a color in the color picker panel
-		$('a', $colorPickerPanel).click(function () {
+		$('a', $colorPickerPanel).click(function (event) {
 			// The hex is stored in the link's rel-attribute
+			  var $colorInput = $('#' + $colorPickerPanel.attr('rel'));
 				var hex = $(this).attr('rel');
-				if ($this.options.showColorCode) {
-				  $colorPickerInput.val(hex);
+				var options = $colorInput.parent().data('colorPicker').options;
+				if (options.showColorCode) {
+					$colorInput.val(hex);
+				  //$colorPickerInput.val(hex);
 				} else {
-					$colorPickerInput.attr('title', hex);
+					$colorInput.attr('title', hex);
 				}
 
 				// If user wants to, change the input's BG to reflect the newly selected colour
-				if ($this.options.inputBG) {
-					$colorPickerInput.css({background: '#' + hex, color: '#' + $this._hexInvert(hex)});
+				if (options.inputBG) {
+					$colorInput.css({background: '#' + hex, color: '#' + $this._hexInvert(hex)});
 				}
 
 				// Trigger change-event on input
-			$colorPickerInput.change();
+				$colorInput.change();
 
-			// Hide the colour-picker and return false
-			$colorPickerPanel.hide($this.options.speed);
-
-			return false;
+			  // Hide the colour-picker and return false
+			  $colorPickerPanel.hide($this.options.speed);
+			  event.stopImmediatePropagation();
+			  return false;
 		});
 
 	},
