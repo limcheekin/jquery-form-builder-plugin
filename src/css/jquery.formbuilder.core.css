@@ -125,5 +125,16 @@ div.col2 {
    margin-left: 52%;
  }
  
-/* Color picker styles */
-#field\.backgroundColor { width: 10em } 
+/* Color panel: color picker styles */
+#field\.backgroundColor, #field\.color { width: 8em }
+
+/* Font styles */
+.floatClearLeft { float:left; clear:left }
+
+/* Font Panel 
+From: http://stackoverflow.com/questions/2611083/css-equivalent-of-table-rowspan-with-fluid-height
+*/
+.fontPanel { display: table }
+.fontPanel .fontPickerContainer { display: table-cell; width: 48%; margin-right: 2% }
+.fontPanel .fontSize { margin-top: 1em }
+.fontPanel .fontStyles { display: table-cell; vertical-align: middle; width: 48%; margin-left: 2%; padding-left: 2%}

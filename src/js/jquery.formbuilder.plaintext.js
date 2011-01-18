@@ -29,9 +29,10 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 				classes : [ 'rightAlign', 'topAlign' ]
 			},
 			styles : {
-				fontFamily : 'default', // browser default
-				color : '',
-				backgroundColor : ''
+				fontFamily: 'default', // browser default
+				fontSize: 'default',
+				color : 'default',
+				backgroundColor : 'default'
 			}
 		}
 	},
@@ -85,7 +86,10 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 				$this.twoColumns($verticalAlignment,$horizontalAlignment) ];
 	},
 	getFieldSettingsGeneralSection : function($this, $widget, settings) {
-		return [ $this.oneColumn($this.colorPicker('Background Color', 'help', 'field.backgroundColor', settings.styles.backgroundColor)) ];
+		var $fontPanel = $this.fontPanel(settings.styles.fontFamily, settings.styles.fontSize, [1,2], 'field.');
+		var $colorPanel = $this.colorPanel(settings.styles.color, settings.styles.backgroundColor, 'field.');
+		
+		return [$fontPanel, $colorPanel];
 	}
 });
 

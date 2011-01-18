@@ -126,11 +126,8 @@ var FbWidget = {
 		var $settings = $widget.find("input[id$='fields[" + $widget.attr('rel') + "].settings']");
 		$this._log('settings = ' + $settings.val());
 		$this._log('unescaped settings = ' + unescape($settings.val()));
-		var settings = $.parseJSON(unescape($settings.val())); // settings is
-																// JavaScript
-																// encoded when
-																// return from
-																// server-side
+		// settings is JavaScript encoded when return from server-side
+		var settings = $.parseJSON(unescape($settings.val())); 
 		$widget.data('fbWidget', settings);
 		var $languageSection = $(formbuilderOptions._fieldSettingsLanguageSection);
 		var $language = $('#language');
@@ -232,11 +229,8 @@ var FbWidget = {
 		});		
  		return $name;		 
  	}, 	
- 	colorPicker: function(label, help, name, value, type) {
-		//var $colorPicker = $(' \
-				//<input type="text" id="' + name + '" name="' + name + '" value="' + value + '" /> \
-				//<a href="#"><img border="0" src="../images/jquery.colourPicker.gif" alt="Open colour picker" /></a>'); 	
- 		var $colorPicker = $('<div></div>');
+ 	colorPicker: function(label, name, value, help, type) {
+		var $colorPicker = $('<div></div>');
  		if (!type || type == 'basic') {
 			$colorPicker.colorPicker({
 				name: name,
@@ -257,6 +251,100 @@ var FbWidget = {
  		$colorPicker.prepend('<label for="' + name + '">' + label + ' (?)</label><br/>');
 	  return $colorPicker;
  	},
+ 	fontPicker: function(name, value) {
+ 		this._log('fontPicker(' +name+ ',' +value+ ')');
+		var $fontPicker = $('<div><label for="' + name + '">Font (?)</label><br/> \
+				<div class="fontPicker"></div> \
+				<input type="hidden" id="' + name + '" value="' + value + '" /></div>'); 		
+		$fontFamily =  $('input', $fontPicker);
+		this._log('$fontFamily.val() = ' + $fontFamily.val());
+ 		if ($fontFamily.val() == 'default') {
+ 			$fontFamily.val($fontPicker.css('fontFamily'));
+ 			this._log('$fontFamily.val() = ' + $fontFamily.val());
+ 		}		
+		$('.fontPicker', $fontPicker).fontPickerRegios({ 
+			defaultFont: $fontFamily.val(),	
+			callbackFunc: function(fontFamily) {
+				$fontFamily.val(fontFamily).change();
+			}
+		});		
+ 		return $fontPicker;
+ 	},	
+ 	fontSize: function(label, name, value, help) {
+ 		this._log('fontSize(' + label + ', ' + name + ',' + value + ', ' + help + ')');
+	 	var $fontSize = $('<div> \
+	 		<label for="' + name + '">' + label + ' (?)</label>&nbsp; \
+		  <select id="' + name + '"> \
+		    <option value="9">9</option> \
+		    <option value="10">10</option> \
+		    <option value="11">11</option> \
+		    <option value="12">12</option> \
+		    <option value="13">13</option> \
+		    <option value="14">14</option> \
+		    <option value="15">15</option> \
+		    <option value="16">16</option> \
+		    <option value="17">17</option> \
+		    <option value="18">18</option> \
+		    <option value="20">20</option> \
+		    <option value="22">22</option> \
+		    <option value="24">24</option> \
+		    <option value="28">28</option> \
+		    <option value="32">32</option> \
+		  </select></div>');			
+		  if (value == 'default') {
+			  $('select', $fontSize).val($fontSize.css('fontSize'));
+		  } else {
+			  $('select', $fontSize).val(value);
+		  }
+		  return $fontSize;
+   } ,	
+  fontStyles: function(names, checked) {  
+		var $fontStyles = $('<div> \
+		  <span class="floatClearLeft"><input type="checkbox" id="' + names[0] + '" value="bold" />&nbsp;Bold</span><br/> \
+	    <span class="floatClearLeft"><input type="checkbox" id="' + names[1] + '" value="italic" />&nbsp;Italic</span><br/> \
+	    <span class="floatClearLeft"><input type="checkbox" id="' + names[2] + '" value="underline" />&nbsp;Underline</span> \
+	  </div>');
+	  if (checked) {
+	    for (var i = 0; i < checked.length; i++) {
+	    	$("input[id$='" + names[checked[i]] + "']", $fontStyles).attr('checked', true);
+	    }
+	  }
+	  return $fontStyles;
+  },
+  fontPanel:function(fontPickerValue, fontSizeValue, fontStylesChecked, idPrefix) {
+	  var $fontPanel = $('<fieldset> \
+			  <legend>Fonts</legend> \
+			  <div class="fontPanel"> \
+			    <div class="fontPickerContainer"> \
+			      <div class="fontSize"> \
+			      </div> \
+			    </div> \
+			    <div class="fontStyles"> \
+			    </div> \
+			  </div> \
+			  </fieldset>');	 
+	  idPrefix = idPrefix ? idPrefix : '';	  
+		$('.fontPickerContainer',$fontPanel).prepend(this.fontPicker(idPrefix + 'fontFamily', fontPickerValue));
+		$('.fontSize',$fontPanel).append(this.fontSize('Size', idPrefix + 'fontSize', fontSizeValue));
+		var names = [idPrefix + 'bold', idPrefix + 'italic', idPrefix + 'underline'];
+		$('.fontStyles',$fontPanel).append(this.fontStyles(names, fontStylesChecked));
+		return $fontPanel;
+  },
+  colorPanel: function(textColorValue, backgroundColorValue, idPrefix) {
+	  idPrefix = idPrefix ? idPrefix : '';	  
+	  var $colorPanel = $('<fieldset><legend>Colors</legend></fieldset>');
+	  if (textColorValue == 'default') {
+		  textColorValue = $colorPanel.css('color');
+	    } 	  
+	  if (backgroundColorValue == 'default') {
+		  backgroundColorValue = $colorPanel.css('backgroundColor');
+	    } 	 
+	  this._log('textColorValue = ' + textColorValue + ', backgroundColorValue = ' + backgroundColorValue);
+	  $colorPanel.append(this.twoColumns(this.colorPicker('Text', idPrefix + 'color', textColorValue),
+			  this.colorPicker('Background', idPrefix + 'backgroundColor', backgroundColorValue)));
+	  $colorPanel.find('.2cols .col2').addClass('noPaddingBottom');
+	  return $colorPanel;
+  },
   getWidget: function($this, settings, $ctrlHolder) {
   	 $.fb.fbWidget.prototype._log('getWidget($this, settings, ctrlHolder) should be overriden by subclass.');
    },

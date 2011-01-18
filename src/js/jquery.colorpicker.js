@@ -19,6 +19,7 @@ var ColorPicker = {
 		ico:		  'ico.gif',				// SRC to color-picker icon
 		title:		'Pick a colour',		// Default dialogue title
 		inputBG:	true,					// Whether to change the input's background to the selected colour's
+		showColorCode: false, // whether to display 6 digits color code in text box, value stored in title attr.
 		speed:		500,					// Speed of dialogue-animation
 		openTxt:	'Open colour picker',
 		type: 'basic',  // color picker panel type: 'basic', 'webSafe' and 'custom' supported
@@ -85,10 +86,17 @@ var ColorPicker = {
 		// called on construction and re-initialization
 		this._log('ColorPicker._init called.');
 		// Add the colour-picker dialogue if not added
-		this.element.append('<input type="text" id="' + this.options.name + '" name="' + this.options.name + '" value="' + this.options.value + '" /> \
+		this.element.append('<input type="text" id="' + this.options.name + '" name="' + this.options.name + '" /> \
 				<a href="#"><img border="0" src="' + this.options.ico + '" alt="' + this.options.openTxt + '" /></a>');
-		var $colorPickerInput = $('input', this.element).attr('readOnly', true);
+		var $colorPickerInput = $('input', this.element).attr('readonly', true);
 		var $this = this.element.data('colorPicker');
+		
+		if ($this.options.showColorCode) {
+			  $colorPickerInput.val(this.options.value);
+	  } else {
+				$colorPickerInput.attr('title', this.options.value).attr('disabled', 'true');
+		}
+		
 
 		var loc = '';
 		var colors = this.options[this.options.type + 'Colors'];
@@ -122,7 +130,13 @@ var ColorPicker = {
 
 
 		if (this.options.inputBG) {
-			$colorPickerInput.css({background: '#' + $colorPickerInput.val(), color: '#' + this._hexInvert($colorPickerInput.val())});
+			var colorCode;
+			if ($this.options.showColorCode) {
+				colorCode = $colorPickerInput.val();
+			} else {
+				colorCode = $colorPickerInput.attr('title');
+			}
+			$colorPickerInput.css({background: colorCode, color: '#' + this._hexInvert(colorCode)});
 		}		
 		
 		$colorPickerIcon.click(function () {
@@ -141,7 +155,11 @@ var ColorPicker = {
 		$('a', $colorPickerPanel).click(function () {
 			// The hex is stored in the link's rel-attribute
 				var hex = $(this).attr('rel');
-				$colorPickerInput.val(hex);
+				if ($this.options.showColorCode) {
+				  $colorPickerInput.val(hex);
+				} else {
+					$colorPickerInput.attr('title', hex);
+				}
 
 				// If user wants to, change the input's BG to reflect the newly selected colour
 				if ($this.options.inputBG) {

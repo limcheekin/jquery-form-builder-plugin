@@ -29,7 +29,7 @@
 <script type="text/javascript">
 $(function(){
 	$('#paletteTabs').tabs();
-	$('#fontselector').fontPickerRegios({ 
+	$('.fontPicker').fontPickerRegios({ 
 		defaultFont: 'Tahoma',	
 		callbackFunc: changeFont
 	});
@@ -37,7 +37,8 @@ $(function(){
 	$('#backgroundColor').colorPicker({
 	    ico:    '../images/jquery.colourPicker.gif', 
 	    title:    "Basic Colors",
-	    type: 'basic'
+	    type: 'basic',
+	    showColorCode: true
 	});		
 	$('#color').colorPicker({
 	    ico:    '../images/jquery.colourPicker.gif', 
@@ -144,9 +145,10 @@ function changeFont(fontFamily)
   <div style="display: table-cell; width: 48%;">
     <div>
 			<label for="fontFamily">Font (?)</label><br/>
-      <div id="fontselector"></div>
+      <div class="fontPicker"></div><input type="hidden" id="fontFamily" />
     </div>
     <div style="margin-top: 1em; margin-right: 2%">
+    <div>
 			<label for="fontSize">Size (?)</label>&nbsp;
       <select id="fontSize">
         <option value="9">9</option>
@@ -164,13 +166,16 @@ function changeFont(fontFamily)
         <option value="24">24</option>
         <option value="28">28</option>
         <option value="32">32</option>
-      </select>		
+      </select>
+    </div>		
     </div>
   </div>  
   <div style="display: table-cell; vertical-align: middle; width: 48%; margin-left: 2%">
-	  <span style="float:left; clear:left"><input type="checkbox" id="bold" value="bold" />&nbsp;Bold</span><br/>
-    <span style="float:left; clear:left"><input type="checkbox" id="italic" value="italic" />&nbsp;Italic</span><br/>
-    <span style="float:left; clear:left"><input type="checkbox" id="underline" value="underline" />&nbsp;Underline</span>
+  <div class="floatClearLeft">
+	  <span><input type="checkbox" id="bold" value="bold" />&nbsp;Bold</span><br/>
+    <span><input type="checkbox" id="italic" value="italic" />&nbsp;Italic</span><br/>
+    <span><input type="checkbox" id="underline" value="underline" />&nbsp;Underline</span>
+  </div>
   </div>
 </div>					  
 </fieldset>
