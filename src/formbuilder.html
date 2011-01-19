@@ -81,22 +81,17 @@ $(function() {
 					</select>
 					</legend>
 					</fieldset>	
-					<div class="general">
-						<div class="clear labelOnTop">
-							<label for="text">Description (?)</label><br/>
-							<textarea id="form.description"></textarea>
-						</div>												
-					</div>								
+					<div class="general"></div>								
 				</div>
 			</div>     
      </div>
   </div>
   <form id="builderForm" action="#" class="uniForm">
   <div id="builderPanel">
-		  <div id="emptyBuilderPanel">Start adding some fields from the menu on the left.</div>
 		  <fieldset>
-			  <input type="hidden" id="name" name="name" value="This is name"/>
-			  <input type="hidden" id="description" name="description" value="This is descr"/>		  
+			  <input type="hidden" id="name" name="name" />
+			  <input type="hidden" id="settings" name="settings" />
+			  <div class="formHeading"></div>
 		   <!-- 
 		    <div class="ctrlHolder">
 		      <label for="">Single Line Text</label>
@@ -129,6 +124,7 @@ $(function() {
 		    </div>
 		     -->
 		  </fieldset>
+		  <div id="emptyBuilderPanel">Start adding some fields from the menu on the left.</div>
   </div>
   <div class="buttons">
 		  <input type="submit" name="create" class="save" value="Create" id="create" />

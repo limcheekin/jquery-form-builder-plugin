@@ -69,11 +69,12 @@
 /* Builder Panel */
 #emptyBuilderPanel {
 	text-align: center;
-	margin-top: 50px;
+	margin-top: 5em;
 	color: grey;
 	font-size: 20px;
-	display: block;
 }
+
+.uniForm .formHeading { padding: 1em; }
 
 .uniForm .ctrlHolder {
 	 position:relative;
@@ -138,4 +139,7 @@ From: http://stackoverflow.com/questions/2611083/css-equivalent-of-table-rowspan
 .fontPanel { display: table }
 .fontPanel .fontPickerContainer { display: table-cell; width: 48%; margin-right: 2% }
 .fontPanel .fontSize { margin-top: 1em }
-.fontPanel .fontStyles { display: table-cell; vertical-align: middle; width: 48%; margin-left: 2%; padding-left: 2%}
+.fontPanel .fontStyles { display: table-cell; vertical-align: middle; width: 48%; margin-left: 2%; padding-left: 10% }
+
+/* Form Settings */
+#form\.heading, #form\.horizontalAlignment { width: 100% }

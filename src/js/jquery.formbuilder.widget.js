@@ -12,7 +12,6 @@
 
 var FbWidget = {
   options: { // default options. values are stored in widget's prototype
-	  fbOptions: "", // $.fb.formbuilder.prototype.options
 	  _styleClass: "ctrlHolder"
     },
   // logging to the firebug's console, put in 1 line so it can be removed
@@ -33,6 +32,9 @@ var FbWidget = {
 		$.Widget.prototype.destroy.call(this);
 
     },
+  _getFbOptions: function() {
+	  return $($.fb.formbuilder.prototype.options._id).formbuilder('option');  
+  },
   _createField: function(name, widget, options, settings) {
 	  var formBuilderOptions = $.fb.formbuilder.prototype.options;
 	  var index = $('#builderForm div.ctrlHolder').size();
@@ -121,7 +123,7 @@ var FbWidget = {
 		var type = $widget.find("input[id$='fields[" + $widget.attr('rel') + "].type']").val();
 		$.fb.fbWidget.prototype._log('type = ' + type);
 		$this = $('#' + type).data('fb' + type);
-		var formbuilderOptions = $this.options.fbOptions;
+		var formbuilderOptions = $this._getFbOptions();
 		$this._log('$widget.text() = ' + $widget.text() + ", formbuilderOptions.readOnly = " + formbuilderOptions.readOnly);
 		var $settings = $widget.find("input[id$='fields[" + $widget.attr('rel') + "].settings']");
 		$this._log('settings = ' + $settings.val());
@@ -201,13 +203,16 @@ var FbWidget = {
   oneColumn: function($e) {
 	  return $('<div class="clear labelOnTop"></div>').append($e);
  	} ,    	
- 	horizontalAlignment: function(name) {
-		return $('<label for="' + name + '">Horizontal Align (?)</label><br /> \
-		<select id="' + name + '"> \
+ 	horizontalAlignment: function(name, value) {
+ 		var $horizontalAlignment = $('<div> \
+ 		<label for="' + name + '">Horizontal Align (?)</label><br /> \
+		<select> \
 			<option value="leftAlign">left</option> \
 			<option value="centerAlign">center</option> \
 			<option value="rightAlign">right</option> \
-		</select>');  		
+		</select></div>');
+		$('select', $horizontalAlignment).val(value).attr('id', name);	
+		return $horizontalAlignment;
  	},
  	verticalAlignment: function() {
  		return $('<label for="field.verticalAlignment">Vertical Align (?)</label><br /> \
@@ -221,7 +226,7 @@ var FbWidget = {
  		var index = $widget.attr('rel');
  		var $name = $('<label for="field.name">Name (?)</label><br/> \
  				  <input type="text" id="field.name" />');
-		("input[id$='field.name']", $name)
+		$("input[id$='field.name']", $name)
 		.val($widget.find("input[id$='fields[" + index + "].name']").val())
 		.keyup(function(event) {
 		  $widget.find("input[id$='fields[" + index + "].name']")
@@ -259,7 +264,7 @@ var FbWidget = {
 		$fontFamily =  $('input', $fontPicker);
 		this._log('$fontFamily.val() = ' + $fontFamily.val());
  		if ($fontFamily.val() == 'default') {
- 			$fontFamily.val(this.options.fbOptions._fontFamily);
+ 			$fontFamily.val(this._getFbOptions().settings.styles.fontFamily);
  			this._log('$fontFamily.val() = ' + $fontFamily.val());
  		}		
 		$('.fontPicker', $fontPicker).fontPickerRegios({ 
@@ -274,7 +279,7 @@ var FbWidget = {
  		this._log('fontSize(' + label + ', ' + name + ',' + value + ', ' + help + ')');
 	 	var $fontSize = $('<div> \
 	 		<label for="' + name + '">' + label + ' (?)</label>&nbsp; \
-		  <select id="' + name + '"> \
+		  <select> \
 		    <option value="9">9</option> \
 		    <option value="10">10</option> \
 		    <option value="11">11</option> \
@@ -290,57 +295,65 @@ var FbWidget = {
 		    <option value="24">24</option> \
 		    <option value="28">28</option> \
 		    <option value="32">32</option> \
-		  </select></div>');			
+		  </select></div>');		
+		  var $select = $('select', $fontSize);
 		  if (value == 'default') {
-			  $('select', $fontSize).val(this.options.fbOptions._fontSize);
+			  $select.val(this._getFbOptions().settings.styles.fontSize);
 		  } else {
-			  $('select', $fontSize).val(value);
+			  $select.val(value);
 		  }
+		  $select.attr('id', name);
 		  return $fontSize;
    } ,	
   fontStyles: function(names, checked) {  
 		var $fontStyles = $('<div> \
-		  <span class="floatClearLeft"><input type="checkbox" id="' + names[0] + '" value="bold" />&nbsp;Bold</span><br/> \
-	    <span class="floatClearLeft"><input type="checkbox" id="' + names[1] + '" value="italic" />&nbsp;Italic</span><br/> \
-	    <span class="floatClearLeft"><input type="checkbox" id="' + names[2] + '" value="underline" />&nbsp;Underline</span> \
+		  <span class="floatClearLeft"><input type="checkbox" id="' + names[0] + '" />&nbsp;Bold</span><br/> \
+	    <span class="floatClearLeft"><input type="checkbox" id="' + names[1] + '" />&nbsp;Italic</span><br/> \
+	    <span class="floatClearLeft"><input type="checkbox" id="' + names[2] + '" />&nbsp;Underline</span> \
 	  </div>');
 	  if (checked) {
 	    for (var i = 0; i < checked.length; i++) {
-	    	$("input[id$='" + names[checked[i]] + "']", $fontStyles).attr('checked', true);
+	    	$("input[id$='" + names[i] + "']", $fontStyles).attr('checked', checked[i]);
 	    }
 	  }
 	  return $fontStyles;
   },
-  fontPanel:function(fontPickerValue, fontSizeValue, fontStylesChecked, idPrefix) {
-	  var $fontPanel = $('<fieldset> \
-			  <legend>Fonts</legend> \
-			  <div class="fontPanel"> \
+  twoRowsOneRowLayout: function(row1col1, row2col1, row1col2) {
+	  var $twoRowsOneRowLayout = $('<div class="fontPanel"> \
 			    <div class="fontPickerContainer"> \
 			      <div class="fontSize"> \
 			      </div> \
 			    </div> \
 			    <div class="fontStyles"> \
 			    </div> \
-			  </div> \
-			  </fieldset>');	 
-	  idPrefix = idPrefix ? idPrefix : '';	  
-		$('.fontPickerContainer',$fontPanel).prepend(this.fontPicker(idPrefix + 'fontFamily', fontPickerValue));
-		$('.fontSize',$fontPanel).append(this.fontSize('Size', idPrefix + 'fontSize', fontSizeValue));
-		var names = [idPrefix + 'bold', idPrefix + 'italic', idPrefix + 'underline'];
-		$('.fontStyles',$fontPanel).append(this.fontStyles(names, fontStylesChecked));
-		return $fontPanel;
+			  </div>');
+		$('.fontPickerContainer',$twoRowsOneRowLayout).prepend(row1col1);
+		$('.fontSize',$twoRowsOneRowLayout).append(row2col1);
+		$('.fontStyles',$twoRowsOneRowLayout).append(row1col2);			    
+		return $twoRowsOneRowLayout;	    
+  },
+  fieldset: function(legend) {
+	  return $('<fieldset><legend>' + legend + '</legend></fieldset>');
+  },
+  fontPanel:function(fontPickerValue, fontSizeValue, fontStylesChecked, idPrefix) { 
+	  idPrefix = idPrefix ? idPrefix : '';
+	  var names = [idPrefix + 'bold', idPrefix + 'italic', idPrefix + 'underline'];
+	  return this.fieldset('Fonts').append(this.twoRowsOneRowLayout(
+			  this.fontPicker(idPrefix + 'fontFamily', fontPickerValue),
+			  this.fontSize('Size', idPrefix + 'fontSize', fontSizeValue),
+			  this.fontStyles(names, fontStylesChecked)
+			  ));
   },
   colorPanel: function(textColorValue, backgroundColorValue, idPrefix) {
-	  idPrefix = idPrefix ? idPrefix : '';	  
-	  var $colorPanel = $('<fieldset><legend>Colors</legend></fieldset>');
+	  idPrefix = idPrefix ? idPrefix : '';
 	  if (textColorValue == 'default') {
-		  textColorValue = this.options.fbOptions._color;
+		  textColorValue = this._getFbOptions().settings.styles.color;
 	    } 	  
 	  if (backgroundColorValue == 'default') {
-		  backgroundColorValue = this.options.fbOptions._backgroundColor;
+		  backgroundColorValue = this._getFbOptions().settings.styles.backgroundColor;
 	    } 	 
 	  this._log('textColorValue = ' + textColorValue + ', backgroundColorValue = ' + backgroundColorValue);
-	  $colorPanel.append(this.twoColumns(this.colorPicker('Text', idPrefix + 'color', textColorValue),
+	  var $colorPanel = this.fieldset('Colors').append(this.twoColumns(this.colorPicker('Text', idPrefix + 'color', textColorValue),
 			  this.colorPicker('Background', idPrefix + 'backgroundColor', backgroundColorValue)));
 	  $colorPanel.find('.2cols .col2').addClass('noPaddingBottom');
 	  return $colorPanel;

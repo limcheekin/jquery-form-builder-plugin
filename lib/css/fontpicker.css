@@ -1,5 +1,5 @@
 .fontPicker {
-  width: 130px;
+  width: 140px;
   height: 18px;
   padding: 1px;
   border: solid 1px #cecece;
@@ -12,7 +12,7 @@
 }
 
 #fontbox {
-  width: 130px;    
+  width: 140px;    
   text-align: center;
   border: solid 1px #cecece;
   background-color: #ffffee;
