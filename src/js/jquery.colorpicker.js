@@ -140,7 +140,7 @@ var ColorPicker = {
 			} else {
 				colorCode = $colorPickerInput.attr('title');
 			}
-			if (colorCode.indexOf('rgb') == -1) colorCode = '#' + colorCode;
+			if (colorCode.length == 6) colorCode = '#' + colorCode;
 			$colorPickerInput.css({background: colorCode, color: '#' + this._hexInvert(colorCode)});
 		}		
 		
