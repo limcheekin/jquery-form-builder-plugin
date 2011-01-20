@@ -68,7 +68,9 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 				});
 		var $verticalAlignment = $this.verticalAlignment({name: 'field.verticalAlignment', value: settings.classes[1]})
         .change(function(event) {
-					var value = $(this).val();
+        	// $(this).val() not work for select id that has '.'
+					var value = $('option:selected', this).val(); 
+					$this._log('field.verticalAlignment value = ' + value);
 					$widget.removeClass(settings.classes[1]).addClass(value);
 					settings.classes[1] = value;
 					$this._updateSettings($widget);
@@ -76,7 +78,7 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 		var $horizontalAlignment = $this.horizontalAlignment('field.horizontalAlignment', settings.classes[0])
 				   .change(function(event) {
 							var $text = $widget.find('div.PlainText');
-							var value = $(this).val();
+							var value = $('option:selected', this).val();
 							$text.removeClass(settings.classes[0]).addClass(value);
 							settings.classes[0] = value;
 							$this._updateSettings($widget);
@@ -154,6 +156,11 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 			$this._updateSettings($widget);
 		});			
 		return [$fontPanel, $colorPanel];
+	}, 
+	languageChange : function($widget, settings) {
+		this._log('languageChange = ' + $.toJSON(settings));
+		$widget.find('div.PlainText').text(settings.text).attr('class', 'PlainText ' + settings.classes[0]);
+		$widget.attr('class', $.fb.fbWidget.prototype.options._styleClass + ' ' + settings.classes[1]);
 	}
 });
 

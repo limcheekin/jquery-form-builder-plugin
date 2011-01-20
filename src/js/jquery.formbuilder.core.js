@@ -116,19 +116,20 @@ var FormBuilder = {
 	  var $builderForm = $(this.options._builderForm);
 	  var $formSettingsLanguageSection = $(this.options._formSettingsLanguageSection);
 	  var $formSettingsGeneralSection = $(this.options._formSettingsGeneralSection);
-	  var language = $('#language').val();
+	  var $language = $('#language', $formSettingsLanguageSection).change(this._languageChange);
 	  var options = this.options;
-	  var settings = options.settings[language];
+	  var settings = options.settings[$language.val()];
 	  var $this = this;
 	  var $formHeading = $('.formHeading',$builderForm);
 	  var formName = settings.name + ' ' + options.formCounter;
+	 
 	  $formHeading.append('<' + settings.heading + '>' + formName + '</' + settings.heading + '>');
 	  
 	  $('#name',$builderForm).val($fbWidget._propertyName(formName));
 		var $name = $('<label for="form.name">Name (?)</label><br/> \
 				  <input type="text" id="form.name" value="' + formName + '" />')
 					.keyup(function(event) {
-						if ($.inArray(language, options._languagesSupportIdGeneration) > -1) {
+						if ($.inArray($language.val(), options._languagesSupportIdGeneration) > -1) {
 							var name = $fbWidget._propertyName($(this).val());
 				      $('#name',$builderForm).val(name).change();
 						}
@@ -261,6 +262,20 @@ var FormBuilder = {
 		$formSettingsGeneralSection.append($fbWidget.fieldset('Fonts').append($fontPanel))
 		   .append($colorPanel);
 	 
+   },
+ _languageChange:function() {
+	 $.fb.formbuilder.prototype._log('languageChange(' + $(this).val() + ')');
+	  var $ctrlHolders = $('.' + $.fb.fbWidget.prototype.options._styleClass + ':visible');
+	  var language = $(this).val();
+	  var settings, type, $widget;
+		$ctrlHolders.each(function(i) {
+		    var $widget = $(this);
+		    settings = $widget.data('fbWidget');
+		    type = $widget.find("input[id$='fields[" + $widget.attr('rel') + "].type']").val();
+		    $.fb.formbuilder.prototype._log('type = ' + type);
+		    $this = $('#' + type).data('fb' + type);
+		    $this.languageChange($widget, settings[language]);
+		});
    },
  _updateSettings: function($this) {
 	 	$this._log('_updateSettings = ' + $.toJSON($this.options.settings));
