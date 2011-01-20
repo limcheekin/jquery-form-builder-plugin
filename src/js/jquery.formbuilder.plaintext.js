@@ -31,6 +31,7 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 			styles : {
 				fontFamily: 'default', // browser default
 				fontSize: 'default',
+				fontStyles: [0, 0, 0],
 				color : 'default',
 				backgroundColor : 'default'
 			}
@@ -63,15 +64,14 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 					var value = $(this).val();
 					$widget.find('div.PlainText').text(value);
 					settings.text = value;
-					$this.updateSettings($widget, settings);
+					$this._updateSettings($widget);
 				});
-		var $verticalAlignment = $this.verticalAlignment().val(
-				settings.classes[1]).change(
-				function(event) {
+		var $verticalAlignment = $this.verticalAlignment({name: 'field.verticalAlignment', value: settings.classes[1]})
+        .change(function(event) {
 					var value = $(this).val();
 					$widget.removeClass(settings.classes[1]).addClass(value);
 					settings.classes[1] = value;
-					$this.updateSettings($widget, settings);
+					$this._updateSettings($widget);
 				});
 		var $horizontalAlignment = $this.horizontalAlignment('field.horizontalAlignment', settings.classes[0])
 				   .change(function(event) {
@@ -79,15 +79,80 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 							var value = $(this).val();
 							$text.removeClass(settings.classes[0]).addClass(value);
 							settings.classes[0] = value;
-							$this.updateSettings($widget, settings);
+							$this._updateSettings($widget);
 						});
 		return [$this.oneColumn($text),
 				$this.twoColumns($horizontalAlignment, $verticalAlignment) ];
 	},
 	getFieldSettingsGeneralSection : function($this, $widget, settings) {
-		var $fontPanel = $this.fontPanel(settings.styles.fontFamily, settings.styles.fontSize, [1,2], 'field.');
-		var $colorPanel = $this.colorPanel(settings.styles.color, settings.styles.backgroundColor, 'field.');
+    var styles = settings.styles;
+    var fbStyles = $this._getFbOptions().settings.styles;
+    var fontFamily = styles.fontFamily != 'default' ? styles.fontFamily : fbStyles.fontFamily ;
+	  var fontSize = styles.fontSize != 'default' ? styles.fontSize : fbStyles.fontSize;	  
+    var color = styles.color != 'default' ? styles.color : fbStyles.color;
+	  var backgroundColor = styles.backgroundColor != 'default' ? styles.backgroundColor : fbStyles.backgroundColor;
+		var $fontPanel = $this.fontPanel(fontFamily, fontSize, styles.fontStyles, 'field.');
+		var $colorPanel = $this.colorPanel(color, backgroundColor, 'field.');
+	  
+		$("input[id$='field.bold']", $fontPanel).change(function(event) {
+			if ($(this).attr('checked')) {
+				$widget.css('fontWeight', 'bold');
+				styles.fontStyles[0] = 1;
+			} else {
+				$widget.css('fontWeight', 'normal');
+				styles.fontStyles[0] = 0;
+			}
+			$this._updateSettings($widget);
+		});
+		$("input[id$='field.italic']", $fontPanel).change(function(event) {
+			if ($(this).attr('checked')) {
+				$widget.css('fontStyle', 'italic');
+				styles.fontStyles[1] = 1;
+			} else {
+				$widget.css('fontStyle', 'normal');
+				styles.fontStyles[1] = 0;
+			}
+			$this._updateSettings($widget);
+		});	
+		$("input[id$='field.underline']", $fontPanel).change(function(event) {
+			if ($(this).attr('checked')) {
+				$widget.css('textDecoration', 'underline');
+				styles.fontStyles[2] = 1;
+			} else {
+				$widget.css('textDecoration', 'none');
+				styles.fontStyles[2] = 0;
+			}
+			$this._updateSettings($widget);
+		});
 		
+		$("input[id$='field.fontFamily']", $fontPanel).change(function(event) {
+			var value = $(this).val();
+			$widget.css('fontFamily', value);
+			styles.fontFamily = value;
+			$this._updateSettings($widget);
+		});		
+		
+		var $fontSize = $this.fontSize('Size', 'field.fontSize', fontSize);
+		$("select[id$='field.fontSize']", $fontPanel).change(function(event) {
+			var value = $(this).val();
+			$widget.css('fontSize', value + 'px');
+			styles.fontSize = value;
+			$this._updateSettings($widget);
+		});		
+		
+		$("input[id$='field.color']", $colorPanel).change(function(event) {
+			var value = $(this).attr('title');
+			$widget.css('color','#' + value);
+			styles.color = value;
+			$this._updateSettings($widget);
+		});		
+
+		$("input[id$='field.backgroundColor']", $colorPanel).change(function(event) {
+			var value = $(this).attr('title');
+			$widget.css('backgroundColor','#' + value);
+			styles.backgroundColor = value;
+			$this._updateSettings($widget);
+		});			
 		return [$fontPanel, $colorPanel];
 	}
 });

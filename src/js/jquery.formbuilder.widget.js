@@ -97,8 +97,7 @@ var FbWidget = {
 	  $.fb.fbWidget.prototype._log('type = ' + type);		
 		var $this = $(this).data(type);
 		// Clone an instance of plugin's option settings.
-		// From:
-		// http://stackoverflow.com/questions/122102/what-is-the-most-efficient-way-to-clone-a-javascript-object
+		// From: http://stackoverflow.com/questions/122102/what-is-the-most-efficient-way-to-clone-a-javascript-object
 		var settings = jQuery.extend(true, {}, $this.options.settings);
 		var counter = $this._getCounter($this);
 		var languages = $this.options._languages;
@@ -129,8 +128,8 @@ var FbWidget = {
 		$this._log('settings = ' + $settings.val());
 		$this._log('unescaped settings = ' + unescape($settings.val()));
 		// settings is JavaScript encoded when return from server-side
-		var settings = $.parseJSON(unescape($settings.val())); 
-		$widget.data('fbWidget', settings);
+		$widget.data('fbWidget', $.parseJSON(unescape($settings.val())));
+		var settings = $widget.data('fbWidget'); 
 		var $languageSection = $(formbuilderOptions._fieldSettingsLanguageSection);
 		var $language = $('#language');
 		$('legend', $languageSection).text('Language: ' + $language.find('option:selected').text());		 		
@@ -185,11 +184,11 @@ var FbWidget = {
 		  $this._log('counter = ' + counter);
 		  return counter;
 	},    
-  updateSettings: function($widget, settings) {
-  	var fullSettings = $widget.data('fbWidget');
+  _updateSettings: function($widget) {
+	  var settings = $widget.data('fbWidget');
+	  this._log('_updateSettings: \n' + $.toJSON(settings));
   	var $settings = $widget.find("input[id$='fields[" + $widget.attr('rel') + "].settings']");
-  	fullSettings[$('#language').val()] = settings;
-  	$settings.val($.toJSON(fullSettings)).change();
+  	$settings.val($.toJSON(settings)).change();
    	} ,          
   twoColumns: function($e1, $e2) {
 	  var $ui = $('<div class="2cols"> \
@@ -214,13 +213,18 @@ var FbWidget = {
 		$('select', $horizontalAlignment).val(value).attr('id', name);	
 		return $horizontalAlignment;
  	},
- 	verticalAlignment: function() {
- 		return $('<label for="field.verticalAlignment">Vertical Align (?)</label><br /> \
-			<select id="field.verticalAlignment"> \
+ 	verticalAlignment: function(options) {
+ 		var o = $.extend({}, options);
+ 		o.label = o.label ? o.label : 'Vertical Align'; 
+ 		var $verticalAlignment = $('<div> \
+ 			<label for="' + o.name + '">' + o.label + ' (?)</label><br /> \
+			<select> \
 				<option value="topAlign">top</option> \
 				<option value="middleAlign">middle</option> \
 				<option value="bottomAlign">bottom</option> \
-			</select>');
+			</select></div>');
+		$('select', $verticalAlignment).val(o.value).attr('id', o.name);	
+		return $verticalAlignment;			
  	},
  	name: function($widget) {
  		var index = $widget.attr('rel');

@@ -1,11 +1,8 @@
-2. Design and complete the Form Settings Panel
-Language Section
-- Name, Description and Horizontal Alignment
-General Section
-- Font Panel and Background Color.
-* Internal widget name and form name generated from English version, otherwise stick with default.
+2. Toggle language changes.
 3. Auto expand and auto scroll BuilderPanel when it is exceed the existing height.
 4. Highlight widget when it is created and selected.
+5. Widget standardization to accept options object as param. 
+eg. options = {label: 'Label 1', name: 'widget1', value: 'default value', description:'help text'};
 5. Document the architecture of JQuery Form Builder and How to create custom widget integrate with form builder.
 6. Blog about it and RFC. Post it to Developing JQuery plugin forum, dzone.com and stackoverflow.com
  
