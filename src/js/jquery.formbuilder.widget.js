@@ -260,23 +260,20 @@ var FbWidget = {
  		$colorPicker.prepend('<label for="' + name + '">' + label + ' (?)</label><br/>');
 	  return $colorPicker;
  	},
- 	fontPicker: function(name, value) {
- 		this._log('fontPicker(' +name+ ',' +value+ ')');
-		var $fontPicker = $('<div><label for="' + name + '">Font (?)</label><br/> \
-				<div class="fontPicker"></div> \
-				<input type="hidden" id="' + name + '" value="' + value + '" /></div>'); 		
-		$fontFamily =  $('input', $fontPicker);
-		this._log('$fontFamily.val() = ' + $fontFamily.val());
- 		if ($fontFamily.val() == 'default') {
- 			$fontFamily.val(this._getFbOptions().settings.styles.fontFamily);
- 			this._log('$fontFamily.val() = ' + $fontFamily.val());
- 		}		
-		$('.fontPicker', $fontPicker).fontPickerRegios({ 
-			defaultFont: $fontFamily.val(),	
-			callbackFunc: function(fontFamily) {
-				$fontFamily.val(fontFamily).change();
-			}
-		});		
+ 	fontPicker: function(options) {
+ 		var o = $.extend({}, options);
+ 		this._log('fontPicker(' + $.toJSON(o) + ')');
+ 		o.value = o.value.replace(/'/gi, ''); // remove single quote for chrome browser
+ 		o.value = o.value.split(',', 1)[0]; // taking the 1st font type
+ 		o.value = o.value != 'default' ? o.value : this._getFbOptions().settings.styles.fontFamily;
+ 		
+		var $fontPicker = $('<div><label for="' + o.name + '">Font (?)</label><br/> \
+				<div class="fontPicker" rel="' + o.name + '"></div></div>'); 		
+
+		$('.fontPicker', $fontPicker).fontPicker({ 
+			name: o.name,
+			defaultFont: o.value
+		});
  		return $fontPicker;
  	},	
  	fontSize: function(label, name, value, help) {
@@ -343,7 +340,7 @@ var FbWidget = {
 	  idPrefix = idPrefix ? idPrefix : '';
 	  var names = [idPrefix + 'bold', idPrefix + 'italic', idPrefix + 'underline'];
 	  return this.fieldset('Fonts').append(this.twoRowsOneRowLayout(
-			  this.fontPicker(idPrefix + 'fontFamily', fontPickerValue),
+			  this.fontPicker({ name: idPrefix + 'fontFamily', value: fontPickerValue }),
 			  this.fontSize('Size', idPrefix + 'fontSize', fontSizeValue),
 			  this.fontStyles(names, fontStylesChecked)
 			  ));

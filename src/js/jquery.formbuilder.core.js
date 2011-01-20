@@ -209,7 +209,7 @@ var FormBuilder = {
 		if (fontFamily == 'default') {
 			fontFamily = options._fontFamily;
 		}
-		var $fontPicker = $fbWidget.fontPicker('form.fontFamily', fontFamily);
+		var $fontPicker = $fbWidget.fontPicker({ name: 'form.fontFamily', value: fontFamily });
 		$("input[id$='form.fontFamily']", $fontPicker).change(function(event) {
 			var value = $(this).val();
 			$builderPanel.css('fontFamily', value);

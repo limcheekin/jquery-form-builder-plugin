@@ -29,7 +29,7 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 				classes : [ 'rightAlign', 'topAlign' ]
 			},
 			styles : {
-				fontFamily: 'default', // browser default
+				fontFamily: 'default', // form builder default
 				fontSize: 'default',
 				fontStyles: [0, 0, 0],
 				color : 'default',
