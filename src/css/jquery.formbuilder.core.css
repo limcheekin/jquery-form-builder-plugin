@@ -24,7 +24,7 @@
 
 #builderPanel {
   border: 1px solid #ccc;  
-  height: 460px	  
+  min-height: 460px	  
 }
 
 .buttons {
