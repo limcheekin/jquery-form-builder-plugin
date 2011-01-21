@@ -44,6 +44,7 @@ var FormBuilder = {
 		_builderPanel: '#builderPanel',
 		_builderForm: '#builderForm fieldset',
 		_emptyBuilderPanel: '#emptyBuilderPanel',
+		_paletteTabs: '#paletteTabs',
 		_standardFieldsPanel: '#standardFields',
 		_fancyFieldsPanel: '#fancyFields',
 		_fieldSettingsPanel: '#fieldSettings',

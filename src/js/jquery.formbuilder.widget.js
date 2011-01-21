@@ -41,7 +41,9 @@ var FbWidget = {
 	  var index = $('#builderForm div.ctrlHolder').size();
 	  
 	  $('<a class="ui-corner-all closeButton" href="#"><span class="ui-icon ui-icon-close">delete this widget</span></a>')
-	  .prependTo(widget).click($.fb.fbWidget.prototype._deleteWidget);
+	  .prependTo(widget).click($.fb.fbWidget.prototype._deleteWidget)
+	  .hover(function () { $('span', this).removeClass('ui-icon-close').addClass('ui-icon-circle-close'); }, 
+			     function () { $('span', this).removeClass('ui-icon-circle-close').addClass('ui-icon-close'); });
 	  widget.attr('rel', index);
 	  widget.append($.fb.fbWidget.prototype._createFieldProperties(name, options, settings, index));
 	  
@@ -57,17 +59,25 @@ var FbWidget = {
   _deleteWidget: function(event) {
 	   var $widget = $(event.target).parent().parent();
 	   var index = $widget.attr('rel');
+	   var options = $.fb.fbWidget.prototype.options;
+	   var fbOptions = $.fb.formbuilder.prototype.options;
+	   
 	   // new record that not stored in database
      if ($widget.find("input[id$='fields[" + index + "].id']").val() == 'null') { 
     	 $widget.remove();
      } else {
   	   $widget.find("input[id$='fields[" + index + "].status']").val('D');
-	     $widget.hide();    	 
+	     $widget.toggle('slide', {direction: 'up'}, 'fast');    	 
      }
-     var $ctrlHolders = $('.' + $.fb.fbWidget.prototype.options._styleClass + ':visible');
+     var $ctrlHolders = $('.' + options._styleClass + ':visible');
+     $.fb.fbWidget.prototype._log('_deleteWidget(). $ctrlHolders.size() = ' + $ctrlHolders.size());
+     if ($widget.attr('class').indexOf(options._selectedClass) > -1) {
+		   // activate Add Field tab
+		   $(fbOptions._paletteTabs).tabs('select', 0);
+     }
      if ($ctrlHolders.size() == 0) {
-    	 $($.fb.formbuilder.prototype.options._emptyBuilderPanel).show();
-     }
+    	 $(fbOptions._emptyBuilderPanel).show();   	 
+         }
      event.stopPropagation();
   },
 	_createFieldProperties: function(name, options, settings, index) {
@@ -106,7 +116,7 @@ var FbWidget = {
 			settings[languages[i]][$this.options._counterField] += ' ' + counter;
 			$this._log(settings[languages[i]][$this.options._counterField]);
 		}
-		var $ctrlHolder = $('<div class="' + $this.options._styleClass + '"></div>');
+		var $ctrlHolder = $('<div class="' + $this.options._styleClass + '"></div>').hide();
 		// store settings to be used in _createFieldSettings() and _languageChange()
 		$ctrlHolder.data('fbWidget', settings); 
 		$this._log("b4. text = " + settings[$('#language').val()].text);
@@ -114,7 +124,7 @@ var FbWidget = {
 		$this._log("at. text = " + settings[$('#language').val()].text);
 		var name = $this._propertyName($this.options._type + counter);
 		$widget.click($this._createFieldSettings);
-		$ctrlHolder.append($widget);
+		$ctrlHolder.append($widget).toggle('slide', {direction: 'down'}, 'slow');
 		$this._createField(name, $ctrlHolder, $this.options, settings);		
 		$this._log('_createFbWidget executed');
     },
@@ -128,8 +138,8 @@ var FbWidget = {
 		var type = $widget.find("input[id$='fields[" + $widget.attr('rel') + "].type']").val();
 		$.fb.fbWidget.prototype._log('type = ' + type);
 		var $this = $('#' + type).data('fb' + type);
-		var formbuilderOptions = $this._getFbOptions();
-		$this._log('$widget.text() = ' + $widget.text() + ", formbuilderOptions.readOnly = " + formbuilderOptions.readOnly);
+		var fbOptions = $this._getFbOptions();
+		$this._log('$widget.text() = ' + $widget.text() + ", fbOptions.readOnly = " + fbOptions.readOnly);
 		
 		if (!$widget.data('fbWidget')) { // widgets loaded from server
 			var $settings = $widget.find("input[id$='fields[" + $widget.attr('rel') + "].settings']");
@@ -138,7 +148,7 @@ var FbWidget = {
 			$widget.data('fbWidget', $.parseJSON(unescape($settings.val())));
 		}
 		var settings = $widget.data('fbWidget'); 
-		var $languageSection = $(formbuilderOptions._fieldSettingsLanguageSection);
+		var $languageSection = $(fbOptions._fieldSettingsLanguageSection);
 		var $language = $('#language');
 		$('legend', $languageSection).text('Language: ' + $language.find('option:selected').text());		 		
 		var fieldSettings = $this.getFieldSettingsLanguageSection($this, $widget, settings[$language.val()]);
@@ -150,7 +160,7 @@ var FbWidget = {
 		
 		fieldSettings = $this.getFieldSettingsGeneralSection($this, $widget, settings);
 		$this._log('fieldSettings.length = ' + fieldSettings.length);
-		var $generalSection = $(formbuilderOptions._fieldSettingsGeneralSection); 
+		var $generalSection = $(fbOptions._fieldSettingsGeneralSection); 
 		// remote all child nodes
 		$generalSection.children().remove();  	
 		for (var i=0; i<fieldSettings.length; i++) {
@@ -158,15 +168,15 @@ var FbWidget = {
 		  $generalSection.append(fieldSettings[i]);
 		}
 		
-		if (formbuilderOptions.readOnly) {
-		  var $fieldSettingsPanel = $(formbuilderOptions._fieldSettingsPanel);
+		if (fbOptions.readOnly) {
+		  var $fieldSettingsPanel = $(fbOptions._fieldSettingsPanel);
 		  $('input', $fieldSettingsPanel).attr("disabled", true);
 		  $('select', $fieldSettingsPanel).attr("disabled", true);
 		  $('textarea', $fieldSettingsPanel).attr("disabled", true);
 		}
 		
 		// activate field settings tab
-		$('#paletteTabs').tabs('select', 1);
+		$(fbOptions._paletteTabs).tabs('select', 1);
 		
 		// focus on 1st input component
 		$('input:first', $fieldSettingsPanel).focus();	
