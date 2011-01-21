@@ -346,17 +346,17 @@ var FbWidget = {
 	  return $fontStyles;
   },
   _twoRowsOneRowLayout: function(row1col1, row2col1, row1col2) {
-	  var $twoRowsOneRowLayout = $('<div class="fontPanel"> \
-			    <div class="fontPickerContainer"> \
-			      <div class="fontSize"> \
+	  var $twoRowsOneRowLayout = $('<div class="twoRowsOneRow"> \
+			    <div class="row1col1"> \
+			      <div class="row2col1"> \
 			      </div> \
 			    </div> \
-			    <div class="fontStyles"> \
+			    <div class="row1col2"> \
 			    </div> \
 			  </div>');
-		$('.fontPickerContainer',$twoRowsOneRowLayout).prepend(row1col1);
-		$('.fontSize',$twoRowsOneRowLayout).append(row2col1);
-		$('.fontStyles',$twoRowsOneRowLayout).append(row1col2);			    
+		$('.row1col1',$twoRowsOneRowLayout).prepend(row1col1);
+		$('.row2col1',$twoRowsOneRowLayout).append(row2col1);
+		$('.row1col2',$twoRowsOneRowLayout).append(row1col2);			    
 		return $twoRowsOneRowLayout;	    
   },
   _fieldset: function(options) {

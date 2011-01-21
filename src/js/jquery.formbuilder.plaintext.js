@@ -37,19 +37,11 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 			}
 		}
 	},
-	_create : function() {
-		$.fb.fbWidget.prototype._create.call(this); 
-	},
 	_init : function() {
 		$.fb.fbWidget.prototype._init.call(this); 
 		this.options = $.extend({}, $.fb.fbWidget.prototype.options, this.options);
 		this._log('FbPlainText._create called. this.options.text = ' + this.options.settings.en.text);
 		this._log('FbPlainText._init called.');
-	},
-	destroy : function() {
-		// FbPlainText's destroy code here
-		this._log('FbPlainText.destroy called.');
-		$.fb.fbWidget.prototype.destroy.call(this); 
 	},
 	_getWidget : function($this, settings, $ctrlHolder) {
 		$ctrlHolder.addClass(settings.classes[1]); // vertical alignment
