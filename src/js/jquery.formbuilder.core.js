@@ -89,7 +89,12 @@ var FormBuilder = {
 			}
 		});
 		
-		$('#paletteTabs').tabs({selected: this.options.tabSelected, disabled: this.options.tabDisabled});
+		$(this.options._paletteTabs).tabs({
+			selected: this.options.tabSelected, 
+			disabled: this.options.tabDisabled,
+			select: this._isFieldSettingsTabCanOpen 
+		});
+		
 		var widgets = this.options.widgets;
 		var length = widgets.length;
 		var widgetOptions;
@@ -101,6 +106,48 @@ var FormBuilder = {
       widget.button()['fb' + widgetOptions._type]().appendTo(widgetOptions.belongsTo);
 	    }			  
    },
+   _isFieldSettingsTabCanOpen: function(event, ui) { 
+		if (ui.index == 1) { // Field Settings tab selected
+			var options = $.fb.formbuilder.prototype.options;
+			if ($(options._emptyBuilderPanel).is(':visible')) {
+				$(options._standardFieldsPanel).qtip({
+					   content: 'No field was created. Please select standard field or fancy field.',
+						 position: { my: 'bottom left', at: 'top center' },
+							show: {
+								event: false,
+								ready: true,
+								effect: function() { $(this).show('drop', { direction:'up'}); }
+							},
+							hide: {
+								target: $(options._standardFieldsPanel + ', ' + options._fancyFieldsPanel)
+							},
+							style: {
+								widget: true,
+								classes: 'ui-tooltip-shadow ui-tooltip-rounded', 
+								tip: true
+							}								   
+			    });
+				return false;
+			} else if ($(options._builderForm + ' .' + $.fb.fbWidget.prototype.options._selectedClass).length == 0) {
+				$('.' + $.fb.fbWidget.prototype.options._styleClass + ':first').qtip({
+					   content: "Please select field below to see it's Field Settings.",
+						 position: { my: 'bottom center', at: 'top center' },
+							show: {
+								event: false,
+								ready: true,
+								effect: function() { $(this).show('drop', { direction:'up'}); }
+							},
+							hide: 'click',
+							style: {
+								widget: true,
+								classes: 'ui-tooltip-shadow ui-tooltip-rounded', 
+								tip: true
+							}								   
+			    });	
+				return false;
+			}
+		} 
+	 },
   _initBuilderPanel: function() {
 	  this._initFormSettings();
 	  if (!this.options.readOnly) {
@@ -271,7 +318,7 @@ var FormBuilder = {
 	 
    },
  _languageChange:function() {
-	 $.fb.formbuilder.prototype._log('languageChange(' + $(this).val() + ')');
+	 $.fb.formbuilder.prototype._log('languageChange(' + $(this).val() + ', ' + $('option:selected', this).text() +  ')');
 	  var fbOptions = $.fb.fbWidget.prototype._getFbOptions();
 	  var $ctrlHolders = $('.' + $.fb.fbWidget.prototype.options._styleClass + ':visible');
 	  var language = $(this).val();

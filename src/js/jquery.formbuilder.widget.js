@@ -37,7 +37,7 @@ var FbWidget = {
 	  return $($.fb.formbuilder.prototype.options._id).formbuilder('option');  
   },
   _createField: function(name, widget, options, settings) {
-	  var formBuilderOptions = $.fb.formbuilder.prototype.options;
+	  var fbOptions = $.fb.formbuilder.prototype.options;
 	  var index = $('#builderForm div.ctrlHolder').size();
 	  
 	  $('<a class="ui-corner-all closeButton" href="#"><span class="ui-icon ui-icon-close">delete this widget</span></a>')
@@ -47,8 +47,8 @@ var FbWidget = {
 	  widget.attr('rel', index);
 	  widget.append($.fb.fbWidget.prototype._createFieldProperties(name, options, settings, index));
 	  
-	  $(formBuilderOptions._emptyBuilderPanel + ':visible').hide();
-	  $(formBuilderOptions._builderForm).append(widget).sortable('refresh');
+	  $(fbOptions._emptyBuilderPanel + ':visible').hide();
+	  $(fbOptions._builderForm).append(widget).sortable('refresh');
     }, 
   _propertyName: function (value) {
   	var propertyName;
