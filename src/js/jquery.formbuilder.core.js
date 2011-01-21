@@ -109,6 +109,8 @@ var FormBuilder = {
    _isFieldSettingsTabCanOpen: function(event, ui) { 
 		if (ui.index == 1) { // Field Settings tab selected
 			var options = $.fb.formbuilder.prototype.options;
+			// activate Add Field tab
+			$(this).tabs('select', 0);
 			if ($(options._emptyBuilderPanel).is(':visible')) {
 				$(options._standardFieldsPanel).qtip({
 					   content: 'No field was created. Please select standard field or fancy field.',
@@ -128,7 +130,7 @@ var FormBuilder = {
 							}								   
 			    });
 				return false;
-			} else if ($(options._builderForm + ' .' + $.fb.fbWidget.prototype.options._selectedClass).length == 0) {
+			} else if ($(options._builderForm + ' .' + $.fb.fbWidget.prototype.options._selectedClass).length === 0) {
 				$('.' + $.fb.fbWidget.prototype.options._styleClass + ':first').qtip({
 					   content: "Please select field below to see it's Field Settings.",
 						 position: { my: 'bottom center', at: 'top center' },
@@ -205,7 +207,7 @@ var FormBuilder = {
 	    	  var heading = $(this).val();
 	    	  var text = $(settings.heading, $formHeading).text();
 	    	  var $heading = $('<' + heading + ' class="heading">' + text + '</' + heading + '>');
-	    	  if (settings.fontStyles[0] == 0) {
+	    	  if (settings.fontStyles[0] === 0) {
 	    		  $heading.css('fontWeight', 'normal');  
 	    	  }
 	    	  if (settings.fontStyles[1] == 1) {

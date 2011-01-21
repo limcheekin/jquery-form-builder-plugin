@@ -75,7 +75,7 @@ var FbWidget = {
 		   // activate Add Field tab
 		   $(fbOptions._paletteTabs).tabs('select', 0);
      }
-     if ($ctrlHolders.size() == 0) {
+     if ($ctrlHolders.size() === 0) {
     	 $(fbOptions._emptyBuilderPanel).show();   	 
          }
      event.stopPropagation();

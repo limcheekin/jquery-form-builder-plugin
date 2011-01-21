@@ -37,6 +37,9 @@ var FontPicker = {
 		hoverColor:  '#efefff',				// background color of font div on mouse hover
 		bgColor:     '#ffffee'              // regular background color of font div              
 	},
+	// logging to the firebug's console, put in 1 line so it can be removed
+	// easily for production
+	_log : function($message) { if (window.console && window.console.log) window.console.log($message);},	
 	_init : function() {
 		var options = this.options;
 		var fontPicker = $('#' + options.id);		
@@ -92,10 +95,7 @@ var FontPicker = {
 		  event.stopImmediatePropagation();
 		});
 
-	},
-	// logging to the firebug's console, put in 1 line so it can be removed
-	// easily for production
-	_log : function($message) { if (window.console && window.console.log) window.console.log($message);}
+	}
 };
 
 $.widget('fb.fontPicker', FontPicker);

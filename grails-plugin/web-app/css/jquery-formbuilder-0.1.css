@@ -2,20 +2,20 @@
 * jquery-form-builder-plugin - JQuery WYSIWYG Web Form Builder
 * http://code.google.com/p/jquery-form-builder-plugin/
 *
-* Revision: 35
+* Revision: 58
 * Version: 0.1
 * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
 *
 * Licensed under Apache v2.0 http://www.apache.org/licenses/LICENSE-2.0.html
 *
-* Date: Sun Jan 16 23:31:36 GMT+08:00 2011
+* Date: Fri Jan 21 20:21:57 GMT+08:00 2011
 */
 
 /*
  * Styles of main component of JQuery Form Builder plugin, 
  * the Form Builder container itself. 
  * 
- * Revision: 35
+ * Revision: 58
  * Version: 0.1
  * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
  *
@@ -37,7 +37,7 @@
 
 #builderPanel {
   border: 1px solid #ccc;  
-  height: 460px	  
+  min-height: 460px	  
 }
 
 .buttons {
@@ -82,14 +82,15 @@
 /* Builder Panel */
 #emptyBuilderPanel {
 	text-align: center;
-	margin-top: 50px;
+	margin-top: 5em;
 	color: grey;
 	font-size: 20px;
-	display: block;
 }
 
+.uniForm .formHeading { padding: 1em; }
+
 .uniForm .ctrlHolder {
-	 position:relative;
+	 position:relative; cursor: pointer;
 }
 .uniForm .ctrlHolder .closeButton {
 	 position:absolute;
@@ -104,7 +105,7 @@
 	padding: 1em;
 }
 
-#fieldSettings fieldset.language, #formSettings fieldset.language { padding: 1em; border: 1px solid #C0C0C0; margin-bottom: 1em }
+#fieldSettings fieldset, #formSettings fieldset { padding: 1em; border: 1px solid #C0C0C0; margin-bottom: 1em }
 
 #fieldSettings div.general, #formSettings div.general { padding: 0; margin: 0 }
 
@@ -136,10 +137,121 @@ div.noPaddingBottom { padding-bottom: 0; }
 
 div.col2 {
    margin-left: 52%;
-  } /*
+ }
+ 
+/* Color panel: color picker styles */
+#field\.backgroundColor, #field\.color, 
+#form\.backgroundColor, #form\.color  { width: 8em }
+
+/* Font styles */
+.floatClearLeft { float:left; clear:left }
+
+/* Font Panel 
+From: http://stackoverflow.com/questions/2611083/css-equivalent-of-table-rowspan-with-fluid-height
+*/
+.twoRowsOneRow { display: table }
+.twoRowsOneRow .row1col1 { display: table-cell; width: 48%; margin-right: 2% }
+.twoRowsOneRow .row2col1 { margin-top: 1em }
+.twoRowsOneRow .row1col2 { display: table-cell; vertical-align: middle; width: 48%; margin-left: 2%; padding-left: 10% }
+
+/* Form Settings */
+#form\.heading, #form\.horizontalAlignment { width: 100% }.colorPicker {
+	background: #fafafa;
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#eee));
+
+	width: 180px;
+	padding: 10px 5px 5px 10px;
+
+	border: 1px solid #666;
+
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	border-radius: 10px;
+
+	-moz-box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.3);
+	-webkit-box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.3);
+	box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.3);
+
+	z-index: 99;
+}
+
+.colorPicker h2 {
+	margin: 0 0 5px 0;
+	font-size: 14px;
+}
+
+.colorPicker ul {
+	margin: 0;
+	padding: 0;
+	list-style-type: none;
+
+	+zoom: 1;
+}
+
+.colorPicker ul:after {
+	content: ".";
+	display: block;
+	height: 0;
+	visibility: hidden;
+	clear: both;
+}
+
+.colorPicker ul li {
+	float: left;
+	margin: 0 5px 5px 0;
+}
+
+.colorPicker ul li a {
+	display: block;
+
+	width: 13px;
+	height: 13px;
+
+	text-decoration: none;
+	text-indent: -100000px;
+	outline: 0;
+
+	border: 1px solid #aaa;
+}
+
+.colorPicker ul li a:hover {
+	border-color: #000;
+}
+.fontPicker {
+  width: 140px;
+  height: 18px;
+  padding: 1px;
+  border: solid 1px #cecece;
+  background-color: #ffffee;
+  font-family: Tahoma;
+  color: #444444;
+  cursor: pointer;
+  text-align: center;
+  margin: 0px;
+}
+
+#fontbox {
+  width: 140px;    
+  text-align: center;
+  border: solid 1px #cecece;
+  background-color: #ffffee;
+  font-family: Tahoma;
+  font-size: 12px;
+  color: #444444;
+  cursor: pointer;  
+  margin: 0px;
+  padding: 1px;
+}
+
+.singlefont {
+  padding-top: 1px;
+  padding-bottom: 1px;
+}
+
+/*
  * Styles of Plain Text widget. 
  * 
- * Revision: 35
+ * Revision: 58
  * Version: 0.1
  * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
  *

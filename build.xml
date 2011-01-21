@@ -82,7 +82,8 @@
 		<concat destfile="${JQUERY_FORM_BUILDER}">
 			<fileset file="${SRC_JS_DIR}/../HEADER.txt" />
 			<fileset file="${SRC_JS_DIR}/jquery.formbuilder.core.js" />
-			<fileset file="${SRC_JS_DIR}/jquery.colorpicker.js" />		
+			<fileset file="${SRC_JS_DIR}/jquery.colorpicker.js" />	
+			<fileset file="${SRC_JS_DIR}/jquery.fontpicker.js" />	
 			<fileset file="${SRC_JS_DIR}/jquery.formbuilder.widget.js" />
 			<filelist files="${PLUGINS_JS}" />
 		</concat>
@@ -105,6 +106,7 @@
 			<fileset file="${SRC_JS_DIR}/../HEADER.txt" />
 			<fileset file="${SRC_JS_DIR}/jquery.formbuilder.core.js" />
 			<fileset file="${SRC_JS_DIR}/jquery.colorpicker.js" />
+			<fileset file="${SRC_JS_DIR}/jquery.fontpicker.js" />	
 			<fileset file="${SRC_JS_DIR}/jquery.formbuilder.widget.js" />
 			<filelist files="${PLUGINS_JS}" />
 		</concat>
@@ -185,6 +187,7 @@
 			<fileset file="${SRC_CSS_DIR}/../HEADER.txt" />
 			<fileset file="${SRC_CSS_DIR}/jquery.formbuilder.core.css" />
 			<fileset file="${SRC_CSS_DIR}/jquery.colorpicker.css" />
+			<fileset file="${SRC_CSS_DIR}/jquery.fontpicker.css" />
 			<filelist files="${PLUGINS_CSS}" />
 		</concat>
 
@@ -243,6 +246,12 @@
   	<copy todir="war/images" overwrite="true">
       <fileset dir="${JQUERY_FORM_BUILDER_IMG}" />
     </copy>
+  	<copy todir="war/WEB-INF" overwrite="true">
+      <fileset dir="src/config" />
+    </copy>  	
+	  <replaceregexp match="@REVISION" replace="${svn.info.lastRev}" flags="g" byline="true" file="war/WEB-INF/appengine-web.xml" />
+  	<replaceregexp match="@REVISION" replace="${svn.info.lastRev}" flags="g" byline="true" file="war/index.html" />
+	  <replaceregexp match="@VERSION" replace="${version}" flags="g" byline="true" file="war/index.html" />  	
   	<replaceregexp match="../lib/" replace="" flags="g" byline="true" file="war/index.html" />
   	<replaceregexp match="&lt;!--PROD.JS--&gt;" flags="g" byline="true" file="war/index.html" 
   		replace="&lt;script type=&quot;text/javascript&quot; src=&quot;js/jquery-formbuilder-${version}.pack.js&quot;&gt;&lt;/script&gt;" />

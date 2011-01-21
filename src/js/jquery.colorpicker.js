@@ -184,16 +184,16 @@ var ColorPicker = {
 		});
 
 	},
+	// logging to the firebug's console, put in 1 line so it can be removed
+	// easily for production
+	_log : function($message) { if (window.console && window.console.log) window.console.log($message);},
 	_hexInvert: function (hex) {
 		var r = hex.substr(0, 2);
 		var g = hex.substr(2, 2);
 		var b = hex.substr(4, 2);
 
 		return 0.212671 * r + 0.715160 * g + 0.072169 * b < 0.5 ? 'ffffff' : '000000';
-	},
-	// logging to the firebug's console, put in 1 line so it can be removed
-	// easily for production
-	_log : function($message) { if (window.console && window.console.log) window.console.log($message);}
+	}
 };
 
 $.widget('fb.colorPicker', ColorPicker);
