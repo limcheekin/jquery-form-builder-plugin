@@ -219,7 +219,7 @@ var FormBuilder = {
 	    	  $this._updateSettings($this);
 	            });
 				
-		var $horizontalAlignment = $fbWidget.horizontalAlignment('form.horizontalAlignment', settings.classes[0]);
+		var $horizontalAlignment = $fbWidget._horizontalAlignment({ name: 'form.horizontalAlignment', value: settings.classes[0] });
 		$('select', $horizontalAlignment).change(function(event) {
 					var value = $(this).val();
 					$formHeading.removeClass(settings.classes[0]).addClass(value);
@@ -228,7 +228,7 @@ var FormBuilder = {
 				}).change();
 		
 		var names = ['form.bold', 'form.italic', 'form.underline'];
-		var $fontStyles = $fbWidget.fontStyles(names, settings.fontStyles);
+		var $fontStyles = $fbWidget._fontStyles({ names: names, checked: settings.fontStyles });
 		$("input[id$='form.bold']", $fontStyles).change(function(event) {
 			if ($(this).attr('checked')) {
 				$(settings.heading, $formHeading).css('fontWeight', 'bold');
@@ -264,7 +264,7 @@ var FormBuilder = {
 		if (fontFamily == 'default') {
 			fontFamily = options._fontFamily;
 		}
-		var $fontPicker = $fbWidget.fontPicker({ name: 'form.fontFamily', value: fontFamily });
+		var $fontPicker = $fbWidget._fontPicker({ name: 'form.fontFamily', value: fontFamily });
 		$("input[id$='form.fontFamily']", $fontPicker).change(function(event) {
 			var value = $(this).val();
 			$builderPanel.css('fontFamily', value);
@@ -276,7 +276,7 @@ var FormBuilder = {
 		if (fontSize == 'default') {
 			fontSize = options._fontSize;
 		}
-		var $fontSize = $fbWidget.fontSize('Size', 'form.fontSize', fontSize);
+		var $fontSize = $fbWidget._fontSize({ label: 'Size', name: 'form.fontSize', value: fontSize });
 		$("select[id$='form.fontSize']", $fontSize).change(function(event) {
 			var value = $(this).val();
 			$builderPanel.css('fontSize', value + 'px');
@@ -284,7 +284,7 @@ var FormBuilder = {
 			$this._updateSettings($this);
 		}).change();		
 		
-		var $fontPanel = $fbWidget.twoColumns($fontPicker, $fontSize);
+		var $fontPanel = $fbWidget._twoColumns($fontPicker, $fontSize);
 		$fontPanel.find('.col2').addClass('noPaddingBottom').css('marginLeft', '60%');
 		
 		var color = options.settings.styles.color;
@@ -295,7 +295,7 @@ var FormBuilder = {
 		if (backgroundColor == 'default') {
 			backgroundColor = options._backgroundColor;
 		}
-		var $colorPanel = $fbWidget.colorPanel(color, backgroundColor, 'form.');
+		var $colorPanel = $fbWidget._colorPanel({ color: color, backgroundColor: backgroundColor, idPrefix: 'form.' });
 		
 		$("input[id$='form.color']", $colorPanel).change(function(event) {
 			var value = $(this).attr('title');
@@ -311,9 +311,9 @@ var FormBuilder = {
 			$this._updateSettings($this);
 		}).change();			
 		
-		$formSettingsLanguageSection.append($fbWidget.oneColumn($name))
-		   .append($fbWidget.twoRowsOneRowLayout($heading, $horizontalAlignment, $fontStyles));
-		$formSettingsGeneralSection.append($fbWidget.fieldset('Fonts').append($fontPanel))
+		$formSettingsLanguageSection.append($fbWidget._oneColumn($name))
+		   .append($fbWidget._twoRowsOneRowLayout($heading, $horizontalAlignment, $fontStyles));
+		$formSettingsGeneralSection.append($fbWidget._fieldset({ text: 'Fonts' }).append($fontPanel))
 		   .append($colorPanel);
 	 
    },

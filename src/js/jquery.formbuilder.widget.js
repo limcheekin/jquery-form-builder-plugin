@@ -13,7 +13,7 @@
 var FbWidget = {
   options: { // default options. values are stored in widget's prototype
 	  _styleClass: 'ctrlHolder',
-	  _selectedClass: 'ui-state-highlight'
+	  _selectedClass: 'ctrlHolderSelected'
     },
   // logging to the firebug's console, put in 1 line so it can be removed
 	// easily for production
@@ -120,7 +120,7 @@ var FbWidget = {
 		// store settings to be used in _createFieldSettings() and _languageChange()
 		$ctrlHolder.data('fbWidget', settings); 
 		$this._log("b4. text = " + settings[$('#language').val()].text);
-		var $widget = $this.getWidget($this, settings[$('#language').val()], $ctrlHolder);
+		var $widget = $this._getWidget($this, settings[$('#language').val()], $ctrlHolder);
 		$this._log("at. text = " + settings[$('#language').val()].text);
 		var name = $this._propertyName($this.options._type + counter);
 		$widget.click($this._createFieldSettings);
@@ -151,14 +151,14 @@ var FbWidget = {
 		var $languageSection = $(fbOptions._fieldSettingsLanguageSection);
 		var $language = $('#language');
 		$('legend', $languageSection).text('Language: ' + $language.find('option:selected').text());		 		
-		var fieldSettings = $this.getFieldSettingsLanguageSection($this, $widget, settings[$language.val()]);
+		var fieldSettings = $this._getFieldSettingsLanguageSection($this, $widget, settings[$language.val()]);
 		// remote all child nodes except legend
 		$languageSection.children(':not(legend)').remove();  
 		for (var i=0; i<fieldSettings.length; i++) {
 			$languageSection.append(fieldSettings[i]);
 		} 
 		
-		fieldSettings = $this.getFieldSettingsGeneralSection($this, $widget, settings);
+		fieldSettings = $this._getFieldSettingsGeneralSection($this, $widget, settings);
 		$this._log('fieldSettings.length = ' + fieldSettings.length);
 		var $generalSection = $(fbOptions._fieldSettingsGeneralSection); 
 		// remote all child nodes
@@ -212,7 +212,7 @@ var FbWidget = {
   	var $settings = $widget.find("input[id$='fields[" + $widget.attr('rel') + "].settings']");
   	$settings.val($.toJSON(settings)).change();
    	} ,          
-  twoColumns: function($e1, $e2) {
+  _twoColumns: function($e1, $e2) {
 	  var $ui = $('<div class="2cols"> \
 		<div class="labelOnTop col1 noPaddingBottom"></div> \
 	  <div class="labelOnTop col2"></div> \
@@ -221,21 +221,23 @@ var FbWidget = {
 	  $ui.find(".col2").append($e2);
 	  return $ui;
  	} ,      
-  oneColumn: function($e) {
+  _oneColumn: function($e) {
 	  return $('<div class="clear labelOnTop"></div>').append($e);
  	} ,    	
- 	horizontalAlignment: function(name, value) {
+ 	_horizontalAlignment: function(options) {
+ 		var o = $.extend({}, options);
+ 		o.label = o.label ? o.label : 'Horizontal Align'; 
  		var $horizontalAlignment = $('<div> \
- 		<label for="' + name + '">Horizontal Align (?)</label><br /> \
+ 		<label for="' + o.name + '">' + o.label + ' (?)</label><br /> \
 		<select> \
 			<option value="leftAlign">left</option> \
 			<option value="centerAlign">center</option> \
 			<option value="rightAlign">right</option> \
 		</select></div>');
-		$('select', $horizontalAlignment).val(value).attr('id', name);	
+		$('select', $horizontalAlignment).val(o.value).attr('id', o.name);	
 		return $horizontalAlignment;
  	},
- 	verticalAlignment: function(options) {
+ 	_verticalAlignment: function(options) {
  		var o = $.extend({}, options);
  		o.label = o.label ? o.label : 'Vertical Align'; 
  		var $verticalAlignment = $('<div> \
@@ -248,7 +250,7 @@ var FbWidget = {
 		$('select', $verticalAlignment).val(o.value).attr('id', o.name);	
 		return $verticalAlignment;			
  	},
- 	name: function($widget) {
+ 	_name: function($widget) {
  		var index = $widget.attr('rel');
  		var $name = $('<label for="field.name">Name (?)</label><br/> \
  				  <input type="text" id="field.name" />');
@@ -260,12 +262,12 @@ var FbWidget = {
 		});		
  		return $name;		 
  	}, 	
- 	colorPicker: function(label, name, value, help, type) {
+ 	_colorPicker: function(options) {
 		var $colorPicker = $('<div></div>');
- 		if (!type || type == 'basic') {
+ 		if (!options.type || options.type == 'basic') {
 			$colorPicker.colorPicker({
-				name: name,
-				value: value,
+				name: options.name,
+				value: options.value,
 				ico: '../images/jquery.colourPicker.gif',
 			  title: 'Basic Colors'
 			});		
@@ -279,10 +281,10 @@ var FbWidget = {
 			  width: 360
 			});		
 		}
- 		$colorPicker.prepend('<label for="' + name + '">' + label + ' (?)</label><br/>');
+ 		$colorPicker.prepend('<label for="' + options.name + '">' + options.label + ' (?)</label><br/>');
 	  return $colorPicker;
  	},
- 	fontPicker: function(options) {
+ 	_fontPicker: function(options) {
  		var o = $.extend({}, options);
  		this._log('fontPicker(' + $.toJSON(o) + ')');
  		o.value = o.value.replace(/'/gi, ''); // remove single quote for chrome browser
@@ -298,10 +300,10 @@ var FbWidget = {
 		});
  		return $fontPicker;
  	},	
- 	fontSize: function(label, name, value, help) {
- 		this._log('fontSize(' + label + ', ' + name + ',' + value + ', ' + help + ')');
+ 	_fontSize: function(options) {
+ 		this._log('fontSize(' + $.toJSON(options) + ')');
 	 	var $fontSize = $('<div> \
-	 		<label for="' + name + '">' + label + ' (?)</label>&nbsp; \
+	 		<label for="' + options.name + '">' + options.label + ' (?)</label>&nbsp; \
 		  <select> \
 		    <option value="9">9</option> \
 		    <option value="10">10</option> \
@@ -320,15 +322,17 @@ var FbWidget = {
 		    <option value="32">32</option> \
 		  </select></div>');		
 		  var $select = $('select', $fontSize);
-		  if (value == 'default') {
+		  if (options.value == 'default') {
 			  $select.val(this._getFbOptions().settings.styles.fontSize);
 		  } else {
-			  $select.val(value);
+			  $select.val(options.value);
 		  }
-		  $select.attr('id', name);
+		  $select.attr('id', options.name);
 		  return $fontSize;
    } ,	
-  fontStyles: function(names, checked) {  
+  _fontStyles: function(options) {  
+	  var names = options.names;
+	  var checked = options.checked;
 		var $fontStyles = $('<div> \
 		  <span class="floatClearLeft"><input type="checkbox" id="' + names[0] + '" />&nbsp;Bold</span><br/> \
 	    <span class="floatClearLeft"><input type="checkbox" id="' + names[1] + '" />&nbsp;Italic</span><br/> \
@@ -341,7 +345,7 @@ var FbWidget = {
 	  }
 	  return $fontStyles;
   },
-  twoRowsOneRowLayout: function(row1col1, row2col1, row1col2) {
+  _twoRowsOneRowLayout: function(row1col1, row2col1, row1col2) {
 	  var $twoRowsOneRowLayout = $('<div class="fontPanel"> \
 			    <div class="fontPickerContainer"> \
 			      <div class="fontSize"> \
@@ -355,39 +359,42 @@ var FbWidget = {
 		$('.fontStyles',$twoRowsOneRowLayout).append(row1col2);			    
 		return $twoRowsOneRowLayout;	    
   },
-  fieldset: function(legend) {
-	  return $('<fieldset><legend>' + legend + '</legend></fieldset>');
+  _fieldset: function(options) {
+	  return $('<fieldset><legend>' + options.text + '</legend></fieldset>');
   },
-  fontPanel:function(fontPickerValue, fontSizeValue, fontStylesChecked, idPrefix) { 
-	  idPrefix = idPrefix ? idPrefix : '';
+  _fontPanel:function(options) {
+	  //fontFamily, fontSize, styles.fontStyles
+	  var idPrefix = options.idPrefix ? options.idPrefix : '';
 	  var names = [idPrefix + 'bold', idPrefix + 'italic', idPrefix + 'underline'];
-	  return this.fieldset('Fonts').append(this.twoRowsOneRowLayout(
-			  this.fontPicker({ name: idPrefix + 'fontFamily', value: fontPickerValue }),
-			  this.fontSize('Size', idPrefix + 'fontSize', fontSizeValue),
-			  this.fontStyles(names, fontStylesChecked)
+	  return this._fieldset({ text: 'Fonts' }).append(this._twoRowsOneRowLayout(
+			  this._fontPicker({ name: idPrefix + 'fontFamily', value: options.fontFamily }),
+			  this._fontSize({ label: 'Size', name: idPrefix + 'fontSize', value: options.fontSize }),
+			  this._fontStyles({ names: names, checked: options.fontStyles })
 			  ));
   },
-  colorPanel: function(textColorValue, backgroundColorValue, idPrefix) {
-	  idPrefix = idPrefix ? idPrefix : '';
-	  if (textColorValue == 'default') {
-		  textColorValue = this._getFbOptions().settings.styles.color;
+  _colorPanel: function(options) {
+	  //textColorValue, backgroundColorValue, idPrefix
+	  var o = $.extend({}, options);
+	  o.idPrefix = o.idPrefix ? o.idPrefix : '';
+	  if (o.color == 'default') {
+		  o.color = this._getFbOptions().settings.styles.color;
 	    } 	  
-	  if (backgroundColorValue == 'default') {
-		  backgroundColorValue = this._getFbOptions().settings.styles.backgroundColor;
+	  if (o.backgroundColor == 'default') {
+		  o.backgroundColor = this._getFbOptions().settings.styles.backgroundColor;
 	    } 	 
-	  this._log('textColorValue = ' + textColorValue + ', backgroundColorValue = ' + backgroundColorValue);
-	  var $colorPanel = this.fieldset('Colors').append(this.twoColumns(this.colorPicker('Text', idPrefix + 'color', textColorValue),
-			  this.colorPicker('Background', idPrefix + 'backgroundColor', backgroundColorValue)));
+	  var $colorPanel = this._fieldset({ text: 'Colors' }).append(
+			  this._twoColumns(this._colorPicker({ label: 'Text', name: o.idPrefix + 'color', value: o.color }),
+			  this._colorPicker({ label: 'Background', name: o.idPrefix + 'backgroundColor', value: o.backgroundColor })));
 	  $colorPanel.find('.2cols .col2').addClass('noPaddingBottom');
 	  return $colorPanel;
   },
-  getWidget: function($this, settings, $ctrlHolder) {
+  _getWidget: function($this, settings, $ctrlHolder) {
   	 $.fb.fbWidget.prototype._log('getWidget($this, settings, ctrlHolder) should be overriden by subclass.');
    },
-  getFieldSettingsLanguageSection: function($this, $widget, settings) {
+  _getFieldSettingsLanguageSection: function($this, $widget, settings) {
 	   $.fb.fbWidget.prototype._log('getFieldSettingsLanguageSection($this, $widget, settings) should be overriden by subclass.');
 	},
-	getFieldSettingsGeneralSection: function($this, $widget, settings) {
+	_getFieldSettingsGeneralSection: function($this, $widget, settings) {
 	   $.fb.fbWidget.prototype._log('getFieldSettingsLanguageSection($this, $widget, settings) should be overriden by subclass.');
 	} , 
 	_languageChange : function($widget, settings, selected) {
