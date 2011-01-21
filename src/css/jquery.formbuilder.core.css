@@ -77,7 +77,7 @@
 .uniForm .formHeading { padding: 1em; }
 
 .uniForm .ctrlHolder {
-	 position:relative;
+	 position:relative; cursor: pointer;
 }
 .uniForm .ctrlHolder .closeButton {
 	 position:absolute;

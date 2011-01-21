@@ -40,6 +40,7 @@ var FormBuilder = {
 			}
 		},
 		_id: '#container',
+		_languages : [ 'en', 'zh' ],
 		_builderPanel: '#builderPanel',
 		_builderForm: '#builderForm fieldset',
 		_emptyBuilderPanel: '#emptyBuilderPanel',
@@ -121,20 +122,25 @@ var FormBuilder = {
 	  var settings = options.settings[$language.val()];
 	  var $this = this;
 	  var $formHeading = $('.formHeading',$builderForm);
-	  var formName = settings.name + ' ' + options.formCounter;
-	 
-	  $formHeading.append('<' + settings.heading + '>' + formName + '</' + settings.heading + '>');
 	  
-	  $('#name',$builderForm).val($fbWidget._propertyName(formName));
+	  for (var i = 0; i < options._languages.length; i++) {
+		  options.settings[options._languages[i]].name += ' ' + options.formCounter;
+	  }
+	 
+	  $formHeading.append('<' + settings.heading + ' class="heading">' + settings.name + '</' + settings.heading + '>');
+	  
+	  $('#name',$builderForm).val($fbWidget._propertyName(settings.name));
 		var $name = $('<label for="form.name">Name (?)</label><br/> \
-				  <input type="text" id="form.name" value="' + formName + '" />')
+				  <input type="text" id="form.name" value="' + settings.name + '" />')
 					.keyup(function(event) {
+						var value = $(this).val();
 						if ($.inArray($language.val(), options._languagesSupportIdGeneration) > -1) {
-							var name = $fbWidget._propertyName($(this).val());
+							var name = $fbWidget._propertyName(value);
 				      $('#name',$builderForm).val(name).change();
 						}
-						$fbWidget._log('$(this).val() = ' + $(this).val());
-						$(settings.heading, $formHeading).text($(this).val());
+						$fbWidget._log('$(this).val() = ' + value);
+						settings.name = value;
+						$(settings.heading, $formHeading).text(value);
 					});			  
 		
 		var $heading = $('<select> \
@@ -150,7 +156,7 @@ var FormBuilder = {
 	      .change(function(event) {
 	    	  var heading = $(this).val();
 	    	  var text = $(settings.heading, $formHeading).text();
-	    	  var $heading = $('<' + heading + '>' + text + '</' + heading + '>');
+	    	  var $heading = $('<' + heading + ' class="heading">' + text + '</' + heading + '>');
 	    	  if (settings.fontStyles[0] == 0) {
 	    		  $heading.css('fontWeight', 'normal');  
 	    	  }
@@ -265,16 +271,41 @@ var FormBuilder = {
    },
  _languageChange:function() {
 	 $.fb.formbuilder.prototype._log('languageChange(' + $(this).val() + ')');
+	  var fbOptions = $.fb.fbWidget.prototype._getFbOptions();
 	  var $ctrlHolders = $('.' + $.fb.fbWidget.prototype.options._styleClass + ':visible');
 	  var language = $(this).val();
-	  var settings, type, $widget;
+	  var formSettings = fbOptions.settings[language];
+	  var $formHeading = $('.formHeading');
+	  var $formSettingsLanguageSection = $(fbOptions._formSettingsLanguageSection);
+	  var settings, type, $widget, selected;
+	  
+	  $("input[id$='form.name']", $formSettingsLanguageSection).val(formSettings.name);
+	  
+	  $("select[id$='form.heading'] option[value='" + formSettings.heading + "']", 
+			  $formSettingsLanguageSection).attr('selected', 'true');
+	  
+	  var $heading = $('<' + formSettings.heading + ' class="heading">' + formSettings.name + '</' + formSettings.heading + '>')
+	  .css('fontWeight', formSettings.fontStyles[0] == 1 ? 'bold' : 'normal')
+	  .css('fontStyle', formSettings.fontStyles[1] == 1 ? 'italic' : 'normal')
+	  .css('textDecoration', formSettings.fontStyles[2] == 1 ? 'underline' : 'none');
+	  $('.heading', $formHeading).replaceWith($heading);
+	  $.fb.formbuilder.prototype._log('formSettings.fontStyles[2] = ' + formSettings.fontStyles[2]);
+	  $("input[id$='form.bold']", $formSettingsLanguageSection).attr('checked', formSettings.fontStyles[0]);
+	  $("input[id$='form.italic']", $formSettingsLanguageSection).attr('checked', formSettings.fontStyles[1]);
+	  $("input[id$='form.underline']", $formSettingsLanguageSection).attr('checked', formSettings.fontStyles[2]);
+	  
+	  $formHeading.removeClass('leftAlign centerAlign rightAlign').addClass(formSettings.classes[0]);
+	  $("select[id$='form.horizontalAlignment'] option[value='" + formSettings.classes[0] + "']", 
+			  $formSettingsLanguageSection).attr('selected', 'true');
+	  
 		$ctrlHolders.each(function(i) {
 		    var $widget = $(this);
+		    selected = $widget.attr('class').indexOf($.fb.fbWidget.prototype.options._selectedClass) > -1;
 		    settings = $widget.data('fbWidget');
 		    type = $widget.find("input[id$='fields[" + $widget.attr('rel') + "].type']").val();
 		    $.fb.formbuilder.prototype._log('type = ' + type);
 		    $this = $('#' + type).data('fb' + type);
-		    $this.languageChange($widget, settings[language]);
+		    $this._languageChange($widget, settings[language], selected);
 		});
    },
  _updateSettings: function($this) {

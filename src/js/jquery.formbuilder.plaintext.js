@@ -157,10 +157,18 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 		});			
 		return [$fontPanel, $colorPanel];
 	}, 
-	languageChange : function($widget, settings) {
+	_languageChange : function($widget, settings, selected) {
 		this._log('languageChange = ' + $.toJSON(settings));
-		$widget.find('div.PlainText').text(settings.text).attr('class', 'PlainText ' + settings.classes[0]);
-		$widget.attr('class', $.fb.fbWidget.prototype.options._styleClass + ' ' + settings.classes[1]);
+		$widget.find('div.PlainText').text(settings.text).removeClass('leftAlign centerAlign rightAlign').addClass(settings.classes[0]);
+		$widget.removeClass('topAlign middleAlign bottomAlign').addClass(settings.classes[1]);
+		if (selected) {
+			var $fieldSettingsLanguageSection = $(this._getFbOptions()._fieldSettingsLanguageSection);
+			$("input[id$='field.text']", $fieldSettingsLanguageSection).val(settings.text);
+			$("select[id$='field.horizontalAlignment'] option[value='" + settings.classes[0] + "']", 
+			    $fieldSettingsLanguageSection).attr('selected', 'true');
+			$("select[id$='field.verticalAlignment'] option[value='" + settings.classes[1] + "']", 
+			    $fieldSettingsLanguageSection).attr('selected', 'true');			  
+		}
 	}
 });
 

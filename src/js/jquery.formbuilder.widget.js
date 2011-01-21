@@ -12,7 +12,8 @@
 
 var FbWidget = {
   options: { // default options. values are stored in widget's prototype
-	  _styleClass: "ctrlHolder"
+	  _styleClass: 'ctrlHolder',
+	  _selectedClass: 'ui-state-highlight'
     },
   // logging to the firebug's console, put in 1 line so it can be removed
 	// easily for production
@@ -98,7 +99,7 @@ var FbWidget = {
 		var $this = $(this).data(type);
 		// Clone an instance of plugin's option settings.
 		// From: http://stackoverflow.com/questions/122102/what-is-the-most-efficient-way-to-clone-a-javascript-object
-		var settings = jQuery.extend(true, {}, $this.options.settings);
+		var settings = jQuery.extend(true, {}, $this.options.settings); 
 		var counter = $this._getCounter($this);
 		var languages = $this.options._languages;
 		for (var i=0; i < languages.length; i++) {
@@ -106,6 +107,8 @@ var FbWidget = {
 			$this._log(settings[languages[i]][$this.options._counterField]);
 		}
 		var $ctrlHolder = $('<div class="' + $this.options._styleClass + '"></div>');
+		// store settings to be used in _createFieldSettings() and _languageChange()
+		$ctrlHolder.data('fbWidget', settings); 
 		$this._log("b4. text = " + settings[$('#language').val()].text);
 		var $widget = $this.getWidget($this, settings[$('#language').val()], $ctrlHolder);
 		$this._log("at. text = " + settings[$('#language').val()].text);
@@ -118,17 +121,22 @@ var FbWidget = {
   _createFieldSettings: function(event) { 
 	  $.fb.fbWidget.prototype._log('_createFieldSettings executing.');
 		var $widget = $(this);	  
+		var selectedClass = $.fb.fbWidget.prototype.options._selectedClass;
 		$widget = $widget.attr('class').indexOf($.fb.fbWidget.prototype.options._styleClass) > -1 ? $widget : $widget.parent();
+		$widget.parent().find('.' + selectedClass).removeClass(selectedClass);
+		$widget.addClass(selectedClass);
 		var type = $widget.find("input[id$='fields[" + $widget.attr('rel') + "].type']").val();
 		$.fb.fbWidget.prototype._log('type = ' + type);
-		$this = $('#' + type).data('fb' + type);
+		var $this = $('#' + type).data('fb' + type);
 		var formbuilderOptions = $this._getFbOptions();
 		$this._log('$widget.text() = ' + $widget.text() + ", formbuilderOptions.readOnly = " + formbuilderOptions.readOnly);
-		var $settings = $widget.find("input[id$='fields[" + $widget.attr('rel') + "].settings']");
-		$this._log('settings = ' + $settings.val());
-		$this._log('unescaped settings = ' + unescape($settings.val()));
-		// settings is JavaScript encoded when return from server-side
-		$widget.data('fbWidget', $.parseJSON(unescape($settings.val())));
+		
+		if (!$widget.data('fbWidget')) { // widgets loaded from server
+			var $settings = $widget.find("input[id$='fields[" + $widget.attr('rel') + "].settings']");
+			$this._log('_createFieldSettings. unescaped settings = ' + unescape($settings.val()));
+			// settings is JavaScript encoded when return from server-side
+			$widget.data('fbWidget', $.parseJSON(unescape($settings.val())));
+		}
 		var settings = $widget.data('fbWidget'); 
 		var $languageSection = $(formbuilderOptions._fieldSettingsLanguageSection);
 		var $language = $('#language');
@@ -158,7 +166,11 @@ var FbWidget = {
 		}
 		
 		// activate field settings tab
-		$('#paletteTabs').tabs('select', 1);	
+		$('#paletteTabs').tabs('select', 1);
+		
+		// focus on 1st input component
+		$('input:first', $fieldSettingsPanel).focus();	
+		
   	$.fb.fbWidget.prototype._log('_createFieldSettings executed.');
     },
 	_getCounter: function($this) {
@@ -367,7 +379,10 @@ var FbWidget = {
 	},
 	getFieldSettingsGeneralSection: function($this, $widget, settings) {
 	   $.fb.fbWidget.prototype._log('getFieldSettingsLanguageSection($this, $widget, settings) should be overriden by subclass.');
-	}    	
+	} , 
+	_languageChange : function($widget, settings, selected) {
+		$.fb.fbWidget.prototype._log('_languageChange($widget, settings, selected) should be overriden by subclass.');
+	}
 };
 
 $.widget('fb.fbWidget', FbWidget);

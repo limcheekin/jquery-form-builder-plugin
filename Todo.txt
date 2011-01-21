@@ -1,4 +1,3 @@
-2. Toggle language changes.
 3. Auto expand and auto scroll BuilderPanel when it is exceed the existing height.
 4. Highlight widget when it is created and selected.
 5. Widget standardization to accept options object as param. 
