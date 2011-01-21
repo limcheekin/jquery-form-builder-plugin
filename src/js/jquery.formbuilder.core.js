@@ -322,6 +322,7 @@ var FormBuilder = {
 	  var fbOptions = $.fb.fbWidget.prototype._getFbOptions();
 	  var $ctrlHolders = $('.' + $.fb.fbWidget.prototype.options._styleClass + ':visible');
 	  var language = $(this).val();
+	  var languageText = $('option:selected', this).text();
 	  var formSettings = fbOptions.settings[language];
 	  var $formHeading = $('.formHeading');
 	  var $formSettingsLanguageSection = $(fbOptions._formSettingsLanguageSection);
@@ -349,6 +350,9 @@ var FormBuilder = {
 		$ctrlHolders.each(function(i) {
 		    var $widget = $(this);
 		    selected = $widget.attr('class').indexOf($.fb.fbWidget.prototype.options._selectedClass) > -1;
+		    if (selected) {
+		    	$(fbOptions._fieldSettingsLanguageSection + ' legend').text('Language: ' + languageText);
+		       }
 		    settings = $widget.data('fbWidget');
 		    type = $widget.find("input[id$='fields[" + $widget.attr('rel') + "].type']").val();
 		    $.fb.formbuilder.prototype._log('type = ' + type);
