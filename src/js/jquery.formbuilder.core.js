@@ -52,7 +52,11 @@ var FormBuilder = {
     _fieldSettingsGeneralSection: '#fieldSettings div.general:first',
     _formSettingsLanguageSection: '#formSettings fieldset.language:first',
     _formSettingsGeneralSection: '#formSettings div.general:first',
-    _languagesSupportIdGeneration: ['en']
+    _languagesSupportIdGeneration: ['en'],
+    _dragBoxCss: {
+		  opacity: 0.6,
+		  border: "5px solid #cccccc"
+	  }
   },
   _create: function() {
     	// called on construction
@@ -103,7 +107,15 @@ var FormBuilder = {
 	  for (i = 0; i < length; i++) {
 		  widgetOptions = $['fb']['fb' + widgets[i]].prototype.options;
 		  widget = $('<a id="' + widgetOptions._type +  '" href="#" class="fbWidget">' + widgetOptions.name + '</a>');
-      widget.button()['fb' + widgetOptions._type]().appendTo(widgetOptions.belongsTo);
+      widget.button()['fb' + widgetOptions._type]()
+      .draggable({
+			  cursor: 'move',
+			  helper: function (event, ui) {
+				  return $(this).data('fb' + widgetOptions._type)
+				    ._createFbWidget(event).css($.fb.formbuilder.prototype.options._dragBoxCss)
+				    .css({padding: '1em', width: $('.formHeading').css('width')});
+			} 
+    	  }).appendTo(widgetOptions.belongsTo);
 	    }			  
    },
    _isFieldSettingsTabCanOpen: function(event, ui) { 
@@ -154,6 +166,7 @@ var FormBuilder = {
 	  this._initFormSettings();
 	  if (!this.options.readOnly) {
 	    this._initSortableWidgets();
+	    $(this.options._builderPanel + 'not(.formHeading)').droppable();
 	  } else {
 			$('input:not(div.buttons input)').attr("disabled", true);
 			$('select').attr("disabled", true);
@@ -171,7 +184,7 @@ var FormBuilder = {
 	  var options = this.options;
 	  var settings = options.settings[$language.val()];
 	  var $this = this;
-	  var $formHeading = $('.formHeading',$builderForm);
+	  var $formHeading = $('.formHeading',$builderPanel);
 	  
 	  for (var i = 0; i < options._languages.length; i++) {
 		  options.settings[options._languages[i]].name += ' ' + options.formCounter;
@@ -394,10 +407,7 @@ var FormBuilder = {
 			axis: 'y',
 			cursor: 'move',
 			helper: function (event, ui) {
-				return $(ui).clone().css({
-					opacity: 0.6,
-					border: "3px solid #cccccc"
-				});
+				return $(ui).clone().css($.fb.formbuilder.prototype.options._dragBoxCss);
 			},
 			start: function (event, ui) {
 				var $previousElement = $(ui.item).prev();
@@ -434,6 +444,7 @@ var FormBuilder = {
 				}	
 			}	
 		});
+		
 		// Making text elements, or elements that contain text, not text-selectable.
 		$builderFormFieldset.disableSelection();	  
   },

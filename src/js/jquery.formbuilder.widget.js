@@ -104,9 +104,15 @@ var FbWidget = {
   },
 	_createFbWidget: function(event) {
 		$.fb.fbWidget.prototype._log('_createFbWidget executing');
-	  var type = 'fb' + $(this)['fbWidget']('option', '_type');
-	  $.fb.fbWidget.prototype._log('type = ' + type);		
-		var $this = $(this).data(type);
+		// $.fb.fbWidget.prototype._log('$(this).options._type = ' + this.options._type);
+		var $this;
+		if (this.options) { // from draggable, event.type == 'mousedown'
+			$this = this;
+		} else { // from click event
+			var type = 'fb' + $(this)['fbWidget']('option', '_type');
+			$.fb.fbWidget.prototype._log('type = ' + type);		
+			$this = $(this).data(type);
+		}
 		// Clone an instance of plugin's option settings.
 		// From: http://stackoverflow.com/questions/122102/what-is-the-most-efficient-way-to-clone-a-javascript-object
 		var settings = jQuery.extend(true, {}, $this.options.settings); 
@@ -124,8 +130,13 @@ var FbWidget = {
 		$this._log("at. text = " + settings[$('#language').val()].text);
 		var name = $this._propertyName($this.options._type + counter);
 		$widget.click($this._createFieldSettings);
-		$ctrlHolder.append($widget).toggle('slide', {direction: 'down'}, 'slow');
-		$this._createField(name, $ctrlHolder, $this.options, settings);		
+		$ctrlHolder.append($widget);
+		if (this.options) {
+			return $ctrlHolder.show();
+		} else {
+			$ctrlHolder.toggle('slide', {direction: 'down'}, 'slow');
+			$this._createField(name, $ctrlHolder, $this.options, settings);			
+		}
 		$this._log('_createFbWidget executed');
     },
   _createFieldSettings: function(event) { 

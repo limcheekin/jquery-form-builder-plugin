@@ -87,6 +87,11 @@
 
 .uniForm .noBorderBottom { border-bottom: 0; }
 
+.dragBox {
+	opacity: 0.6;
+	border: 5px solid #cccccc;
+}
+
 /* Field Settings Panel */
 #fieldSettings {
 	padding: 1em;
