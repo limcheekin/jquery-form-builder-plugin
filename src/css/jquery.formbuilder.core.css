@@ -84,8 +84,11 @@
 div.ctrlHolder { padding: 1em }
 
 .uniForm .ctrlHolder {
-	 position:relative; cursor: pointer;
+	 position:relative; 
+	 cursor: pointer; 
+	 padding: 1em 1.5em 1em 1em;
 }
+
 .uniForm .ctrlHolder .closeButton {
 	 position:absolute;
 	 top:1px;

@@ -210,7 +210,8 @@ var FormBuilder = {
    },
   _initDroppable: function() {
 	  var fbOptions = this.options;
-	  $(fbOptions._formControls).droppable({
+	  var $formControls = $(fbOptions._formControls);
+	  $formControls.droppable({
 	  	drop: function(event, ui) {
 	  		$.fb.formbuilder.prototype._log('drop executing. ui.helper.attr(rel) = ' + ui.helper.attr('rel') + ', ui.offset.top = ' + ui.offset.top);
 	  		$.fb.formbuilder.prototype._log('ui.draggable.attr(id) = ' + ui.draggable.attr('id'));
@@ -220,24 +221,28 @@ var FormBuilder = {
 	  			 var $widget = ui.draggable.data('fb' + ui.draggable.attr('id'));
 		    	 var $prevCtrlHolder = $.fb.formbuilder.prototype._getPreviousCtrlHolder(ui);
 		    	 var $ctrlHolder = $widget._createFbWidget(event); 
+		    	 var $elements;
 		    	 if ($prevCtrlHolder) {
 	  			   $widget._log('$prevCtrlHolder.text() = ' + $prevCtrlHolder.text());
 	  			   $ctrlHolder.insertAfter($prevCtrlHolder);
+	  			   $elements = $prevCtrlHolder.next().nextAll(); // $ctrlHolder.next() not works
 	  		   } else {
 	  			   $(fbOptions._emptyBuilderPanel + ':visible').hide();
-					   $($.fb.formbuilder.prototype.options._formControls).prepend($ctrlHolder).sortable('refresh');				  		        	   
+	  			   $elements = $('.' + $.fb.fbWidget.prototype.options._styleClass + 
+	  					   ':visible:not(.' + fbOptions._draggableClass + ')', $formControls);
+	  				 $formControls.prepend($ctrlHolder).sortable('refresh');				  		        	   
 	  		          }
 		    	 $ctrlHolder.toggle('slide', {direction: 'up'}, 'slow');
-			    if ($prevCtrlHolder.next().next().length) {
-			    	$widget._log('$ctrlHolder.next() = ' + $prevCtrlHolder.next().next().text());
+
+		    	 if ($elements.length) {
 						// set next widget's sequence as my sequence
+		    		 $widget._log('$elements.first().text() = ' + $elements.first().text());
 						$.fb.formbuilder.prototype._getSequence($ctrlHolder).val(
-						    $.fb.formbuilder.prototype._getSequence($prevCtrlHolder.next().next()).val()).change();						
-						$elements = $ctrlHolder.nextAll();  
+						    $.fb.formbuilder.prototype._getSequence($elements.first()).val()).change();
 						$elements.each(function(index) {
 						  $.fb.formbuilder.prototype._increaseSequence($(this));
 						 });
-			    	 }
+			    	 } 
 	  		    }
 	  		}  		
 	    });	   
