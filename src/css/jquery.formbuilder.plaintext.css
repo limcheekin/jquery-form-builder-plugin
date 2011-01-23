@@ -12,6 +12,10 @@
 .uniForm .ctrlHolder .PlainText { padding-top: 0; padding-bottom: 0 }
 .uniForm .topAlign { padding-top: 0; padding-bottom: 2em; }
 .uniForm .bottomAlign { padding-top: 2em; padding-bottom: 0; }
-.uniForm .rightAlign { text-align: right; }
-.uniForm .centerAlign { text-align: center; }
+div.rightAlign { text-align: right; }
+div.centerAlign { text-align: center; }
+
+/* for drag and drop */
+div.topAlign { padding-top: 0; padding-bottom: 2em; }
+div.bottomAlign { padding-top: 2em; padding-bottom: 0; }
 

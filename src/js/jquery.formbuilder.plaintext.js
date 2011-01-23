@@ -26,7 +26,7 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 			},
 			zh : {
 				text : '無格式文字',
-				classes : [ 'rightAlign', 'topAlign' ]
+				classes : [ 'rightAlign', 'middleAlign' ]
 			},
 			styles : {
 				fontFamily: 'default', // form builder default

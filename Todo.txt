@@ -2,6 +2,7 @@
 eg. options = {label: 'Label 1', name: 'widget1', value: 'default value', description:'help text'};
 4.1. Revise Widget API by refer to JQuery UI, keep all method consistent 
      to accept event and fb object as params, such as method: function(event, fb)
+     fb = { target: widgetHandle, item: widget, item.settings: settings };
 5. Document the architecture of JQuery Form Builder and How to create custom widget integrate with form builder.
 6. Blog about it and RFC. Post it to Developing JQuery plugin forum, dzone.com and stackoverflow.com
 7. Tooltip for Field Setting panel.

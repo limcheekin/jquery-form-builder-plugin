@@ -42,7 +42,7 @@ var FormBuilder = {
 		_id: '#container',
 		_languages : [ 'en', 'zh' ],
 		_builderPanel: '#builderPanel',
-		_builderForm: '#builderForm fieldset',
+		_builderForm: '#builderForm',
 		_emptyBuilderPanel: '#emptyBuilderPanel',
 		_paletteTabs: '#paletteTabs',
 		_standardFieldsPanel: '#standardFields',
@@ -55,8 +55,12 @@ var FormBuilder = {
     _languagesSupportIdGeneration: ['en'],
     _dragBoxCss: {
 		  opacity: 0.6,
+		  zIndex: 8888, 
 		  border: "5px solid #cccccc"
-	  }
+	  },
+		_formControls: '#builderPanel fieldset',
+		_draggableClass: 'draggable',
+		_dropPlaceHolderClass: 'dropPlaceHolder'
   },
   _create: function() {
     	// called on construction
@@ -108,15 +112,45 @@ var FormBuilder = {
 		  widgetOptions = $['fb']['fb' + widgets[i]].prototype.options;
 		  widget = $('<a id="' + widgetOptions._type +  '" href="#" class="fbWidget">' + widgetOptions.name + '</a>');
       widget.button()['fb' + widgetOptions._type]()
-      .draggable({
-			  cursor: 'move',
-			  helper: function (event, ui) {
-				  return $(this).data('fb' + widgetOptions._type)
-				    ._createFbWidget(event).css($.fb.formbuilder.prototype.options._dragBoxCss)
-				    .css({padding: '1em', width: $('.formHeading').css('width')});
-			} 
-    	  }).appendTo(widgetOptions.belongsTo);
+      .appendTo(widgetOptions.belongsTo);
+      this._initDraggable(widget, widgetOptions._type);
 	    }			  
+   },
+  _initDraggable: function(widget, type) {
+	  widget.draggable({
+		  cursor: 'move',
+		  distance: 10,
+		  helper: function (event, ui) {
+			  var helper = $(this).data('fb' + type)
+			    ._createFbWidget(event).css($.fb.formbuilder.prototype.options._dragBoxCss)
+			    .css({width: $('.formHeading').css('width')})
+			    .addClass($.fb.formbuilder.prototype.options._draggableClass);
+			  $.fb.formbuilder.prototype._log('helper.html() = ' + helper.html());
+			  return helper;
+		} ,
+    drag: function(event, ui) {
+			$.fb.formbuilder.prototype._log('ui.helper: w x h = ' + ui.helper.css('width') + " x " + ui.helper.css('height'));
+			var $prevCtrlHolder = $.fb.formbuilder.prototype._getPreviousCtrlHolder(ui);
+			var fbOptions = $.fb.formbuilder.prototype.options;
+			// $.fb.formbuilder.prototype._log('rel: ' + $prevCtrlHolder.attr('rel') + " == " + ui.helper.attr('rel'));
+			if ($prevCtrlHolder && $prevCtrlHolder.attr('rel') != ui.helper.attr('rel')) {
+				ui.helper.attr('rel', $prevCtrlHolder.attr('rel'));
+				$('.' + fbOptions._dropPlaceHolderClass).remove();
+			  $('<div></div>').addClass(fbOptions._dropPlaceHolderClass)
+			   .css('height', '30px').insertAfter($prevCtrlHolder);		  
+			} else {
+				var $ctrlHolder = $('.' + $.fb.fbWidget.prototype.options._styleClass + 
+						   ':visible:not(.' + fbOptions._draggableClass + '):first');		
+				
+				if ($ctrlHolder.length && ui.offset.top < $ctrlHolder.offset().top) {
+					$('.' + fbOptions._dropPlaceHolderClass).remove();
+				}
+			} 
+         },
+    stop: function(event, ui) {
+	   $('.' + $.fb.formbuilder.prototype.options._dropPlaceHolderClass).remove();
+        }
+	  });	   
    },
    _isFieldSettingsTabCanOpen: function(event, ui) { 
 		if (ui.index == 1) { // Field Settings tab selected
@@ -166,7 +200,7 @@ var FormBuilder = {
 	  this._initFormSettings();
 	  if (!this.options.readOnly) {
 	    this._initSortableWidgets();
-	    $(this.options._builderPanel + 'not(.formHeading)').droppable();
+      this._initDroppable();
 	  } else {
 			$('input:not(div.buttons input)').attr("disabled", true);
 			$('select').attr("disabled", true);
@@ -174,6 +208,56 @@ var FormBuilder = {
 	    }
 	  this._initWidgetsEventBinder();
    },
+  _initDroppable: function() {
+	  var fbOptions = this.options;
+	  $(fbOptions._formControls).droppable({
+	  	drop: function(event, ui) {
+	  		$.fb.formbuilder.prototype._log('drop executing. ui.helper.attr(rel) = ' + ui.helper.attr('rel') + ', ui.offset.top = ' + ui.offset.top);
+	  		$.fb.formbuilder.prototype._log('ui.draggable.attr(id) = ' + ui.draggable.attr('id'));
+	  		// to make sure the drop event is trigger by draggable instead of sortable
+	  		if (ui.helper.attr('class').lastIndexOf(fbOptions._draggableClass) > -1) {
+	  			 $('.' + fbOptions._dropPlaceHolderClass).remove();
+	  			 var $widget = ui.draggable.data('fb' + ui.draggable.attr('id'));
+		    	 var $prevCtrlHolder = $.fb.formbuilder.prototype._getPreviousCtrlHolder(ui);
+		    	 var $ctrlHolder = $widget._createFbWidget(event); 
+		    	 if ($prevCtrlHolder) {
+	  			   $widget._log('$prevCtrlHolder.text() = ' + $prevCtrlHolder.text());
+	  			   $ctrlHolder.insertAfter($prevCtrlHolder);
+	  		   } else {
+	  			   $(fbOptions._emptyBuilderPanel + ':visible').hide();
+					   $($.fb.formbuilder.prototype.options._formControls).prepend($ctrlHolder).sortable('refresh');				  		        	   
+	  		          }
+		    	 $ctrlHolder.toggle('slide', {direction: 'up'}, 'slow');
+			    if ($prevCtrlHolder.next().next().length) {
+			    	$widget._log('$ctrlHolder.next() = ' + $prevCtrlHolder.next().next().text());
+						// set next widget's sequence as my sequence
+						$.fb.formbuilder.prototype._getSequence($ctrlHolder).val(
+						    $.fb.formbuilder.prototype._getSequence($prevCtrlHolder.next().next()).val()).change();						
+						$elements = $ctrlHolder.nextAll();  
+						$elements.each(function(index) {
+						  $.fb.formbuilder.prototype._increaseSequence($(this));
+						 });
+			    	 }
+	  		    }
+	  		}  		
+	    });	   
+   },
+  _getPreviousCtrlHolder: function(ui) {
+		var $ctrlHolders = $('.' + $.fb.fbWidget.prototype.options._styleClass + 
+				   ':visible:not(.' + $.fb.formbuilder.prototype.options._draggableClass + ')');
+		var $this, $prevCtrlHolder;
+		  
+		$ctrlHolders.each(function(i) {
+			$this = $(this);
+			$.fb.formbuilder.prototype._log(i + ') top = ' + $this.offset().top);
+			if (ui.offset.top > $this.offset().top) {
+				$prevCtrlHolder = $this;
+			} else {
+				return false;
+			}
+		});
+		return $prevCtrlHolder;
+  },  
   _initFormSettings: function() {
 	  var $fbWidget = $.fb.fbWidget.prototype;
 	  var $builderPanel = $(this.options._builderPanel);
@@ -184,7 +268,7 @@ var FormBuilder = {
 	  var options = this.options;
 	  var settings = options.settings[$language.val()];
 	  var $this = this;
-	  var $formHeading = $('.formHeading',$builderPanel);
+	  var $formHeading = $('.formHeading', $builderPanel);
 	  
 	  for (var i = 0; i < options._languages.length; i++) {
 		  options.settings[options._languages[i]].name += ' ' + options.formCounter;
@@ -402,10 +486,11 @@ var FormBuilder = {
 		}
   },
   _initSortableWidgets: function() {
-	  var $builderFormFieldset = $(this.options._builderForm);
-		$builderFormFieldset.sortable({ 
+	  var $formControls = $(this.options._formControls);
+	  $formControls.sortable({ 
 			axis: 'y',
 			cursor: 'move',
+			distance: 10,
 			helper: function (event, ui) {
 				return $(ui).clone().css($.fb.formbuilder.prototype.options._dragBoxCss);
 			},
@@ -413,41 +498,41 @@ var FormBuilder = {
 				var $previousElement = $(ui.item).prev();
 				if ($previousElement.attr('rel')) {
 					ui.item.prevIndex = $previousElement.attr('rel');
-					ui.item.originalPositionTop = $previousElement.position().top;
-					// alert('ui.item.originalPositionTop = ' + ui.item.originalPositionTop);
+					ui.item.originalOffsetTop = $previousElement.offset().top;
 				}
 			},
-			update: function (event, ui) {
-				var $uiItem = $(ui.item);
-				var $elements;
-				var moveDown = ui.position.top > ui.item.originalPositionTop;
-				$.fb.formbuilder.prototype._log('moveDown = ' + moveDown + ', ui.position.top = ' + ui.position.top + ", ui.item.originalPositionTop = " + ui.item.originalPositionTop);
-				if (ui.item.prevIndex) {
-					var prevElementSelector = '[rel="' + ui.item.prevIndex + '"]';
-					if (moveDown) {
-				    $elements = $uiItem.prevUntil(prevElementSelector);
-				    $.fb.formbuilder.prototype._moveDown($uiItem, $elements);			    
-					} else {
-						// set next widget's sequence as my sequence
-						$.fb.formbuilder.prototype._getSequence($uiItem).val(
-						    $.fb.formbuilder.prototype._getSequence($uiItem.next()).val()).change();						
-						$elements = $uiItem.nextUntil(prevElementSelector);  
-						$elements.each(function(index) {
-						  $.fb.formbuilder.prototype._increaseSequence($(this));
-						 });		
-						// process the last one
-						$.fb.formbuilder.prototype._increaseSequence($(prevElementSelector));
-					}
-				} else {
-					$elements = $uiItem.prevAll();
-					$.fb.formbuilder.prototype._moveDown($uiItem, $elements);			
-				}	
-			}	
-		});
+			update: $.fb.formbuilder.prototype._updateSequence
+			});
 		
 		// Making text elements, or elements that contain text, not text-selectable.
-		$builderFormFieldset.disableSelection();	  
+	  $formControls.disableSelection();	  
   },
+  _updateSequence: function (event, ui) {
+		var $uiItem = $(ui.item);
+		var $elements;
+		var moveDown = ui.offset.top > ui.item.originalOffsetTop;
+		$.fb.formbuilder.prototype._log('moveDown = ' + moveDown + ', ui.offset.top = ' + ui.offset.top + ", ui.item.originalOffsetTop = " + ui.item.originalOffsetTop);
+		if (ui.item.prevIndex) {
+			var prevElementSelector = '[rel="' + ui.item.prevIndex + '"]';
+			if (moveDown) {
+		    $elements = $uiItem.prevUntil(prevElementSelector);
+		    $.fb.formbuilder.prototype._moveDown($uiItem, $elements);			    
+			} else {
+				// set next widget's sequence as my sequence
+				$.fb.formbuilder.prototype._getSequence($uiItem).val(
+				    $.fb.formbuilder.prototype._getSequence($uiItem.next()).val()).change();						
+				$elements = $uiItem.nextUntil(prevElementSelector);  
+				$elements.each(function(index) {
+				  $.fb.formbuilder.prototype._increaseSequence($(this));
+				 });		
+				// process the last one
+				$.fb.formbuilder.prototype._increaseSequence($(prevElementSelector));
+			}
+		} else {
+			$elements = $uiItem.prevAll();
+			$.fb.formbuilder.prototype._moveDown($uiItem, $elements);			
+		}
+	},
 	_init: function() {
 	  // called on construction and re-initialization
 		this._log('FormBuilder._init called.');

@@ -48,7 +48,6 @@ var FbWidget = {
 	  widget.append($.fb.fbWidget.prototype._createFieldProperties(name, options, settings, index));
 	  
 	  $(fbOptions._emptyBuilderPanel + ':visible').hide();
-	  $(fbOptions._builderForm).append(widget).sortable('refresh');
     }, 
   _propertyName: function (value) {
   	var propertyName;
@@ -61,13 +60,13 @@ var FbWidget = {
 	   var index = $widget.attr('rel');
 	   var options = $.fb.fbWidget.prototype.options;
 	   var fbOptions = $.fb.formbuilder.prototype.options;
-	   
+  
 	   // new record that not stored in database
      if ($widget.find("input[id$='fields[" + index + "].id']").val() == 'null') { 
     	 $widget.remove();
      } else {
-  	   $widget.find("input[id$='fields[" + index + "].status']").val('D');
-	     $widget.toggle('slide', {direction: 'up'}, 'fast');    	 
+  	   $widget.find("input[id$='fields[" + index + "].status']").val('D'); 	 
+  	   $widget.hide();
      }
      var $ctrlHolders = $('.' + options._styleClass + ':visible');
      $.fb.fbWidget.prototype._log('_deleteWidget(). $ctrlHolders.size() = ' + $ctrlHolders.size());
@@ -103,7 +102,7 @@ var FbWidget = {
 	    }
   },
 	_createFbWidget: function(event) {
-		$.fb.fbWidget.prototype._log('_createFbWidget executing');
+		$.fb.fbWidget.prototype._log('_createFbWidget executing. event.type = ' + event.type);
 		// $.fb.fbWidget.prototype._log('$(this).options._type = ' + this.options._type);
 		var $this;
 		if (this.options) { // from draggable, event.type == 'mousedown'
@@ -128,14 +127,19 @@ var FbWidget = {
 		$this._log("b4. text = " + settings[$('#language').val()].text);
 		var $widget = $this._getWidget($this, settings[$('#language').val()], $ctrlHolder);
 		$this._log("at. text = " + settings[$('#language').val()].text);
-		var name = $this._propertyName($this.options._type + counter);
-		$widget.click($this._createFieldSettings);
 		$ctrlHolder.append($widget);
-		if (this.options) {
-			return $ctrlHolder.show();
+		if (event.type == 'click' || event.type == 'drop') {
+			var name = $this._propertyName($this.options._type + counter);
+			$widget.click($this._createFieldSettings);			
+			$this._createField(name, $ctrlHolder, $this.options, settings);
+			if (event.type == 'click') {
+				$($.fb.formbuilder.prototype.options._formControls).append($ctrlHolder).sortable('refresh');				
+				$ctrlHolder.toggle('slide', {direction: 'up'}, 'slow');			
+			} else {
+				return $ctrlHolder;
+			}
 		} else {
-			$ctrlHolder.toggle('slide', {direction: 'down'}, 'slow');
-			$this._createField(name, $ctrlHolder, $this.options, settings);			
+			return $ctrlHolder.show();
 		}
 		$this._log('_createFbWidget executed');
     },
@@ -195,7 +199,7 @@ var FbWidget = {
   	$.fb.fbWidget.prototype._log('_createFieldSettings executed.');
     },
 	_getCounter: function($this) {
-		  var $ctrlHolders = $('.' + $this.options._styleClass + ':visible');
+		  var $ctrlHolders = $('.' + $this.options._styleClass + ':visible:not(.' + this._getFbOptions()._draggableClass + ')');
 		  var counter = 1;
 		  if ($ctrlHolders.size() > 0) {
 		    	var $ctrlHolder, index, name, widgetCounter = 0;

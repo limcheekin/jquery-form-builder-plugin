@@ -76,6 +76,13 @@
 
 .uniForm .formHeading { padding: 1em; }
 
+#builderPanel fieldset {
+  min-height: 380px	  
+}
+
+/* for drag and drop */
+div.ctrlHolder { padding: 1em }
+
 .uniForm .ctrlHolder {
 	 position:relative; cursor: pointer;
 }
