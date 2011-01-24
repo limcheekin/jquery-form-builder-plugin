@@ -16,22 +16,38 @@
 <title>Plain Text Field Settings</title>
 <script type="text/javascript" src="../lib/js/jquery-1.4.4.min.js"></script>
 <script type="text/javascript" src="../lib/js/jquery-ui-1.8.7.custom.min.js"></script>
-<script type="text/javascript" src="../lib/js/jquery.fontpicker-regios.js"></script>
+<script type="text/javascript" src="../lib/js/jquery.qtip.min.js"></script>
+<script type="text/javascript" src="js/jquery.fontpicker.js"></script>
 <script type="text/javascript" src="js/jquery.colorpicker.js"></script>
 <link type="text/css" href="../lib/css/smoothness/jquery-ui-1.8.7.custom.css" media="screen" rel="stylesheet" /> 
 <link type="text/css" href="../lib/css/uni-form.css" media="screen" rel="stylesheet" />  
 <link type="text/css" href="../lib/css/default.uni-form.css" media="screen" rel="stylesheet" />  
+<link type="text/css" href="../lib/css/jquery.qtip.css" media="screen" rel="stylesheet" />
 <!--DEV--><link type="text/css" href="css/jquery.formbuilder.core.css" media="screen" rel="stylesheet" />  
 <!--DEV--><link type="text/css" href="css/jquery.formbuilder.plaintext.css" media="screen" rel="stylesheet" />  
-<link type="text/css" href="../lib/css/fontpicker.css" media="screen" rel="stylesheet" /> 
+<link type="text/css" href="css/jquery.fontpicker.css" media="screen" rel="stylesheet" /> 
 <link type="text/css" href="css/jquery.colorpicker.css" media="screen" rel="stylesheet" /> 
 
 <script type="text/javascript">
 $(function(){
+	$('#tooltip').qtip({
+		content: $('#tooltip').attr('title'),
+	  position: { my: 'bottom left', at: 'top center' },
+		show: {
+			event: 'click',
+			effect: function() { $(this).show('drop', { direction:'up'}); }
+		},		
+		hide: 'mouseout',
+		style: {
+			widget: true,
+			classes: 'ui-tooltip-shadow ui-tooltip-rounded', 
+			tip: true
+		}				
+	});
+	
 	$('#paletteTabs').tabs();
-	$('.fontPicker').fontPickerRegios({ 
-		defaultFont: 'Tahoma',	
-		callbackFunc: changeFont
+	$('.fontPicker').fontPicker({ 
+		defaultFont: 'Tahoma'
 	});
 	
 	$('#backgroundColor').colorPicker({
@@ -88,11 +104,6 @@ $(function(){
 	$builderFormFieldset.disableSelection();
 });
 
-function changeFont(fontFamily)
-{	  
-  alert (fontFamily + " selected.");
-  // $('#sampletext').css('fontFamily', fontFamily);  
-}
 </script>
 
 <style type="text/css">
@@ -178,27 +189,71 @@ function changeFont(fontFamily)
   </div>
 </div>					  
 </fieldset>
-<fieldset>
-<legend>Colors</legend>
-	<div class="2cols">
-		<div class="labelOnTop col1 noPaddingBottom">
-			<label for="color">Text (?)</label><br/>
-      <div id="color"></div>
-		</div>
-		<div class="labelOnTop col2 noPaddingBottom">
-			<label for="backgroundColor">Background (?)</label><br/>
-			<div id="backgroundColor"></div>
-		</div>	
-	</div>
+<fieldset><legend>Colors</legend>
+<div class="2cols">
+<div class="labelOnTop col1 noPaddingBottom"><label for="form.color">Text</label><br>
+<input class="floatClearLeft" type="text" name="form.color" id="form.color"
+	readonly="" title="rgb(0, 0, 0)" disabled=""
+	style="background: none repeat scroll 0% 0% rgb(0, 0, 0); color: rgb(0, 0, 0);">
+<a class="floatLeft" rel="form.color" href="#"><img border="0"
+	alt="Open colour picker" src="../images/jquery.colourPicker.gif"></a>
+</div>
+<div class="labelOnTop col2 noPaddingBottom"><label	for="form.backgroundColor">Background</label>
+<input type="text" name="form.backgroundColor"
+	id="form.backgroundColor" readonly="" title="transparent" disabled=""
+	style="background: none repeat scroll 0% 0% transparent; color: rgb(0, 0, 0);">
+<a class="floatLeft" rel="form.backgroundColor" href="#"><img border="0"
+	alt="Open colour picker" src="../images/jquery.colourPicker.gif"></a>
+</div>
+</div>
 </fieldset>
-					</div>				
-				</div>
+</div>
+
+<fieldset class="language"><legend> <label
+	for="language">Language: </label> <select id="language">
+	<option value="zh">Chinese</option>
+	<option selected="" value="en">English</option>
+</select> </legend>
+<div class="twoRowsOneRow">
+<div class="row1col1"><select style="margin-top: 1em;"
+	id="form.heading">
+	<option value="h1">Heading 1</option>
+	<option value="h2">Heading 2</option>
+	<option value="h3">Heading 3</option>
+	<option value="h4">Heading 4</option>
+	<option value="h5">Heading 5</option>
+	<option value="h6">Heading 6</option>
+</select>
+<div class="row2col1">
+<div><label for="form.horizontalAlignment">Horizontal
+Align</label><br>
+<select id="form.horizontalAlignment">
+	<option value="leftAlign">left</option>
+	<option value="centerAlign">center</option>
+	<option value="rightAlign">right</option>
+</select></div>
+</div>
+</div>
+<div class="row1col2">
+<div style="padding-left:3em"><input type="checkbox"
+	id="form.bold">&nbsp;Bold<br>
+<input type="checkbox"
+	id="form.italic">&nbsp;Italic<br>
+<input type="checkbox"
+	id="form.underline">&nbsp;Underline</div>
+</div>
+</div>
+</fieldset>
+
+
+</div>
 			</div>     
      </div>
   </div>
-  <div id="builderPanel">
-		<form id="builderForm" action="#" class="uniForm">
-		  <fieldset>
+  <form id="builderForm" action="#" class="uniForm">
+		  <div id="builderPanel">
+		    <div class="formHeading"><h1>Form 1</h1></div>
+			  <fieldset>
 				<div id="plainText1" class="ctrlHolder topAlign">
 				<a href="#" class="ui-corner-all closeButton"><span	class="ui-icon ui-icon-close">delete this widget</span></a>
 				<div class="PlainText">
@@ -217,9 +272,13 @@ function changeFont(fontFamily)
 Panel 3
 				</div>
 				</div>							
-</fieldset>
-		</form>	  
-  </div>		    
+		  </fieldset>
+		  
+  </div>
+  <div class="buttons">
+		  <input type="submit" name="create" class="save" value="Create" id="create" />
+	</div>
+	</form>	  
 </div>
 </body>
 </html>

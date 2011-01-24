@@ -228,36 +228,58 @@ var FbWidget = {
   	$settings.val($.toJSON(settings)).change();
    	} ,          
   _twoColumns: function($e1, $e2) {
-	  var $ui = $('<div class="2cols"> \
-		<div class="labelOnTop col1 noPaddingBottom"></div> \
-	  <div class="labelOnTop col2"></div> \
-    </div>');
-	  $ui.find(".col1").append($e1);
-	  $ui.find(".col2").append($e2);
-	  return $ui;
+	  return $('<div class="2cols"></div>')
+	        .append($e1.addClass('labelOnTop col1 noPaddingBottom'))
+	        .append($e2.addClass('labelOnTop col2'));
  	} ,      
   _oneColumn: function($e) {
-	  return $('<div class="clear labelOnTop"></div>').append($e);
- 	} ,    	
+	  return $e.addClass('clear labelOnTop');
+ 	} ,   
+ 	_description: function(options) {
+ 		var $description;
+ 		if (options.description) {
+ 		  $description = $('<span>&nbsp;(<a href="#" title="' + options.description + '">?</a>)</span>');
+			var $link = $('a', $description);
+			$link.qtip({
+				content: $link.attr('title'),
+				  position: { my: 'bottom left', at: 'top center' },
+					show: {
+						event: 'click',
+						effect: function() { $(this).show('drop', { direction:'up'}); }
+					},		
+					hide: 'mouseout',
+					style: {
+						widget: true,
+						classes: 'ui-tooltip-shadow ui-tooltip-rounded', 
+						tip: true
+					}				
+			}); 		
+ 		}
+ 		return $description;
+ 	},
+ 	_label: function(options) {
+ 		var $label = $('<div><label for="' + options.name + '">' + options.label + '</label></div>')
+ 		       .append(this._description(options));
+ 		if (!options.nobreak) $label.append('<br />');
+ 		return $label;
+ 	},
  	_horizontalAlignment: function(options) {
  		var o = $.extend({}, options);
  		o.label = o.label ? o.label : 'Horizontal Align'; 
- 		var $horizontalAlignment = $('<div> \
- 		<label for="' + o.name + '">' + o.label + ' (?)</label><br /> \
-		<select> \
+ 		var $horizontalAlignment = this._label(o)
+		.append('<select> \
 			<option value="leftAlign">left</option> \
 			<option value="centerAlign">center</option> \
 			<option value="rightAlign">right</option> \
-		</select></div>');
+		</select>');
 		$('select', $horizontalAlignment).val(o.value).attr('id', o.name);	
 		return $horizontalAlignment;
  	},
  	_verticalAlignment: function(options) {
  		var o = $.extend({}, options);
  		o.label = o.label ? o.label : 'Vertical Align'; 
- 		var $verticalAlignment = $('<div> \
- 			<label for="' + o.name + '">' + o.label + ' (?)</label><br /> \
-			<select> \
+ 		var $verticalAlignment = this._label(o)
+		 .append('<select> \
 				<option value="topAlign">top</option> \
 				<option value="middleAlign">middle</option> \
 				<option value="bottomAlign">bottom</option> \
@@ -278,7 +300,7 @@ var FbWidget = {
  		return $name;		 
  	}, 	
  	_colorPicker: function(options) {
-		var $colorPicker = $('<div></div>');
+		var $colorPicker = this._label(options);
  		if (!options.type || options.type == 'basic') {
 			$colorPicker.colorPicker({
 				name: options.name,
@@ -296,7 +318,6 @@ var FbWidget = {
 			  width: 360
 			});		
 		}
- 		$colorPicker.prepend('<label for="' + options.name + '">' + options.label + ' (?)</label><br/>');
 	  return $colorPicker;
  	},
  	_fontPicker: function(options) {
@@ -305,9 +326,8 @@ var FbWidget = {
  		o.value = o.value.replace(/'/gi, ''); // remove single quote for chrome browser
  		o.value = o.value.split(',', 1)[0]; // taking the 1st font type
  		o.value = o.value != 'default' ? o.value : this._getFbOptions().settings.styles.fontFamily;
- 		
-		var $fontPicker = $('<div><label for="' + o.name + '">Font (?)</label><br/> \
-				<div class="fontPicker" rel="' + o.name + '"></div></div>'); 		
+ 		if (!o.label) o.label = 'Font';
+		var $fontPicker = this._label(o).append('<div class="fontPicker" rel="' + o.name + '"></div>'); 		
 
 		$('.fontPicker', $fontPicker).fontPicker({ 
 			name: o.name,
@@ -317,9 +337,8 @@ var FbWidget = {
  	},	
  	_fontSize: function(options) {
  		this._log('fontSize(' + $.toJSON(options) + ')');
-	 	var $fontSize = $('<div> \
-	 		<label for="' + options.name + '">' + options.label + ' (?)</label>&nbsp; \
-		  <select> \
+ 		options.nobreak = true;
+	 	var $fontSize = this._label(options).append('&nbsp;<select> \
 		    <option value="9">9</option> \
 		    <option value="10">10</option> \
 		    <option value="11">11</option> \
@@ -335,7 +354,7 @@ var FbWidget = {
 		    <option value="24">24</option> \
 		    <option value="28">28</option> \
 		    <option value="32">32</option> \
-		  </select></div>');		
+		  </select>');		
 		  var $select = $('select', $fontSize);
 		  if (options.value == 'default') {
 			  $select.val(this._getFbOptions().settings.styles.fontSize);
@@ -349,9 +368,9 @@ var FbWidget = {
 	  var names = options.names;
 	  var checked = options.checked;
 		var $fontStyles = $('<div> \
-		  <span class="floatClearLeft"><input type="checkbox" id="' + names[0] + '" />&nbsp;Bold</span><br/> \
-	    <span class="floatClearLeft"><input type="checkbox" id="' + names[1] + '" />&nbsp;Italic</span><br/> \
-	    <span class="floatClearLeft"><input type="checkbox" id="' + names[2] + '" />&nbsp;Underline</span> \
+		  <input type="checkbox" id="' + names[0] + '" />&nbsp;Bold<br /> \
+	    <input type="checkbox" id="' + names[1] + '" />&nbsp;Italic<br /> \
+	    <input type="checkbox" id="' + names[2] + '" />&nbsp;Underline \
 	  </div>');
 	  if (checked) {
 	    for (var i = 0; i < checked.length; i++) {
@@ -384,7 +403,7 @@ var FbWidget = {
 	  return this._fieldset({ text: 'Fonts' }).append(this._twoRowsOneRowLayout(
 			  this._fontPicker({ name: idPrefix + 'fontFamily', value: options.fontFamily }),
 			  this._fontSize({ label: 'Size', name: idPrefix + 'fontSize', value: options.fontSize }),
-			  this._fontStyles({ names: names, checked: options.fontStyles })
+			  this._fontStyles({ names: names, checked: options.fontStyles }).css('paddingLeft', '2em')
 			  ));
   },
   _colorPanel: function(options) {
@@ -401,6 +420,7 @@ var FbWidget = {
 			  this._twoColumns(this._colorPicker({ label: 'Text', name: o.idPrefix + 'color', value: o.color }),
 			  this._colorPicker({ label: 'Background', name: o.idPrefix + 'backgroundColor', value: o.backgroundColor })));
 	  $colorPanel.find('.2cols .col2').addClass('noPaddingBottom');
+	  $colorPanel.find('input:first').addClass('floatClearLeft');
 	  return $colorPanel;
   },
   _getWidget: function($this, settings, $ctrlHolder) {

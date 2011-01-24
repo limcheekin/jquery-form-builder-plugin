@@ -49,9 +49,10 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 				.addClass(settings.classes[0]);
 	},
 	_getFieldSettingsLanguageSection : function($this, $widget, settings) {
-		var $text = $('<label for="field.text">Text (?)</label><br /> \
-     <input type="text" id="field.text" />')
-				.val($widget.find('div.PlainText').text())
+		var $text = $this._label({ label: 'Text', name: 'field.text', 
+			                 description: 'Text entered below will display in the form.' })
+		           .append('<input type="text" id="field.text" />');
+				$('input', $text).val($widget.find('div.PlainText').text())
 				.keyup(function(event) {
 					var value = $(this).val();
 					$widget.find('div.PlainText').text(value);

@@ -282,9 +282,9 @@ var FormBuilder = {
 	  $formHeading.append('<' + settings.heading + ' class="heading">' + settings.name + '</' + settings.heading + '>');
 	  
 	  $('#name',$builderForm).val($fbWidget._propertyName(settings.name));
-		var $name = $('<label for="form.name">Name (?)</label><br/> \
-				  <input type="text" id="form.name" value="' + settings.name + '" />')
-					.keyup(function(event) {
+		var $name = $fbWidget._label({ label: 'Name', name: 'form.name' })
+		       .append('<input type="text" id="form.name" value="' + settings.name + '" />');
+		$('input', $name).keyup(function(event) {
 						var value = $(this).val();
 						if ($.inArray($language.val(), options._languagesSupportIdGeneration) > -1) {
 							var name = $fbWidget._propertyName(value);
@@ -332,7 +332,8 @@ var FormBuilder = {
 				}).change();
 		
 		var names = ['form.bold', 'form.italic', 'form.underline'];
-		var $fontStyles = $fbWidget._fontStyles({ names: names, checked: settings.fontStyles });
+		var $fontStyles = $fbWidget._fontStyles({ names: names, checked: settings.fontStyles })
+		                  .css('paddingLeft', '3em');
 		$("input[id$='form.bold']", $fontStyles).change(function(event) {
 			if ($(this).attr('checked')) {
 				$(settings.heading, $formHeading).css('fontWeight', 'bold');

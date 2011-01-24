@@ -87,7 +87,7 @@ var ColorPicker = {
 		this._log('ColorPicker._init called.');
 		// Add the colour-picker dialogue if not added
 		this.element.append('<input type="text" id="' + this.options.name + '" name="' + this.options.name + '" /> \
-				<a href="#" rel="' + this.options.name + '"><img border="0" src="' + this.options.ico + '" alt="' + this.options.openTxt + '"/></a>');
+				<a class="floatLeft" href="#" rel="' + this.options.name + '"><img border="0" src="' + this.options.ico + '" alt="' + this.options.openTxt + '"/></a>');
 		var $colorPickerInput = $('input', this.element).attr('readonly', true);
 		var $this = this.element.data('colorPicker');
 		var id = "colorpicker_" + this.options.type;
