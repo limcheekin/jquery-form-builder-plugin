@@ -16,15 +16,21 @@
 <title>Widget Name Field Settings</title>
 <script type="text/javascript" src="../lib/js/jquery-1.4.4.min.js"></script>
 <script type="text/javascript" src="../lib/js/jquery-ui-1.8.7.custom.min.js"></script>
-<script type="text/javascript" src="../lib/js/jquery.fontpicker-regios.js"></script>
-<script type="text/javascript" src="../lib/js/jquery.colourPicker.min.js"></script>
+<script type="text/javascript" src="../lib/js/jquery.json-2.2.min.js"></script>
+<script type="text/javascript" src="../lib/js/jquery.qtip.min.js"></script>
+<!--DEV--><script type="text/javascript" src="js/jquery.formbuilder.core.js"></script>
+<!--DEV--><script type="text/javascript" src="js/jquery.formbuilder.widget.js"></script>
+<!--DEV--><script type="text/javascript" src="js/jquery.colorpicker.js"></script>
+<!--DEV--><script type="text/javascript" src="js/jquery.fontpicker.js"></script>
+<!--PROD.JS-->
 <link type="text/css" href="../lib/css/smoothness/jquery-ui-1.8.7.custom.css" media="screen" rel="stylesheet" /> 
 <link type="text/css" href="../lib/css/uni-form.css" media="screen" rel="stylesheet" />  
-<link type="text/css" href="../lib/css/default.uni-form.css" media="screen" rel="stylesheet" />
-<link type="text/css" href="css/jquery.formbuilder.core.css" media="screen" rel="stylesheet" />  
-<link type="text/css" href="../lib/css/fontpicker.css" media="screen" rel="stylesheet" /> 
-<link type="text/css" href="../lib/css/jquery.colourPicker.css" media="screen" rel="stylesheet" /> 
-
+<link type="text/css" href="../lib/css/default.uni-form.css" media="screen" rel="stylesheet" />  
+<link type="text/css" href="../lib/css/jquery.qtip.css" media="screen" rel="stylesheet" />
+<!--DEV--><link type="text/css" href="css/jquery.formbuilder.core.css" media="screen" rel="stylesheet" />  
+<!--DEV--><link type="text/css" href="css/jquery.colorpicker.css" media="screen" rel="stylesheet" />  
+<!--DEV--><link type="text/css" href="css/jquery.fontpicker.css" media="screen" rel="stylesheet" /> 
+<!--PROD.CSS-->
 <script type="text/javascript">
 $(function(){
 	$('#paletteTabs').tabs();
@@ -47,7 +53,7 @@ $(function(){
 				</ul>
 				<div id="fieldSettings">
 					<fieldset class="language">
-					<legend>Language: <select><option value="en">English</option></select></legend>
+					<legend>Language: English</legend>
 					<div class="clear labelOnTop">
 						<label for="text">Text (?)</label><br/>
 						<input type="text" id="text" />
@@ -79,7 +85,7 @@ $(function(){
 							</div>
 							<div class="labelOnTop col2">
 								<label for="backgroundColor">Background Color (?)</label><br/>
-					      <select id="backgroundColor" class="colorPicker">
+					      <select id="backgroundColor">
 					      </select>
 							</div>	
 						</div>
@@ -88,12 +94,18 @@ $(function(){
 			</div>     
      </div>
   </div>
-  <div id="builderPanel">
-		<form id="builderForm" action="#" class="uniForm">
-		  <fieldset>
-		  </fieldset>
-		</form>	  
-  </div>		     
+  <form id="builderForm" action="#" class="uniForm">
+		  <div id="builderPanel">
+		    <div class="formHeading"><h1>Form 1</h1></div>
+			  <fieldset>
+				<div class="ctrlHolder">
+				</div>							
+		  </fieldset>		  
+  </div>
+  <div class="buttons">
+		  <input type="submit" name="create" class="save" value="Create" id="create" />
+	</div>
+	</form>	  	     
 </div>
 </body>
 </html>
