@@ -251,7 +251,8 @@
     </copy>  	
 	  <replaceregexp match="@REVISION" replace="${svn.info.lastRev}" flags="g" byline="true" file="war/WEB-INF/appengine-web.xml" />
   	<replaceregexp match="@REVISION" replace="${svn.info.lastRev}" flags="g" byline="true" file="war/index.html" />
-	  <replaceregexp match="@VERSION" replace="${version}" flags="g" byline="true" file="war/index.html" />  	
+	  <replaceregexp match="@VERSION" replace="${version}" flags="g" byline="true" file="war/index.html" />  
+  	<replaceregexp match="Date: " replace="Date: ${svn.info.lastDate}" file="war/index.html" />
   	<replaceregexp match="../lib/" replace="" flags="g" byline="true" file="war/index.html" />
   	<replaceregexp match="&lt;!--PROD.JS--&gt;" flags="g" byline="true" file="war/index.html" 
   		replace="&lt;script type=&quot;text/javascript&quot; src=&quot;js/jquery-formbuilder-${version}.pack.js&quot;&gt;&lt;/script&gt;" />
