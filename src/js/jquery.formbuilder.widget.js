@@ -235,11 +235,11 @@ var FbWidget = {
   _oneColumn: function($e) {
 	  return $e.addClass('clear labelOnTop');
  	} ,   
- 	_description: function(options) {
- 		var $description;
+ 	_help: function(options) {
+ 		var $help;
  		if (options.description) {
- 		  $description = $('<span>&nbsp;(<a href="#" title="' + options.description + '">?</a>)</span>');
-			var $link = $('a', $description);
+ 		  $help = $('<span>&nbsp;(<a href="#" title="' + options.description + '">?</a>)</span>');
+			var $link = $('a', $help);
 			$link.qtip({
 				content: $link.attr('title'),
 				  position: { my: 'bottom left', at: 'top center' },
@@ -255,11 +255,11 @@ var FbWidget = {
 					}				
 			}); 		
  		}
- 		return $description;
+ 		return $help;
  	},
  	_label: function(options) {
  		var $label = $('<div><label for="' + options.name + '">' + options.label + '</label></div>')
- 		       .append(this._description(options));
+ 		       .append(this._help(options));
  		if (!options.nobreak) $label.append('<br />');
  		return $label;
  	},

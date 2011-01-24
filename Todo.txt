@@ -16,4 +16,5 @@ Option Group 1
 Option Group 2
   Option 3
   Option 4
+12. Bug? Changing Form Settings tab to Field Settings tab, Field Settings tab not display properly.
   
