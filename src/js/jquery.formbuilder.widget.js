@@ -125,7 +125,8 @@ var FbWidget = {
 		// store settings to be used in _createFieldSettings() and _languageChange()
 		$ctrlHolder.data('fbWidget', settings); 
 		$this._log("b4. text = " + settings[$('#language').val()].text);
-		var $widget = $this._getWidget($this, settings[$('#language').val()], $ctrlHolder);
+		var fb = {target: $this, item: $ctrlHolder, settings: settings[$('#language').val()]};
+		var $widget = $this._getWidget(event, fb);
 		$this._log("at. text = " + settings[$('#language').val()].text);
 		$ctrlHolder.append($widget);
 		if (event.type == 'click' || event.type == 'drop') {
@@ -165,15 +166,16 @@ var FbWidget = {
 		var settings = $widget.data('fbWidget'); 
 		var $languageSection = $(fbOptions._fieldSettingsLanguageSection);
 		var $language = $('#language');
-		$('legend', $languageSection).text('Language: ' + $language.find('option:selected').text());		 		
-		var fieldSettings = $this._getFieldSettingsLanguageSection($this, $widget, settings[$language.val()]);
+		$('legend', $languageSection).text('Language: ' + $language.find('option:selected').text());		
+		var fbLanguageSection = {target: $this, item: $widget, settings: settings[$language.val()]};
+		var fieldSettings = $this._getFieldSettingsLanguageSection(event, fbLanguageSection);
 		// remote all child nodes except legend
 		$languageSection.children(':not(legend)').remove();  
 		for (var i=0; i<fieldSettings.length; i++) {
 			$languageSection.append(fieldSettings[i]);
 		} 
-		
-		fieldSettings = $this._getFieldSettingsGeneralSection($this, $widget, settings);
+		var fbGeneralSection = {target: $this, item: $widget, settings: settings};
+		fieldSettings = $this._getFieldSettingsGeneralSection(event, fbGeneralSection);
 		$this._log('fieldSettings.length = ' + fieldSettings.length);
 		var $generalSection = $(fbOptions._fieldSettingsGeneralSection); 
 		// remote all child nodes
@@ -423,17 +425,17 @@ var FbWidget = {
 	  $colorPanel.find('input:first').addClass('floatClearLeft');
 	  return $colorPanel;
   },
-  _getWidget: function($this, settings, $ctrlHolder) {
-  	 $.fb.fbWidget.prototype._log('getWidget($this, settings, ctrlHolder) should be overriden by subclass.');
+  _getWidget: function(event, fb) {
+  	 $.fb.fbWidget.prototype._log('getWidget(event, fb) should be overriden by subclass.');
    },
-  _getFieldSettingsLanguageSection: function($this, $widget, settings) {
-	   $.fb.fbWidget.prototype._log('getFieldSettingsLanguageSection($this, $widget, settings) should be overriden by subclass.');
+  _getFieldSettingsLanguageSection: function(event, fb) {
+	   $.fb.fbWidget.prototype._log('getFieldSettingsLanguageSection(event, fb) should be overriden by subclass.');
 	},
-	_getFieldSettingsGeneralSection: function($this, $widget, settings) {
-	   $.fb.fbWidget.prototype._log('getFieldSettingsLanguageSection($this, $widget, settings) should be overriden by subclass.');
+	_getFieldSettingsGeneralSection: function(event, fb) {
+	   $.fb.fbWidget.prototype._log('getFieldSettingsLanguageSection(event, fb) should be overriden by subclass.');
 	} , 
-	_languageChange : function($widget, settings, selected) {
-		$.fb.fbWidget.prototype._log('_languageChange($widget, settings, selected) should be overriden by subclass.');
+	_languageChange : function(event, fb) {
+		$.fb.fbWidget.prototype._log('_languageChange(event, fb) should be overriden by subclass.');
 	}
 };
 

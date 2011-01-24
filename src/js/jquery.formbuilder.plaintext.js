@@ -40,126 +40,125 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 	_init : function() {
 		$.fb.fbWidget.prototype._init.call(this); 
 		this.options = $.extend({}, $.fb.fbWidget.prototype.options, this.options);
-		this._log('FbPlainText._create called. this.options.text = ' + this.options.settings.en.text);
-		this._log('FbPlainText._init called.');
 	},
-	_getWidget : function($this, settings, $ctrlHolder) {
-		$ctrlHolder.addClass(settings.classes[1]); // vertical alignment
-		return $($this.options._html).text(settings.text)
-				.addClass(settings.classes[0]);
+	_getWidget : function(event, fb) {
+		fb.item.addClass(fb.settings.classes[1]); // vertical alignment
+		return $(fb.target.options._html).text(fb.settings.text)
+				.addClass(fb.settings.classes[0]);
 	},
-	_getFieldSettingsLanguageSection : function($this, $widget, settings) {
-		var $text = $this._label({ label: 'Text', name: 'field.text', 
+	_getFieldSettingsLanguageSection : function(event, fb) {
+		var $text = fb.target._label({ label: 'Text', name: 'field.text', 
 			                 description: 'Text entered below will display in the form.' })
 		           .append('<input type="text" id="field.text" />');
-				$('input', $text).val($widget.find('div.PlainText').text())
+				$('input', $text).val(fb.item.find('div.PlainText').text())
 				.keyup(function(event) {
 					var value = $(this).val();
-					$widget.find('div.PlainText').text(value);
-					settings.text = value;
-					$this._updateSettings($widget);
+					fb.item.find('div.PlainText').text(value);
+					fb.settings.text = value;
+					fb.target._updateSettings(fb.item);
 				});
-		var $verticalAlignment = $this._verticalAlignment({name: 'field.verticalAlignment', value: settings.classes[1]})
+		var $verticalAlignment = fb.target._verticalAlignment({name: 'field.verticalAlignment', value: fb.settings.classes[1]})
         .change(function(event) {
         	// $(this).val() not work for select id that has '.'
 					var value = $('option:selected', this).val(); 
-					$this._log('field.verticalAlignment value = ' + value);
-					$widget.removeClass(settings.classes[1]).addClass(value);
-					settings.classes[1] = value;
-					$this._updateSettings($widget);
+					fb.target._log('field.verticalAlignment value = ' + value);
+					fb.item.removeClass(fb.settings.classes[1]).addClass(value);
+					fb.settings.classes[1] = value;
+					fb.target._updateSettings(fb.item);
 				});
-		var $horizontalAlignment = $this._horizontalAlignment({ name: 'field.horizontalAlignment', value: settings.classes[0] })
+		var $horizontalAlignment = fb.target._horizontalAlignment({ name: 'field.horizontalAlignment', value: fb.settings.classes[0] })
 				   .change(function(event) {
-							var $text = $widget.find('div.PlainText');
+					   fb.target._log('$horizontalAlignment change trigger');
+							var $text = fb.item.find('div.PlainText');
 							var value = $('option:selected', this).val();
-							$text.removeClass(settings.classes[0]).addClass(value);
-							settings.classes[0] = value;
-							$this._updateSettings($widget);
+							$text.removeClass(fb.settings.classes[0]).addClass(value);
+							fb.settings.classes[0] = value;
+							fb.target._updateSettings(fb.item);
 						});
-		return [$this._oneColumn($text),
-				$this._twoColumns($horizontalAlignment, $verticalAlignment) ];
+		return [fb.target._oneColumn($text),
+				fb.target._twoColumns($horizontalAlignment, $verticalAlignment) ];
 	},
-	_getFieldSettingsGeneralSection : function($this, $widget, settings) {
-    var styles = settings.styles;
-    var fbStyles = $this._getFbOptions().settings.styles;
+	_getFieldSettingsGeneralSection : function(event, fb) {
+    var styles = fb.settings.styles;
+    var fbStyles = fb.target._getFbOptions().settings.styles;
     var fontFamily = styles.fontFamily != 'default' ? styles.fontFamily : fbStyles.fontFamily ;
 	  var fontSize = styles.fontSize != 'default' ? styles.fontSize : fbStyles.fontSize;	  
     var color = styles.color != 'default' ? styles.color : fbStyles.color;
 	  var backgroundColor = styles.backgroundColor != 'default' ? styles.backgroundColor : fbStyles.backgroundColor;
-		var $fontPanel = $this._fontPanel({ fontFamily: fontFamily, fontSize: fontSize, 
+		var $fontPanel = fb.target._fontPanel({ fontFamily: fontFamily, fontSize: fontSize, 
 			                           fontStyles: styles.fontStyles, idPrefix: 'field.' });
-		var $colorPanel = $this._colorPanel({ color: color, backgroundColor: backgroundColor, idPrefix: 'field.' });
+		var $colorPanel = fb.target._colorPanel({ color: color, backgroundColor: backgroundColor, idPrefix: 'field.' });
 	  
 		$("input[id$='field.bold']", $fontPanel).change(function(event) {
 			if ($(this).attr('checked')) {
-				$widget.css('fontWeight', 'bold');
+				fb.item.css('fontWeight', 'bold');
 				styles.fontStyles[0] = 1;
 			} else {
-				$widget.css('fontWeight', 'normal');
+				fb.item.css('fontWeight', 'normal');
 				styles.fontStyles[0] = 0;
 			}
-			$this._updateSettings($widget);
+			fb.target._updateSettings(fb.item);
 		});
 		$("input[id$='field.italic']", $fontPanel).change(function(event) {
 			if ($(this).attr('checked')) {
-				$widget.css('fontStyle', 'italic');
+				fb.item.css('fontStyle', 'italic');
 				styles.fontStyles[1] = 1;
 			} else {
-				$widget.css('fontStyle', 'normal');
+				fb.item.css('fontStyle', 'normal');
 				styles.fontStyles[1] = 0;
 			}
-			$this._updateSettings($widget);
+			fb.target._updateSettings(fb.item);
 		});	
 		$("input[id$='field.underline']", $fontPanel).change(function(event) {
 			if ($(this).attr('checked')) {
-				$widget.css('textDecoration', 'underline');
+				fb.item.css('textDecoration', 'underline');
 				styles.fontStyles[2] = 1;
 			} else {
-				$widget.css('textDecoration', 'none');
+				fb.item.css('textDecoration', 'none');
 				styles.fontStyles[2] = 0;
 			}
-			$this._updateSettings($widget);
+			fb.target._updateSettings(fb.item);
 		});
 		
 		$("input[id$='field.fontFamily']", $fontPanel).change(function(event) {
 			var value = $(this).val();
-			$widget.css('fontFamily', value);
+			fb.item.css('fontFamily', value);
 			styles.fontFamily = value;
-			$this._updateSettings($widget);
+			fb.target._updateSettings(fb.item);
 		});		
 		
 		$("select[id$='field.fontSize']", $fontPanel).change(function(event) {
 			var value = $(this).val();
-			$widget.css('fontSize', value + 'px');
+			fb.item.css('fontSize', value + 'px');
 			styles.fontSize = value;
-			$this._updateSettings($widget);
+			fb.target._updateSettings(fb.item);
 		});		
 		
 		$("input[id$='field.color']", $colorPanel).change(function(event) {
 			var value = $(this).attr('title');
-			$widget.css('color','#' + value);
+			fb.item.css('color','#' + value);
 			styles.color = value;
-			$this._updateSettings($widget);
+			fb.target._updateSettings(fb.item);
 		});		
 
 		$("input[id$='field.backgroundColor']", $colorPanel).change(function(event) {
 			var value = $(this).attr('title');
-			$widget.css('backgroundColor','#' + value);
+			fb.item.css('backgroundColor','#' + value);
 			styles.backgroundColor = value;
-			$this._updateSettings($widget);
+			fb.target._updateSettings(fb.item);
 		});			
 		return [$fontPanel, $colorPanel];
 	}, 
-	_languageChange : function($widget, settings, selected) {
-		this._log('languageChange = ' + $.toJSON(settings));
-		$widget.find('div.PlainText').text(settings.text).removeClass('leftAlign centerAlign rightAlign').addClass(settings.classes[0]);
-		$widget.removeClass('topAlign middleAlign bottomAlign').addClass(settings.classes[1]);
-		if (selected) {
+	_languageChange : function(event, fb) {
+		this._log('languageChange = ' + $.toJSON(fb.settings));
+		fb.item.find('div.PlainText').text(fb.settings.text).removeClass('leftAlign centerAlign rightAlign').addClass(fb.settings.classes[0]);
+		fb.item.removeClass('topAlign middleAlign bottomAlign').addClass(fb.settings.classes[1]);
+		if (fb.item.selected) {
 			var $fieldSettingsLanguageSection = $(this._getFbOptions()._fieldSettingsLanguageSection);
-			$("input[id$='field.text']", $fieldSettingsLanguageSection).val(settings.text);
-			$("select[id$='field.horizontalAlignment'] option[value='" + settings.classes[0] + "']", 
+			$("input[id$='field.text']", $fieldSettingsLanguageSection).val(fb.settings.text);
+			$("select[id$='field.horizontalAlignment'] option[value='" + fb.settings.classes[0] + "']", 
 			    $fieldSettingsLanguageSection).attr('selected', 'true');
-			$("select[id$='field.verticalAlignment'] option[value='" + settings.classes[1] + "']", 
+			$("select[id$='field.verticalAlignment'] option[value='" + fb.settings.classes[1] + "']", 
 			    $fieldSettingsLanguageSection).attr('selected', 'true');			  
 		}
 	}

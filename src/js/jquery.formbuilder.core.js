@@ -422,7 +422,7 @@ var FormBuilder = {
 		   .append($colorPanel);
 	 
    },
- _languageChange:function() {
+ _languageChange:function(event) {
 	 $.fb.formbuilder.prototype._log('languageChange(' + $(this).val() + ', ' + $('option:selected', this).text() +  ')');
 	  var fbOptions = $.fb.fbWidget.prototype._getFbOptions();
 	  var $ctrlHolders = $('.' + $.fb.fbWidget.prototype.options._styleClass + ':visible');
@@ -431,7 +431,7 @@ var FormBuilder = {
 	  var formSettings = fbOptions.settings[language];
 	  var $formHeading = $('.formHeading');
 	  var $formSettingsLanguageSection = $(fbOptions._formSettingsLanguageSection);
-	  var settings, type, $widget, selected;
+	  var settings, type, $widget, selected, fb;
 	  
 	  $("input[id$='form.name']", $formSettingsLanguageSection).val(formSettings.name);
 	  
@@ -462,7 +462,9 @@ var FormBuilder = {
 		    type = $widget.find("input[id$='fields[" + $widget.attr('rel') + "].type']").val();
 		    $.fb.formbuilder.prototype._log('type = ' + type);
 		    $this = $('#' + type).data('fb' + type);
-		    $this._languageChange($widget, settings[language], selected);
+		    fb = {target: $this, item: $widget, settings: settings[language]};
+		    fb.item.selected = selected;
+		    $this._languageChange(event, fb);
 		});
    },
  _updateSettings: function($this) {
