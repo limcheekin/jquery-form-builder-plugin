@@ -14,7 +14,7 @@
 
 var FormBuilder = {
   options: { // default options. values are stored in widget's prototype
-		widgets : ['PlainText'],
+		fields : ['PlainText'],
 		tabSelected: 0,
 		readOnly: false,
 		tabDisabled: [],
@@ -103,7 +103,7 @@ var FormBuilder = {
 			select: this._isFieldSettingsTabCanOpen 
 		});
 		
-		var widgets = this.options.widgets;
+		var widgets = this.options.fields;
 		var length = widgets.length;
 		var widgetOptions;
 		var widget;
