@@ -58,9 +58,9 @@ var FbFieldName = $.extend({}, $.fb.fbWidget.prototype, {
 	},
 	_getFieldSettingsGeneralSection : function(event, fb) {
 		var $jqueryObjects = [];
-		fb.target._log('fbFieldName._getFieldSettingsLanguageSection executing...');
+		fb.target._log('fbFieldName._getFieldSettingsGeneralSection executing...');
 		// write your code here
-		fb.target._log('fbFieldName._getFieldSettingsLanguageSection executed.');
+		fb.target._log('fbFieldName._getFieldSettingsGeneralSection executed.');
 		return $jqueryObjects;
 	}, 
 	_languageChange : function(event, fb) {
