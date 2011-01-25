@@ -21,7 +21,7 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 		_languages : [ 'en', 'zh' ],
 		settings : {
 			en : {
-				text : 'Plain Text Value',
+				text : 'Plain Text',
 				classes : [ 'leftAlign', 'topAlign' ]
 			},
 			zh : {
@@ -31,7 +31,7 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 			styles : {
 				fontFamily: 'default', // form builder default
 				fontSize: 'default',
-				fontStyles: [0, 0, 0],
+				fontStyles: [0, 0, 0], // bold, italic, underline
 				color : 'default',
 				backgroundColor : 'default'
 			}

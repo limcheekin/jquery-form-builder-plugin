@@ -417,7 +417,7 @@ var FormBuilder = {
 		}).change();			
 		
 		$formSettingsLanguageSection.append($fbWidget._oneColumn($name))
-		   .append($fbWidget._twoRowsOneRowLayout($heading, $horizontalAlignment, $fontStyles));
+		   .append($fbWidget._twoRowsOneRow($heading, $horizontalAlignment, $fontStyles));
 		$formSettingsGeneralSection.append($fbWidget._fieldset({ text: 'Fonts' }).append($fontPanel))
 		   .append($colorPanel);
 	 

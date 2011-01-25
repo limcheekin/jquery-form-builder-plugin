@@ -50,17 +50,19 @@ $(function(){
 		defaultFont: 'Tahoma'
 	});
 	
-	$('#backgroundColor').colorPicker({
+	/*var $backgroundColor = $('#color').colorPicker({
 	    ico:    '../images/jquery.colourPicker.gif', 
-	    title:    "Basic Colors",
-	    type: 'basic',
-	    name: 'bgColor',
-	    showColorCode: true
-	});		
+	    title:    "Web Safe Colors",
+	    type: 'webSafe',
+	    name: 'field.color',
+	    width: 360
+	}); */		
+	//$('a', $backgroundColor).removeClass('floatLeft');
+	
 	$('#color').colorPicker({
 	    ico:    '../images/jquery.colourPicker.gif', 
-	    name: 'fgColor',
-	});		
+	    name: 'field.color',
+	});	
 	var $builderFormFieldset = $('#builderForm fieldset');
 	$builderFormFieldset.sortable({ 
 		/*placeholder: 'ui-state-highlight',*/
@@ -130,7 +132,7 @@ $(function(){
 					</div>
 					<div class="2cols">
 						<div class="labelOnTop col1 noPaddingBottom">
-							<label for="horizontalAlignment">Horizontal Align (?)</label><br/>
+							<label for="horizontalAlignment">Horizontal Align</label><br/>
 							<select id="horizontalAlignment">
 								<option value="leftAlign">left</option>
 								<option value="centerAlign">center</option>
@@ -138,7 +140,7 @@ $(function(){
 							</select>
 						</div>
 						<div class="labelOnTop col2 noPaddingBottom">
-							<label for="verticalAlignment">Vertical Align (?)</label><br/>
+							<label for="verticalAlignment">Vertical Align</label><br/>
 							<select id="verticalAlignment">
 								<option value="topAlign">top</option>
 								<option value="middleAlign">middle</option>
@@ -154,12 +156,12 @@ $(function(){
 <div style="display: table">
   <div style="display: table-cell; width: 48%;">
     <div>
-			<label for="fontFamily">Font (?)</label><br/>
+			<label for="fontFamily">Font</label><br/>
       <div class="fontPicker"></div><input type="hidden" id="fontFamily" />
     </div>
     <div style="margin-top: 1em; margin-right: 2%">
     <div>
-			<label for="fontSize">Size (?)</label>&nbsp;
+			<label for="fontSize">Size</label>&nbsp;
       <select id="fontSize">
         <option value="9">9</option>
         <option value="10">10</option>
@@ -181,7 +183,7 @@ $(function(){
     </div>
   </div>  
   <div style="display: table-cell; vertical-align: middle; width: 48%; margin-left: 2%">
-  <div class="floatClearLeft">
+  <div class="floatClearLeft" style="padding-left: 2em">
 	  <span><input type="checkbox" id="bold" value="bold" />&nbsp;Bold</span><br/>
     <span><input type="checkbox" id="italic" value="italic" />&nbsp;Italic</span><br/>
     <span><input type="checkbox" id="underline" value="underline" />&nbsp;Underline</span>
@@ -191,61 +193,16 @@ $(function(){
 </fieldset>
 <fieldset><legend>Colors</legend>
 <div class="2cols">
-<div class="labelOnTop col1 noPaddingBottom"><label for="form.color">Text</label><br>
-<input class="floatClearLeft" type="text" name="form.color" id="form.color"
-	readonly="" title="rgb(0, 0, 0)" disabled=""
-	style="background: none repeat scroll 0% 0% rgb(0, 0, 0); color: rgb(0, 0, 0);">
-<a class="floatLeft" rel="form.color" href="#"><img border="0"
-	alt="Open colour picker" src="../images/jquery.colourPicker.gif"></a>
+<div class="labelOnTop col1 noPaddingBottom"><label for="field.color">Text</label><br>
+<div class="floatClearLeft" id="color"></div>
 </div>
-<div class="labelOnTop col2 noPaddingBottom"><label	for="form.backgroundColor">Background</label>
-<input type="text" name="form.backgroundColor"
-	id="form.backgroundColor" readonly="" title="transparent" disabled=""
-	style="background: none repeat scroll 0% 0% transparent; color: rgb(0, 0, 0);">
-<a class="floatLeft" rel="form.backgroundColor" href="#"><img border="0"
-	alt="Open colour picker" src="../images/jquery.colourPicker.gif"></a>
+<div class="labelOnTop col2 noPaddingBottom">
+<!--  <label	for="field.backgroundColor">Background</label>
+<div class="floatLeft" id="backgroundColor"></div> -->
 </div>
 </div>
 </fieldset>
 </div>
-
-<fieldset class="language"><legend> <label
-	for="language">Language: </label> <select id="language">
-	<option value="zh">Chinese</option>
-	<option selected="" value="en">English</option>
-</select> </legend>
-<div class="twoRowsOneRow">
-<div class="row1col1"><select style="margin-top: 1em;"
-	id="form.heading">
-	<option value="h1">Heading 1</option>
-	<option value="h2">Heading 2</option>
-	<option value="h3">Heading 3</option>
-	<option value="h4">Heading 4</option>
-	<option value="h5">Heading 5</option>
-	<option value="h6">Heading 6</option>
-</select>
-<div class="row2col1">
-<div><label for="form.horizontalAlignment">Horizontal
-Align</label><br>
-<select id="form.horizontalAlignment">
-	<option value="leftAlign">left</option>
-	<option value="centerAlign">center</option>
-	<option value="rightAlign">right</option>
-</select></div>
-</div>
-</div>
-<div class="row1col2">
-<div style="padding-left:3em"><input type="checkbox"
-	id="form.bold">&nbsp;Bold<br>
-<input type="checkbox"
-	id="form.italic">&nbsp;Italic<br>
-<input type="checkbox"
-	id="form.underline">&nbsp;Underline</div>
-</div>
-</div>
-</fieldset>
-
-
 </div>
 			</div>     
      </div>

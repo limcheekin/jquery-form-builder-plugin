@@ -381,8 +381,8 @@ var FbWidget = {
 	  }
 	  return $fontStyles;
   },
-  _twoRowsOneRowLayout: function(row1col1, row2col1, row1col2) {
-	  var $twoRowsOneRowLayout = $('<div class="twoRowsOneRow"> \
+  _twoRowsOneRow: function(row1col1, row2col1, row1col2) {
+	  var $twoRowsOneRow = $('<div class="twoRowsOneRow"> \
 			    <div class="row1col1"> \
 			      <div class="row2col1"> \
 			      </div> \
@@ -390,10 +390,10 @@ var FbWidget = {
 			    <div class="row1col2"> \
 			    </div> \
 			  </div>');
-		$('.row1col1',$twoRowsOneRowLayout).prepend(row1col1);
-		$('.row2col1',$twoRowsOneRowLayout).append(row2col1);
-		$('.row1col2',$twoRowsOneRowLayout).append(row1col2);			    
-		return $twoRowsOneRowLayout;	    
+		$('.row1col1',$twoRowsOneRow).prepend(row1col1);
+		$('.row2col1',$twoRowsOneRow).append(row2col1);
+		$('.row1col2',$twoRowsOneRow).append(row1col2);			    
+		return $twoRowsOneRow;	    
   },
   _fieldset: function(options) {
 	  return $('<fieldset><legend>' + options.text + '</legend></fieldset>');
@@ -402,7 +402,7 @@ var FbWidget = {
 	  //fontFamily, fontSize, styles.fontStyles
 	  var idPrefix = options.idPrefix ? options.idPrefix : '';
 	  var names = [idPrefix + 'bold', idPrefix + 'italic', idPrefix + 'underline'];
-	  return this._fieldset({ text: 'Fonts' }).append(this._twoRowsOneRowLayout(
+	  return this._fieldset({ text: 'Fonts' }).append(this._twoRowsOneRow(
 			  this._fontPicker({ name: idPrefix + 'fontFamily', value: options.fontFamily }),
 			  this._fontSize({ label: 'Size', name: idPrefix + 'fontSize', value: options.fontSize }),
 			  this._fontStyles({ names: names, checked: options.fontStyles }).css('paddingLeft', '2em')
