@@ -1,10 +1,5 @@
-5. Create following documentation:
-b) How to create new field and integration with form builder.
-c) Revised roadmap to make the release cycle shorter.
-d) BuildingThePluginWithAnt
-
-6. Blog about it and RFC. Post it to Developing JQuery plugin forum, dzone.com and stackoverflow.com
-8. Auto-scroll when build panel expand.
+8. Blog about it and RFC. Post it to Developing JQuery plugin forum, dzone.com and stackoverflow.com
+9. Auto-scroll when build panel expand.
 10. Font Panel should belong to language section (English and Chinese have different font family)
 11. Multiple Choices Widget
 Choose One (Radio button) and Choose Multiple (Check Box) allow restriction such as choose 2 only 

@@ -13,8 +13,8 @@
  */
 
 var FormBuilder = {
-  options: { // default options. values are stored in widget's prototype
-		fields : ['PlainText'],
+  options: { // default options. values are stored in prototype
+		fields: 'PlainText',
 		tabSelected: 0,
 		readOnly: false,
 		tabDisabled: [],
@@ -104,12 +104,13 @@ var FormBuilder = {
 		});
 		
 		var widgets = this.options.fields;
+		widgets = widgets.split(',');
 		var length = widgets.length;
 		var widgetOptions;
 		var widget;
 		var i;
 	  for (i = 0; i < length; i++) {
-		  widgetOptions = $['fb']['fb' + widgets[i]].prototype.options;
+		  widgetOptions = $['fb']['fb' + $.trim(widgets[i])].prototype.options;
 		  widget = $('<a id="' + widgetOptions._type +  '" href="#" class="fbWidget">' + widgetOptions.name + '</a>');
       widget.button()['fb' + widgetOptions._type]()
       .appendTo(widgetOptions.belongsTo);

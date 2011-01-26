@@ -90,7 +90,7 @@
 		<replaceregexp match="@REVISION" replace="${svn.info.lastRev}" flags="g" byline="true" file="${JQUERY_FORM_BUILDER}" />
 		<replaceregexp match="@VERSION" replace="${version}" flags="g" byline="true" file="${JQUERY_FORM_BUILDER}" />
 		<replaceregexp match="Date:" replace="Date: ${svn.info.lastDate}" file="${JQUERY_FORM_BUILDER}" />
-
+		<replaceregexp match="fields: (.*)" replace="fields: '${PLUGINS}'," byline="true" file="${JQUERY_FORM_BUILDER}" /> 
 		<echo message="${JQUERY_FORM_BUILDER} built." />
 	</target>	
 
@@ -113,6 +113,7 @@
 		<replaceregexp match="@REVISION" replace="${svn.info.lastRev}" flags="g" byline="true" file="${JQUERY_FORM_BUILDER}" />
 		<replaceregexp match="@VERSION" replace="${version}" flags="g" byline="true" file="${JQUERY_FORM_BUILDER}" />
 		<replaceregexp match="Date:" replace="Date: ${svn.info.lastDate}" file="${JQUERY_FORM_BUILDER}" />
+		<replaceregexp match="fields: (.*)" replace="fields: '${PLUGINS}'," byline="true" file="${JQUERY_FORM_BUILDER}" /> 
 
 		<echo message="${JQUERY_FORM_BUILDER} built." />
 	</target>
