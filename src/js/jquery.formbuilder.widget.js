@@ -42,8 +42,8 @@ var FbWidget = {
 	  
 	  $('<a class="ui-corner-all closeButton" href="#"><span class="ui-icon ui-icon-close">delete this widget</span></a>')
 	  .prependTo(widget).click($.fb.fbWidget.prototype._deleteWidget)
-	  .hover(function () { $('span', this).removeClass('ui-icon-close').addClass('ui-icon-circle-close'); }, 
-			     function () { $('span', this).removeClass('ui-icon-circle-close').addClass('ui-icon-close'); });
+	  .mouseover(function () { $('span', this).removeClass('ui-icon-close').addClass('ui-icon-circle-close'); }) 
+	  .mouseout(function () { $('span', this).removeClass('ui-icon-circle-close').addClass('ui-icon-close'); });
 	  widget.attr('rel', index);
 	  widget.append($.fb.fbWidget.prototype._createFieldProperties(name, options, settings, index));
 	  

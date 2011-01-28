@@ -135,14 +135,14 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 		});		
 		
 		$("input[id$='field.color']", $colorPanel).change(function(event) {
-			var value = $(this).attr('title');
+			var value = $(this).data('colorPicker').color;
 			fb.item.css('color','#' + value);
 			styles.color = value;
 			fb.target._updateSettings(fb.item);
 		});		
 
 		$("input[id$='field.backgroundColor']", $colorPanel).change(function(event) {
-			var value = $(this).attr('title');
+			var value = $(this).data('colorPicker').color;
 			fb.item.css('backgroundColor','#' + value);
 			styles.backgroundColor = value;
 			fb.target._updateSettings(fb.item);

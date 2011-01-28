@@ -2,20 +2,20 @@
 * jquery-form-builder-plugin - JQuery WYSIWYG Web Form Builder
 * http://code.google.com/p/jquery-form-builder-plugin/
 *
-* Revision: 58
+* Revision: 101
 * Version: 0.1
 * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
 *
 * Licensed under Apache v2.0 http://www.apache.org/licenses/LICENSE-2.0.html
 *
-* Date: Fri Jan 21 20:21:57 GMT+08:00 2011
+* Date: Wed Jan 26 14:11:55 GMT+08:00 2011
 */
 
 /*
  * Styles of main component of JQuery Form Builder plugin, 
  * the Form Builder container itself. 
  * 
- * Revision: 58
+ * Revision: 101
  * Version: 0.1
  * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
  *
@@ -89,9 +89,19 @@
 
 .uniForm .formHeading { padding: 1em; }
 
-.uniForm .ctrlHolder {
-	 position:relative; cursor: pointer;
+#builderPanel fieldset {
+  min-height: 250px	  
 }
+
+/* for drag and drop */
+div.ctrlHolder { padding: 1em }
+
+.uniForm .ctrlHolder {
+	 position:relative; 
+	 cursor: pointer; 
+	 padding: 1em 1.5em 1em 1em;
+}
+
 .uniForm .ctrlHolder .closeButton {
 	 position:absolute;
 	 top:1px;
@@ -99,6 +109,11 @@
 }
 
 .uniForm .noBorderBottom { border-bottom: 0; }
+
+.dragBox {
+	opacity: 0.6;
+	border: 5px solid #cccccc;
+}
 
 /* Field Settings Panel */
 #fieldSettings {
@@ -117,11 +132,15 @@ div.labelOnTop { padding-top: 0em; padding-bottom: 2.5em; } /*border-bottom: 1px
 
 .clear {
   clear: both;
-   }
+}
+
+#fieldSettings label, #formSettings label {
+  padding-bottom: 2px;
+}
 
 div.labelOnTop label {
    float: left;
-    }
+}
     
 div.labelOnTop input, div.labelOnTop select, div.labelOnTop textarea {
    float: left;
@@ -136,7 +155,7 @@ div.col1 {
 div.noPaddingBottom { padding-bottom: 0; }
 
 div.col2 {
-   margin-left: 52%;
+	margin-left: 52%;
  }
  
 /* Color panel: color picker styles */
@@ -146,13 +165,15 @@ div.col2 {
 /* Font styles */
 .floatClearLeft { float:left; clear:left }
 
+.floatLeft { float:left }
+
 /* Font Panel 
 From: http://stackoverflow.com/questions/2611083/css-equivalent-of-table-rowspan-with-fluid-height
 */
 .twoRowsOneRow { display: table }
 .twoRowsOneRow .row1col1 { display: table-cell; width: 48%; margin-right: 2% }
 .twoRowsOneRow .row2col1 { margin-top: 1em }
-.twoRowsOneRow .row1col2 { display: table-cell; vertical-align: middle; width: 48%; margin-left: 2%; padding-left: 10% }
+.twoRowsOneRow .row1col2 { display: table-cell; vertical-align: middle; width: 48%; margin-left: 2% }
 
 /* Form Settings */
 #form\.heading, #form\.horizontalAlignment { width: 100% }.colorPicker {
@@ -251,7 +272,7 @@ From: http://stackoverflow.com/questions/2611083/css-equivalent-of-table-rowspan
 /*
  * Styles of Plain Text widget. 
  * 
- * Revision: 58
+ * Revision: 101
  * Version: 0.1
  * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
  *
@@ -262,6 +283,10 @@ From: http://stackoverflow.com/questions/2611083/css-equivalent-of-table-rowspan
 .uniForm .ctrlHolder .PlainText { padding-top: 0; padding-bottom: 0 }
 .uniForm .topAlign { padding-top: 0; padding-bottom: 2em; }
 .uniForm .bottomAlign { padding-top: 2em; padding-bottom: 0; }
-.uniForm .rightAlign { text-align: right; }
-.uniForm .centerAlign { text-align: center; }
+div.rightAlign { text-align: right; }
+div.centerAlign { text-align: center; }
+
+/* for drag and drop */
+div.topAlign { padding-top: 0; padding-bottom: 2em; }
+div.bottomAlign { padding-top: 2em; padding-bottom: 0; }
 

@@ -95,8 +95,10 @@ var ColorPicker = {
 		if ($this.options.showColorCode) {
 			  $colorPickerInput.val(this.options.value);
 	  } else {
-				$colorPickerInput.attr('title', this.options.value).attr('disabled', 'true');
+				$colorPickerInput.attr('disabled', 'true');
 		}
+		
+		$colorPickerInput.data('colorPicker', { color: this.options.value });
 		
 		var $colorPickerPanel = $('#' + id);
 
@@ -134,12 +136,7 @@ var ColorPicker = {
 
 
 		if (this.options.inputBG) {
-			var colorCode;
-			if ($this.options.showColorCode) {
-				colorCode = $colorPickerInput.val();
-			} else {
-				colorCode = $colorPickerInput.attr('title');
-			}
+			var colorCode = this.options.value;
 			if (colorCode.length == 6) colorCode = '#' + colorCode;
 			$colorPickerInput.css({background: colorCode, color: '#' + this._hexInvert(colorCode)});
 		}		
@@ -161,13 +158,13 @@ var ColorPicker = {
 			// The hex is stored in the link's rel-attribute
 			  var $colorInput = $("input[id$='" + $colorPickerPanel.attr('rel') + "']");
 				var hex = $(this).attr('rel');
+				$.fb.colorPicker.prototype._log('colorPicker. input id = ' + $colorPickerPanel.attr('rel') + ', hex = ' + hex + ', title = ' + $(this).attr('title') + ', text = ' + $(this).text());
 				var options = $colorInput.parent().data('colorPicker').options;
 				if (options.showColorCode) {
 					$colorInput.val(hex);
-				  //$colorPickerInput.val(hex);
-				} else {
-					$colorInput.attr('title', hex);
-				}
+				} 
+					
+				$colorInput.data('colorPicker', { color: hex });
 
 				// If user wants to, change the input's BG to reflect the newly selected colour
 				if (options.inputBG) {

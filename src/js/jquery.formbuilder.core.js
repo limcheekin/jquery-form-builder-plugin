@@ -404,14 +404,15 @@ var FormBuilder = {
 		var $colorPanel = $fbWidget._colorPanel({ color: color, backgroundColor: backgroundColor, idPrefix: 'form.' });
 		
 		$("input[id$='form.color']", $colorPanel).change(function(event) {
-			var value = $(this).attr('title');
+			var value = $(this).data('colorPicker').color;
 			$builderPanel.css('color','#' + value);
 			options.settings.styles.color = value;
 			$this._updateSettings($this);
 		}).change();		
 
 		$("input[id$='form.backgroundColor']", $colorPanel).change(function(event) {
-			var value = $(this).attr('title');
+			var value = $(this).data('colorPicker').color;
+			$this._log('background color change: value ' + value);
 			$builderPanel.css('backgroundColor','#' + value);
 			options.settings.styles.backgroundColor = value;
 			$this._updateSettings($this);
