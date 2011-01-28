@@ -17,6 +17,7 @@ var ColorPicker = {
 		name: 'jquery-color-picker',
 		value: '',
 		ico:		  'ico.gif',				// SRC to color-picker icon
+		disabledIco: 'ico.gif',
 		title:		'Pick a colour',		// Default dialogue title
 		inputBG:	true,					// Whether to change the input's background to the selected colour's
 		showColorCode: false, // whether to display 6 digits color code in text box, value stored in title attr.
@@ -80,14 +81,17 @@ var ColorPicker = {
 	                  "FF9999","FF99CC","FF99FF","FFCC00","FFCC33",
 	                  "FFCC66","FFCC99","FFCCCC","FFCCFF","FFFF00",
 	                  "FFFF33","FFFF66","FFFF99","FFFFCC","FFFFFF"],
-		customColors:[]                 
+		customColors:[],
+		disabled: false
 	},
 	_init : function() {
 		// called on construction and re-initialization
+		var ico = this.options.disabled ? this.options.disabledIco : this.options.ico;
 		this._log('ColorPicker._init called.');
 		// Add the colour-picker dialogue if not added
 		this.element.append('<input type="text" id="' + this.options.name + '" name="' + this.options.name + '" /> \
-				<a class="floatLeft" href="#" rel="' + this.options.name + '"><img border="0" src="' + this.options.ico + '" alt="' + this.options.openTxt + '"/></a>');
+				<a class="floatLeft" href="#" rel="' + this.options.name + '"> \
+				<img border="0" src="' + ico + '" alt="' + this.options.openTxt + '"/></a>');
 		var $colorPickerInput = $('input', this.element).attr('readonly', true);
 		var $this = this.element.data('colorPicker');
 		var id = "colorpicker_" + this.options.type;
@@ -102,7 +106,7 @@ var ColorPicker = {
 		
 		var $colorPickerPanel = $('#' + id);
 
-		if ($colorPickerPanel.length == 0) {
+		if ($colorPickerPanel.length == 0 && !this.options.disabled) {
 			var loc = '';
 			var colors = this.options[this.options.type + 'Colors'];
 			var color;
@@ -132,26 +136,26 @@ var ColorPicker = {
 			});
 		}
 
-		var $colorPickerIcon	= $('a', this.element);
-
-
 		if (this.options.inputBG) {
 			var colorCode = this.options.value;
 			if (colorCode.length == 6) colorCode = '#' + colorCode;
 			$colorPickerInput.css({background: colorCode, color: '#' + this._hexInvert(colorCode)});
 		}		
 		
-		$colorPickerIcon.click(function () {
-			// Show the colour-picker next to the icon and fill it with the colours in the select that used to be there
-			var iconPos	= $colorPickerIcon.offset();	
-			$colorPickerPanel.css({
-				position: 'absolute', 
-				left: iconPos.left + 'px', 
-				top: iconPos.top + 'px',
-				width: $this.options.width + 'px'
-			}).show($this.options.speed).attr('rel', $colorPickerIcon.attr('rel'));
-			return false;
-		});
+		if (!this.options.disabled) {
+			var $colorPickerIcon = $('a', this.element);
+			$colorPickerIcon.click(function () {
+				// Show the colour-picker next to the icon and fill it with the colours in the select that used to be there
+				var iconPos	= $colorPickerIcon.offset();	
+				$colorPickerPanel.css({
+					position: 'absolute', 
+					left: iconPos.left + 'px', 
+					top: iconPos.top + 'px',
+					width: $this.options.width + 'px'
+				}).show($this.options.speed).attr('rel', $colorPickerIcon.attr('rel'));
+				return false;
+			});
+		}
 
 		// When you click a color in the color picker panel
 		$('a', $colorPickerPanel).click(function (event) {

@@ -330,7 +330,7 @@ var FormBuilder = {
 					$formHeading.removeClass(settings.classes[0]).addClass(value);
 					settings.classes[0] = value;
 					$this._updateSettings($this);
-				}).change();
+				});
 		
 		var names = ['form.bold', 'form.italic', 'form.underline'];
 		var $fontStyles = $fbWidget._fontStyles({ names: names, checked: settings.fontStyles })
@@ -344,7 +344,7 @@ var FormBuilder = {
 				settings.fontStyles[0] = 0;
 			}
 			$this._updateSettings($this);
-		}).change();
+		});
 		$("input[id$='form.italic']", $fontStyles).change(function(event) {
 			if ($(this).attr('checked')) {
 				$(settings.heading, $formHeading).css('fontStyle', 'italic');
@@ -354,7 +354,7 @@ var FormBuilder = {
 				settings.fontStyles[1] = 0;
 			}
 			$this._updateSettings($this);
-		}).change();		
+		});		
 		$("input[id$='form.underline']", $fontStyles).change(function(event) {
 			if ($(this).attr('checked')) {
 				$(settings.heading, $formHeading).css('textDecoration', 'underline');
@@ -364,7 +364,7 @@ var FormBuilder = {
 				settings.fontStyles[2] = 0;
 			}
 			$this._updateSettings($this);
-		}).change();
+		});
 		
 		var fontFamily = options.settings.styles.fontFamily;
 		if (fontFamily == 'default') {
@@ -376,7 +376,7 @@ var FormBuilder = {
 			$builderPanel.css('fontFamily', value);
 			options.settings.styles.fontFamily = value;
 			$this._updateSettings($this);
-		}).change();		
+		});		
 		
 		var fontSize = options.settings.styles.fontSize;
 		if (fontSize == 'default') {
@@ -388,7 +388,7 @@ var FormBuilder = {
 			$builderPanel.css('fontSize', value + 'px');
 			options.settings.styles.fontSize = value;
 			$this._updateSettings($this);
-		}).change();		
+		});		
 		
 		var $fontPanel = $fbWidget._twoColumns($fontPicker, $fontSize);
 		$fontPanel.find('.col2').addClass('noPaddingBottom').css('marginLeft', '60%');
@@ -408,7 +408,7 @@ var FormBuilder = {
 			$builderPanel.css('color','#' + value);
 			options.settings.styles.color = value;
 			$this._updateSettings($this);
-		}).change();		
+		});		
 
 		$("input[id$='form.backgroundColor']", $colorPanel).change(function(event) {
 			var value = $(this).data('colorPicker').color;
@@ -416,7 +416,7 @@ var FormBuilder = {
 			$builderPanel.css('backgroundColor','#' + value);
 			options.settings.styles.backgroundColor = value;
 			$this._updateSettings($this);
-		}).change();			
+		});			
 		
 		$formSettingsLanguageSection.append($fbWidget._oneColumn($name))
 		   .append($fbWidget._twoRowsOneRow($heading, $horizontalAlignment, $fontStyles));

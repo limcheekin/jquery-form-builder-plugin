@@ -2,13 +2,13 @@
 * jquery-form-builder-plugin - JQuery WYSIWYG Web Form Builder
 * http://code.google.com/p/jquery-form-builder-plugin/
 *
-* Revision: 101
+* Revision: 106
 * Version: 0.1
 * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
 *
 * Licensed under Apache v2.0 http://www.apache.org/licenses/LICENSE-2.0.html
 *
-* Date: Wed Jan 26 14:11:55 GMT+08:00 2011 
+* Date: Fri Jan 28 15:46:52 GMT+08:00 2011 
 */
 
 /*
@@ -16,7 +16,7 @@
  * consists of builder palette contains widgets supported by the form builder and 
  * builder panel where the constructed form display. 
  * 
- * Revision: 101
+ * Revision: 106
  * Version: 0.1
  * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
  *
@@ -343,7 +343,7 @@ var FormBuilder = {
 					$formHeading.removeClass(settings.classes[0]).addClass(value);
 					settings.classes[0] = value;
 					$this._updateSettings($this);
-				}).change();
+				});
 		
 		var names = ['form.bold', 'form.italic', 'form.underline'];
 		var $fontStyles = $fbWidget._fontStyles({ names: names, checked: settings.fontStyles })
@@ -357,7 +357,7 @@ var FormBuilder = {
 				settings.fontStyles[0] = 0;
 			}
 			$this._updateSettings($this);
-		}).change();
+		});
 		$("input[id$='form.italic']", $fontStyles).change(function(event) {
 			if ($(this).attr('checked')) {
 				$(settings.heading, $formHeading).css('fontStyle', 'italic');
@@ -367,7 +367,7 @@ var FormBuilder = {
 				settings.fontStyles[1] = 0;
 			}
 			$this._updateSettings($this);
-		}).change();		
+		});		
 		$("input[id$='form.underline']", $fontStyles).change(function(event) {
 			if ($(this).attr('checked')) {
 				$(settings.heading, $formHeading).css('textDecoration', 'underline');
@@ -377,7 +377,7 @@ var FormBuilder = {
 				settings.fontStyles[2] = 0;
 			}
 			$this._updateSettings($this);
-		}).change();
+		});
 		
 		var fontFamily = options.settings.styles.fontFamily;
 		if (fontFamily == 'default') {
@@ -389,7 +389,7 @@ var FormBuilder = {
 			$builderPanel.css('fontFamily', value);
 			options.settings.styles.fontFamily = value;
 			$this._updateSettings($this);
-		}).change();		
+		});		
 		
 		var fontSize = options.settings.styles.fontSize;
 		if (fontSize == 'default') {
@@ -401,7 +401,7 @@ var FormBuilder = {
 			$builderPanel.css('fontSize', value + 'px');
 			options.settings.styles.fontSize = value;
 			$this._updateSettings($this);
-		}).change();		
+		});		
 		
 		var $fontPanel = $fbWidget._twoColumns($fontPicker, $fontSize);
 		$fontPanel.find('.col2').addClass('noPaddingBottom').css('marginLeft', '60%');
@@ -421,7 +421,7 @@ var FormBuilder = {
 			$builderPanel.css('color','#' + value);
 			options.settings.styles.color = value;
 			$this._updateSettings($this);
-		}).change();		
+		});		
 
 		$("input[id$='form.backgroundColor']", $colorPanel).change(function(event) {
 			var value = $(this).data('colorPicker').color;
@@ -429,7 +429,7 @@ var FormBuilder = {
 			$builderPanel.css('backgroundColor','#' + value);
 			options.settings.styles.backgroundColor = value;
 			$this._updateSettings($this);
-		}).change();			
+		});			
 		
 		$formSettingsLanguageSection.append($fbWidget._oneColumn($name))
 		   .append($fbWidget._twoRowsOneRow($heading, $horizontalAlignment, $fontStyles));
@@ -606,7 +606,7 @@ $.widget('fb.formbuilder', FormBuilder);/*
  * at http://andreaslagerkvist.com/jquery/colour-picker/ and customized for 
  * JQuery Form Builder plugin project at http://code.google.com/p/jquery-form-builder-plugin/
  * 
- * Revision: 101
+ * Revision: 106
  * Version: 0.1
  * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
  *
@@ -620,6 +620,7 @@ var ColorPicker = {
 		name: 'jquery-color-picker',
 		value: '',
 		ico:		  'ico.gif',				// SRC to color-picker icon
+		disabledIco: 'ico.gif',
 		title:		'Pick a colour',		// Default dialogue title
 		inputBG:	true,					// Whether to change the input's background to the selected colour's
 		showColorCode: false, // whether to display 6 digits color code in text box, value stored in title attr.
@@ -683,14 +684,17 @@ var ColorPicker = {
 	                  "FF9999","FF99CC","FF99FF","FFCC00","FFCC33",
 	                  "FFCC66","FFCC99","FFCCCC","FFCCFF","FFFF00",
 	                  "FFFF33","FFFF66","FFFF99","FFFFCC","FFFFFF"],
-		customColors:[]                 
+		customColors:[],
+		disabled: false
 	},
 	_init : function() {
 		// called on construction and re-initialization
+		var ico = this.options.disabled ? this.options.disabledIco : this.options.ico;
 		this._log('ColorPicker._init called.');
 		// Add the colour-picker dialogue if not added
 		this.element.append('<input type="text" id="' + this.options.name + '" name="' + this.options.name + '" /> \
-				<a class="floatLeft" href="#" rel="' + this.options.name + '"><img border="0" src="' + this.options.ico + '" alt="' + this.options.openTxt + '"/></a>');
+				<a class="floatLeft" href="#" rel="' + this.options.name + '"> \
+				<img border="0" src="' + ico + '" alt="' + this.options.openTxt + '"/></a>');
 		var $colorPickerInput = $('input', this.element).attr('readonly', true);
 		var $this = this.element.data('colorPicker');
 		var id = "colorpicker_" + this.options.type;
@@ -705,7 +709,7 @@ var ColorPicker = {
 		
 		var $colorPickerPanel = $('#' + id);
 
-		if ($colorPickerPanel.length == 0) {
+		if ($colorPickerPanel.length == 0 && !this.options.disabled) {
 			var loc = '';
 			var colors = this.options[this.options.type + 'Colors'];
 			var color;
@@ -735,26 +739,26 @@ var ColorPicker = {
 			});
 		}
 
-		var $colorPickerIcon	= $('a', this.element);
-
-
 		if (this.options.inputBG) {
 			var colorCode = this.options.value;
 			if (colorCode.length == 6) colorCode = '#' + colorCode;
 			$colorPickerInput.css({background: colorCode, color: '#' + this._hexInvert(colorCode)});
 		}		
 		
-		$colorPickerIcon.click(function () {
-			// Show the colour-picker next to the icon and fill it with the colours in the select that used to be there
-			var iconPos	= $colorPickerIcon.offset();	
-			$colorPickerPanel.css({
-				position: 'absolute', 
-				left: iconPos.left + 'px', 
-				top: iconPos.top + 'px',
-				width: $this.options.width + 'px'
-			}).show($this.options.speed).attr('rel', $colorPickerIcon.attr('rel'));
-			return false;
-		});
+		if (!this.options.disabled) {
+			var $colorPickerIcon = $('a', this.element);
+			$colorPickerIcon.click(function () {
+				// Show the colour-picker next to the icon and fill it with the colours in the select that used to be there
+				var iconPos	= $colorPickerIcon.offset();	
+				$colorPickerPanel.css({
+					position: 'absolute', 
+					left: iconPos.left + 'px', 
+					top: iconPos.top + 'px',
+					width: $this.options.width + 'px'
+				}).show($this.options.speed).attr('rel', $colorPickerIcon.attr('rel'));
+				return false;
+			});
+		}
 
 		// When you click a color in the color picker panel
 		$('a', $colorPickerPanel).click(function (event) {
@@ -801,7 +805,7 @@ $.widget('fb.colorPicker', ColorPicker);/*
  * at http://plugins.jquery.com/project/fontpicker-regios and customized for 
  * JQuery Form Builder plugin project at http://code.google.com/p/jquery-form-builder-plugin/
  * 
- * Revision: 101
+ * Revision: 106
  * Version: 0.1
  * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
  *
@@ -833,7 +837,8 @@ var FontPicker = {
 		fontclass:   'singlefont',			// class for the font divs
 		speed:		 100,					// speed of dialog animation, default is fast
 		hoverColor:  '#efefff',				// background color of font div on mouse hover
-		bgColor:     '#ffffee'              // regular background color of font div              
+		bgColor:     '#ffffee',              // regular background color of font div
+		disabled: false
 	},
 	// logging to the firebug's console, put in 1 line so it can be removed
 	// easily for production
@@ -842,7 +847,7 @@ var FontPicker = {
 		var options = this.options;
 		var fontPicker = $('#' + options.id);		
 		this.element.parent().append('<input type="hidden" id="' + options.name + '" value="' + options.defaultFont + '" />');
-		if (!fontPicker.length) {
+		if (!fontPicker.length && !options.disabled) {
 			fontPicker = $('<div id="'+options.id+'" ></div>').appendTo(document.body).hide();
 
 			// Remove the font-picker if you click outside it (on body)
@@ -851,23 +856,24 @@ var FontPicker = {
 					fontPicker.slideUp(options.speed);		
 			});
 		}
-
-		this.element.click(function () {
-			// toggle the font picker 
-			if (fontPicker.is(':hidden'))
-			{
-				var $this = $(this);
-				fontPicker.css({
-					position: 'absolute', 
-					left: $this.offset().left + 'px', 
-					top: ($this.offset().top + $this.height() + 3) + 'px'
-				}).attr('rel', $this.attr('rel')); 			
-				fontPicker.slideDown(options.speed);
-			}
-			else
-				fontPicker.slideUp(options.speed);		
-		});
 		
+    if (!options.disabled) {
+			this.element.click(function () {
+				// toggle the font picker 
+				if (fontPicker.is(':hidden'))
+				{
+					var $this = $(this);
+					fontPicker.css({
+						position: 'absolute', 
+						left: $this.offset().left + 'px', 
+						top: ($this.offset().top + $this.height() + 3) + 'px'
+					}).attr('rel', $this.attr('rel')); 			
+					fontPicker.slideDown(options.speed);
+				}
+				else
+					fontPicker.slideUp(options.speed);		
+			});
+       }
 		// select initial value
 		if (options.defaultFont.length)
 		{
@@ -899,7 +905,7 @@ var FontPicker = {
 $.widget('fb.fontPicker', FontPicker);/*
  * Base widget plugin of JQuery Form Builder plugin, all Form Builder widgets should extend from this plugin. 
  * 
- * Revision: 101
+ * Revision: 106
  * Version: 0.1
  * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
  *
@@ -1206,16 +1212,20 @@ var FbWidget = {
 				name: options.name,
 				value: options.value,
 				ico: '../images/jquery.colourPicker.gif',
-			  title: 'Basic Colors'
+				disabledIco: '../images/jquery.colourPicker.disabled.gif',				
+			  title: 'Basic Colors',
+			  disabled: this._getFbOptions().readOnly
 			});		
 		} else {
 			$colorPicker.colorPicker({
 				name: name,
 				value: value,
 				ico: '../images/jquery.colourPicker.gif',				
+				disabledIco: '../images/jquery.colourPicker.disabled.gif',	
 			  title: 'Web Safe Colors',
 			  type: 'webSafe',
-			  width: 360
+			  width: 360,
+			  disabled: this._getFbOptions().readOnly
 			});		
 		}
 	  return $colorPicker;
@@ -1231,7 +1241,8 @@ var FbWidget = {
 
 		$('.fontPicker', $fontPicker).fontPicker({ 
 			name: o.name,
-			defaultFont: o.value
+			defaultFont: o.value,
+			disabled: this._getFbOptions().readOnly
 		});
  		return $fontPicker;
  	},	
@@ -1340,7 +1351,7 @@ var FbWidget = {
 $.widget('fb.fbWidget', FbWidget);/*
  * JQuery Form Builder - Plain Text plugin.
  * 
- * Revision: 101
+ * Revision: 106
  * Version: 0.1
  * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
  *

@@ -14,7 +14,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Plain Text design</title>
-<script type="text/javascript" src="../lib/js/jquery-1.4.4.min.js"></script>
+<script type="text/javascript" src="../lib/js/jquery-1.4.2.min.js"></script>
 <script type="text/javascript" src="../lib/js/jquery-ui-1.8.7.custom.min.js"></script>
 <script type="text/javascript" src="../lib/js/jquery.qtip.min.js"></script>
 <script type="text/javascript" src="js/jquery.fontpicker.js"></script>
@@ -47,7 +47,8 @@ $(function(){
 	
 	$('#paletteTabs').tabs();
 	$('.fontPicker').fontPicker({ 
-		defaultFont: 'Tahoma'
+		defaultFont: 'Tahoma',
+		disabled: true
 	});
 	
 	/*var $backgroundColor = $('#color').colorPicker({
@@ -61,7 +62,9 @@ $(function(){
 	
 	$('#color').colorPicker({
 	    ico:    '../images/jquery.colourPicker.gif', 
+	    disabledIco:    '../images/jquery.colourPicker.disabled.gif', 
 	    name: 'field.color',
+	    disabled: true
 	});	
 	var $builderFormFieldset = $('#builderForm fieldset');
 	$builderFormFieldset.sortable({ 

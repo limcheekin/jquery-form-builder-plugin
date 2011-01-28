@@ -35,7 +35,8 @@ var FontPicker = {
 		fontclass:   'singlefont',			// class for the font divs
 		speed:		 100,					// speed of dialog animation, default is fast
 		hoverColor:  '#efefff',				// background color of font div on mouse hover
-		bgColor:     '#ffffee'              // regular background color of font div              
+		bgColor:     '#ffffee',              // regular background color of font div
+		disabled: false
 	},
 	// logging to the firebug's console, put in 1 line so it can be removed
 	// easily for production
@@ -44,7 +45,7 @@ var FontPicker = {
 		var options = this.options;
 		var fontPicker = $('#' + options.id);		
 		this.element.parent().append('<input type="hidden" id="' + options.name + '" value="' + options.defaultFont + '" />');
-		if (!fontPicker.length) {
+		if (!fontPicker.length && !options.disabled) {
 			fontPicker = $('<div id="'+options.id+'" ></div>').appendTo(document.body).hide();
 
 			// Remove the font-picker if you click outside it (on body)
@@ -53,23 +54,24 @@ var FontPicker = {
 					fontPicker.slideUp(options.speed);		
 			});
 		}
-
-		this.element.click(function () {
-			// toggle the font picker 
-			if (fontPicker.is(':hidden'))
-			{
-				var $this = $(this);
-				fontPicker.css({
-					position: 'absolute', 
-					left: $this.offset().left + 'px', 
-					top: ($this.offset().top + $this.height() + 3) + 'px'
-				}).attr('rel', $this.attr('rel')); 			
-				fontPicker.slideDown(options.speed);
-			}
-			else
-				fontPicker.slideUp(options.speed);		
-		});
 		
+    if (!options.disabled) {
+			this.element.click(function () {
+				// toggle the font picker 
+				if (fontPicker.is(':hidden'))
+				{
+					var $this = $(this);
+					fontPicker.css({
+						position: 'absolute', 
+						left: $this.offset().left + 'px', 
+						top: ($this.offset().top + $this.height() + 3) + 'px'
+					}).attr('rel', $this.attr('rel')); 			
+					fontPicker.slideDown(options.speed);
+				}
+				else
+					fontPicker.slideUp(options.speed);		
+			});
+       }
 		// select initial value
 		if (options.defaultFont.length)
 		{

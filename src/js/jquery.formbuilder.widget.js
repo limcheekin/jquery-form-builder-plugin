@@ -308,16 +308,20 @@ var FbWidget = {
 				name: options.name,
 				value: options.value,
 				ico: '../images/jquery.colourPicker.gif',
-			  title: 'Basic Colors'
+				disabledIco: '../images/jquery.colourPicker.disabled.gif',				
+			  title: 'Basic Colors',
+			  disabled: this._getFbOptions().readOnly
 			});		
 		} else {
 			$colorPicker.colorPicker({
 				name: name,
 				value: value,
 				ico: '../images/jquery.colourPicker.gif',				
+				disabledIco: '../images/jquery.colourPicker.disabled.gif',	
 			  title: 'Web Safe Colors',
 			  type: 'webSafe',
-			  width: 360
+			  width: 360,
+			  disabled: this._getFbOptions().readOnly
 			});		
 		}
 	  return $colorPicker;
@@ -333,7 +337,8 @@ var FbWidget = {
 
 		$('.fontPicker', $fontPicker).fontPicker({ 
 			name: o.name,
-			defaultFont: o.value
+			defaultFont: o.value,
+			disabled: this._getFbOptions().readOnly
 		});
  		return $fontPicker;
  	},	
