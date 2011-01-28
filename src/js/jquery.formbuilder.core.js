@@ -272,17 +272,26 @@ var FormBuilder = {
 	  var $formSettingsGeneralSection = $(this.options._formSettingsGeneralSection);
 	  var $language = $('#language', $formSettingsLanguageSection).change(this._languageChange);
 	  var options = this.options;
-	  var settings = options.settings[$language.val()];
+	  var settings;
 	  var $this = this;
 	  var $formHeading = $('.formHeading', $builderPanel);
+	  var $settings = $('#settings', $builderForm);
+		// first creation
+		if ($settings.val() == '') {
+			settings = options.settings[$language.val()];
+		  for (var i = 0; i < options._languages.length; i++) {
+			   options.settings[options._languages[i]].name += ' ' + options.formCounter;
+		    }
+		  $formHeading.append('<' + settings.heading + ' class="heading">' + settings.name + '</' + settings.heading + '>');
+		  $('#name',$builderForm).val($fbWidget._propertyName(settings.name));
+		  $this._updateSettings($this);
+		} else {
+			options.settings = $.parseJSON(unescape($settings.val()));
+			settings = options.settings[$language.val()];
+		}	  
+		
+		$fbWidget._log('settings.name = ' + settings.name);
 	  
-	  for (var i = 0; i < options._languages.length; i++) {
-		  options.settings[options._languages[i]].name += ' ' + options.formCounter;
-	  }
-	 
-	  $formHeading.append('<' + settings.heading + ' class="heading">' + settings.name + '</' + settings.heading + '>');
-	  
-	  $('#name',$builderForm).val($fbWidget._propertyName(settings.name));
 		var $name = $fbWidget._label({ label: 'Name', name: 'form.name' })
 		       .append('<input type="text" id="form.name" value="' + settings.name + '" />');
 		$('input', $name).keyup(function(event) {
@@ -294,7 +303,10 @@ var FormBuilder = {
 						$fbWidget._log('$(this).val() = ' + value);
 						settings.name = value;
 						$(settings.heading, $formHeading).text(value);
+						$this._updateSettings($this);
 					});			  
+		
+
 		
 		var $heading = $('<select> \
 					<option value="h1">Heading 1</option> \

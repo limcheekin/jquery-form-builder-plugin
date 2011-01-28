@@ -2,13 +2,13 @@
 * jquery-form-builder-plugin - JQuery WYSIWYG Web Form Builder
 * http://code.google.com/p/jquery-form-builder-plugin/
 *
-* Revision: 106
+* Revision: 107
 * Version: 0.1
 * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
 *
 * Licensed under Apache v2.0 http://www.apache.org/licenses/LICENSE-2.0.html
 *
-* Date: Fri Jan 28 15:46:52 GMT+08:00 2011 
+* Date: Fri Jan 28 17:19:17 GMT+08:00 2011 
 */
 
 /*
@@ -16,7 +16,7 @@
  * consists of builder palette contains widgets supported by the form builder and 
  * builder panel where the constructed form display. 
  * 
- * Revision: 106
+ * Revision: 107
  * Version: 0.1
  * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
  *
@@ -285,17 +285,26 @@ var FormBuilder = {
 	  var $formSettingsGeneralSection = $(this.options._formSettingsGeneralSection);
 	  var $language = $('#language', $formSettingsLanguageSection).change(this._languageChange);
 	  var options = this.options;
-	  var settings = options.settings[$language.val()];
+	  var settings;
 	  var $this = this;
 	  var $formHeading = $('.formHeading', $builderPanel);
+	  var $settings = $('#settings', $builderForm);
+		// first creation
+		if ($settings.val() == '') {
+			settings = options.settings[$language.val()];
+		  for (var i = 0; i < options._languages.length; i++) {
+			   options.settings[options._languages[i]].name += ' ' + options.formCounter;
+		    }
+		  $formHeading.append('<' + settings.heading + ' class="heading">' + settings.name + '</' + settings.heading + '>');
+		  $('#name',$builderForm).val($fbWidget._propertyName(settings.name));
+		  $this._updateSettings($this);
+		} else {
+			options.settings = $.parseJSON(unescape($settings.val()));
+			settings = options.settings[$language.val()];
+		}	  
+		
+		$fbWidget._log('settings.name = ' + settings.name);
 	  
-	  for (var i = 0; i < options._languages.length; i++) {
-		  options.settings[options._languages[i]].name += ' ' + options.formCounter;
-	  }
-	 
-	  $formHeading.append('<' + settings.heading + ' class="heading">' + settings.name + '</' + settings.heading + '>');
-	  
-	  $('#name',$builderForm).val($fbWidget._propertyName(settings.name));
 		var $name = $fbWidget._label({ label: 'Name', name: 'form.name' })
 		       .append('<input type="text" id="form.name" value="' + settings.name + '" />');
 		$('input', $name).keyup(function(event) {
@@ -307,7 +316,10 @@ var FormBuilder = {
 						$fbWidget._log('$(this).val() = ' + value);
 						settings.name = value;
 						$(settings.heading, $formHeading).text(value);
+						$this._updateSettings($this);
 					});			  
+		
+
 		
 		var $heading = $('<select> \
 					<option value="h1">Heading 1</option> \
@@ -606,7 +618,7 @@ $.widget('fb.formbuilder', FormBuilder);/*
  * at http://andreaslagerkvist.com/jquery/colour-picker/ and customized for 
  * JQuery Form Builder plugin project at http://code.google.com/p/jquery-form-builder-plugin/
  * 
- * Revision: 106
+ * Revision: 107
  * Version: 0.1
  * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
  *
@@ -805,7 +817,7 @@ $.widget('fb.colorPicker', ColorPicker);/*
  * at http://plugins.jquery.com/project/fontpicker-regios and customized for 
  * JQuery Form Builder plugin project at http://code.google.com/p/jquery-form-builder-plugin/
  * 
- * Revision: 106
+ * Revision: 107
  * Version: 0.1
  * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
  *
@@ -905,7 +917,7 @@ var FontPicker = {
 $.widget('fb.fontPicker', FontPicker);/*
  * Base widget plugin of JQuery Form Builder plugin, all Form Builder widgets should extend from this plugin. 
  * 
- * Revision: 106
+ * Revision: 107
  * Version: 0.1
  * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
  *
@@ -1351,7 +1363,7 @@ var FbWidget = {
 $.widget('fb.fbWidget', FbWidget);/*
  * JQuery Form Builder - Plain Text plugin.
  * 
- * Revision: 106
+ * Revision: 107
  * Version: 0.1
  * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
  *
