@@ -156,8 +156,7 @@ var FormBuilder = {
    _isFieldSettingsTabCanOpen: function(event, ui) { 
 		if (ui.index == 1) { // Field Settings tab selected
 			var options = $.fb.formbuilder.prototype.options;
-			// activate Add Field tab
-			$(this).tabs('select', 0);
+			var canOpen = true;
 			if ($(options._emptyBuilderPanel).is(':visible')) {
 				$(options._standardFieldsPanel).qtip({
 					   content: 'No field was created. Please select standard field or fancy field.',
@@ -176,7 +175,7 @@ var FormBuilder = {
 								tip: true
 							}								   
 			    });
-				return false;
+				canOpen = false;
 			} else if ($(options._builderForm + ' .' + $.fb.fbWidget.prototype.options._selectedClass).length === 0) {
 				$('.' + $.fb.fbWidget.prototype.options._styleClass + ':first').qtip({
 					   content: "Please select field below to see it's Field Settings.",
@@ -193,8 +192,13 @@ var FormBuilder = {
 								tip: true
 							}								   
 			    });	
-				return false;
+				canOpen = false;
 			}
+			if (!canOpen) {
+				// activate Add Field tab
+				$(this).tabs('select', 0);
+			}
+			return canOpen;
 		} 
 	 },
   _initBuilderPanel: function() {
