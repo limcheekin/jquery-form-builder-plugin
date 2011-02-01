@@ -135,7 +135,9 @@ var FbWidget = {
 			$this._createField(name, $ctrlHolder, $this.options, settings);
 			if (event.type == 'click') {
 				$($.fb.formbuilder.prototype.options._formControls).append($ctrlHolder).sortable('refresh');				
-				$ctrlHolder.toggle('slide', {direction: 'up'}, 'slow');			
+				$ctrlHolder.toggle('slide', {direction: 'up'}, 'slow');
+				$this._scroll(event);
+				event.preventDefault();
 			} else {
 				return $ctrlHolder;
 			}
@@ -143,6 +145,25 @@ var FbWidget = {
 			return $ctrlHolder.show();
 		}
 		$this._log('_createFbWidget executed');
+    },
+  _scroll: function(event) {
+		 var $builderPanel = $($.fb.formbuilder.prototype.options._builderPanel); 
+		 this._log("builderPanel: min-height = " + $builderPanel.css('minHeight') + ", height = " + $builderPanel.css('height'));
+		 var minHeight = $builderPanel.css('minHeight');
+		 var height = $builderPanel.css('height');
+		 minHeight = minHeight.substring(0, minHeight.lastIndexOf('px')) * 1;
+		 height = height.substring(0, height.lastIndexOf('px')) * 1;
+		 
+		 if (height > minHeight) {
+			 this._log("builderPanel: scrolling... height: " + height + ", minHeight: " + minHeight);
+			 var y = height - minHeight;
+			 this._log("y = " + y);
+			 //window.scrollTo(0, y);
+			 // From: http://tympanus.net/codrops/2010/06/02/smooth-vertical-or-horizontal-page-scrolling-with-jquery/
+			 $('html, body').stop().animate({
+				 scrollTop: y
+			 }, 1500,'easeInOutExpo');			 
+		 }
     },
   _createFieldSettings: function(event) { 
 	  $.fb.fbWidget.prototype._log('_createFieldSettings executing.');
