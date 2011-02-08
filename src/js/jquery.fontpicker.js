@@ -48,6 +48,13 @@ var FontPicker = {
 		if (!fontPicker.length && !options.disabled) {
 			fontPicker = $('<div id="'+options.id+'" ></div>').appendTo(document.body).hide();
 
+			/* add individual font divs to fontbox */
+			$.each(this.fonts, function(i, item) {
+				
+				fontPicker.append('<div class="singlefont" onmouseover="this.style.backgroundColor=\''+options.hoverColor
+				+'\'" onmouseout="this.style.backgroundColor=\''+options.bgColor+'\'" style="font-family: '+item+';" value="' + item + '"> ' + item.split(',')[0] + '</div>');
+			});
+			
 			// Remove the font-picker if you click outside it (on body)
 			$(document.body).click(function(event) {									
 					if ($(event.target).is('.'+options.selClass) || $(event.target).is('#'+options.id)) return;					
@@ -77,13 +84,6 @@ var FontPicker = {
 		{
 			this.fontFamily(options.defaultFont);
 		}
-
-		/* add individual font divs to fontbox */
-		$.each(this.fonts, function(i, item) {
-			
-			fontPicker.append('<div class="singlefont" onmouseover="this.style.backgroundColor=\''+options.hoverColor
-			+'\'" onmouseout="this.style.backgroundColor=\''+options.bgColor+'\'" style="font-family: '+item+';" value="' + item + '"> ' + item.split(',')[0] + '</div>');
-		});
 		
 		$('.'+options.fontclass).click(function(event) {
 			var $this = $(this);
