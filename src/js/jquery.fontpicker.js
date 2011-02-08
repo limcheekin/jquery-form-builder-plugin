@@ -44,7 +44,7 @@ var FontPicker = {
 	_init : function() {
 		var options = this.options;
 		var fontPicker = $('#' + options.id);		
-		this.element.parent().append('<input type="hidden" id="' + options.name + '" value="' + options.defaultFont + '" />');
+		this.element.parent().append('<input type="hidden" id="' + options.name + '" />');
 		if (!fontPicker.length && !options.disabled) {
 			fontPicker = $('<div id="'+options.id+'" ></div>').appendTo(document.body).hide();
 
@@ -75,8 +75,7 @@ var FontPicker = {
 		// select initial value
 		if (options.defaultFont.length)
 		{
-			this.element.css('fontFamily', options.defaultFont);
-			this.element.text(options.defaultFont);
+			this.fontFamily(options.defaultFont);
 		}
 
 		/* add individual font divs to fontbox */
@@ -97,6 +96,14 @@ var FontPicker = {
 		  event.stopImmediatePropagation();
 		});
 
+	},
+	fontFamily : function(value) {
+	   this._log('fontFamily(' + value + ')');	
+	   var fontFamilyValue = value.replace(/'/gi, ''); // remove single quote for chrome browser
+		 var fontFamilyText = fontFamilyValue.split(',', 1)[0]; // taking the 1st font type
+		 this._log('fontFamilyValue = ' + fontFamilyValue + ', fontFamilyText = ' + fontFamilyText);	
+		 this.element.text(fontFamilyText).css('fontFamily', fontFamilyValue);
+		 $('input', this.element.parent()).val(fontFamilyValue);
 	}
 };
 

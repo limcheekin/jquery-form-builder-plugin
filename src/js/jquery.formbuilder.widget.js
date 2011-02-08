@@ -350,9 +350,7 @@ var FbWidget = {
  	_fontPicker: function(options) {
  		var o = $.extend({}, options);
  		this._log('fontPicker(' + $.toJSON(o) + ')');
- 		o.value = o.value.replace(/'/gi, ''); // remove single quote for chrome browser
- 		o.value = o.value.split(',', 1)[0]; // taking the 1st font type
- 		o.value = o.value != 'default' ? o.value : this._getFbOptions().settings.styles.fontFamily;
+ 		o.value = o.value != 'default' ? o.value : this._getFbOptions()._fontFamily;
  		if (!o.label) o.label = 'Font';
 		var $fontPicker = this._label(o).append('<div class="fontPicker" rel="' + o.name + '"></div>'); 		
 
@@ -428,11 +426,15 @@ var FbWidget = {
 	  //fontFamily, fontSize, styles.fontStyles
 	  var idPrefix = options.idPrefix ? options.idPrefix : '';
 	  var names = [idPrefix + 'bold', idPrefix + 'italic', idPrefix + 'underline'];
-	  return this._fieldset({ text: 'Fonts' }).append(this._twoRowsOneRow(
+	  var fontPanel = this._twoRowsOneRow(
 			  this._fontPicker({ name: idPrefix + 'fontFamily', value: options.fontFamily }),
 			  this._fontSize({ label: 'Size', name: idPrefix + 'fontSize', value: options.fontSize }),
 			  this._fontStyles({ names: names, checked: options.fontStyles }).css('paddingLeft', '2em')
-			  ));
+	    );
+	  if (options.nofieldset)
+		  return fontPanel;
+	  else
+	    return this._fieldset({ text: 'Fonts' }).append(fontPanel);
   },
   _colorPanel: function(options) {
 	  //textColorValue, backgroundColorValue, idPrefix
