@@ -36,6 +36,9 @@ var FbWidget = {
   _getFbOptions: function() {
 	  return $($.fb.formbuilder.prototype.options._id).formbuilder('option');  
   },
+  _getFbLocalizedSettings: function() {
+	  return $($.fb.formbuilder.prototype.options._id).formbuilder('option').settings[$('#language').val()];  
+  },  
   _createField: function(name, widget, options, settings) {
 	  var fbOptions = $.fb.formbuilder.prototype.options;
 	  var index = $('#builderForm div.ctrlHolder').size();

@@ -24,17 +24,21 @@ var FormBuilder = {
 				name: 'Form',
 				classes: ['leftAlign'],
 				heading: 'h2',
-				fontFamily: 'default', 
-				fontSize: 'default',							
-				fontStyles: [1, 0, 0]
+				styles: {
+					fontFamily: 'default', 
+					fontSize: 'default',
+					fontStyles: [1, 0, 0] // bold, italic, underline					
+				}				
 			},
 			zh: {
 				name: '表格',
 				classes: ['rightAlign'],
 				heading: 'h2',
-				fontFamily: 'default', 
-				fontSize: 'default',							
-				fontStyles: [1, 0, 0]
+				styles: {
+					fontFamily: 'default', 
+					fontSize: 'default',
+					fontStyles: [1, 0, 0] // bold, italic, underline					
+				}			
 			},			
 			styles : {
 				color : 'default', // browser default
@@ -332,13 +336,13 @@ var FormBuilder = {
 	    	  var heading = $(this).val();
 	    	  var text = $(settings.heading, $formHeading).text();
 	    	  var $heading = $('<' + heading + ' class="heading">' + text + '</' + heading + '>');
-	    	  if (settings.fontStyles[0] === 0) {
+	    	  if (settings.styles.fontStyles[0] === 0) {
 	    		  $heading.css('fontWeight', 'normal');  
 	    	  }
-	    	  if (settings.fontStyles[1] == 1) {
+	    	  if (settings.styles.fontStyles[1] == 1) {
 	    		  $heading.css('fontStyle', 'italic');
 	    	  }	    	  
-	    	  if (settings.fontStyles[2] == 1) {
+	    	  if (settings.styles.fontStyles[2] == 1) {
 	    		  $heading.css('textDecoration', 'underline');
 	    	  }	    		    	  
 	    	  $(settings.heading, $formHeading).replaceWith($heading);
@@ -354,38 +358,41 @@ var FormBuilder = {
 					$this._updateSettings($this);
 				});
 			
-		var fontFamily = settings.fontFamily == 'default' ? options._fontFamily : settings.fontFamily;
-		var fontSize = settings.fontSize == 'default' ? options._fontSize : settings.fontSize;
-		var $fontPanel = $fbWidget._fontPanel({ fontFamily: fontFamily, fontSize: fontSize, 
-            fontStyles: settings.fontStyles, idPrefix: 'form.', nofieldset: true });
+		settings.styles.fontFamily = settings.styles.fontFamily == 'default' ? options._fontFamily : settings.styles.fontFamily;
+		settings.styles.fontSize = settings.styles.fontSize == 'default' ? options._fontSize : settings.styles.fontSize;
+		var $fontPanel = $fbWidget._fontPanel({ 
+			      fontFamily: settings.styles.fontFamily, 
+			      fontSize: settings.styles.fontSize, 
+            fontStyles: settings.styles.fontStyles, 
+            idPrefix: 'form.', nofieldset: true });
 
 		$("input[id$='form.bold']", $fontPanel).change(function(event) {
 			if ($(this).attr('checked')) {
 				$(settings.heading, $formHeading).css('fontWeight', 'bold');
-				settings.fontStyles[0] = 1;
+				settings.styles.fontStyles[0] = 1;
 			} else {
 				$(settings.heading, $formHeading).css('fontWeight', 'normal');
-				settings.fontStyles[0] = 0;
+				settings.styles.fontStyles[0] = 0;
 			}
 			$this._updateSettings($this);
 		});
 		$("input[id$='form.italic']", $fontPanel).change(function(event) {
 			if ($(this).attr('checked')) {
 				$(settings.heading, $formHeading).css('fontStyle', 'italic');
-				settings.fontStyles[1] = 1;
+				settings.styles.fontStyles[1] = 1;
 			} else {
 				$(settings.heading, $formHeading).css('fontStyle', 'normal');
-				settings.fontStyles[1] = 0;
+				settings.styles.fontStyles[1] = 0;
 			}
 			$this._updateSettings($this);
 		});		
 		$("input[id$='form.underline']", $fontPanel).change(function(event) {
 			if ($(this).attr('checked')) {
 				$(settings.heading, $formHeading).css('textDecoration', 'underline');
-				settings.fontStyles[2] = 1;
+				settings.styles.fontStyles[2] = 1;
 			} else {
 				$(settings.heading, $formHeading).css('textDecoration', 'none');
-				settings.fontStyles[2] = 0;
+				settings.styles.fontStyles[2] = 0;
 			}
 			$this._updateSettings($this);
 		});
@@ -393,7 +400,7 @@ var FormBuilder = {
 		$("input[id$='form.fontFamily']", $fontPanel).change(function(event) {
 			var value = $(this).val();
 			$builderPanel.css('fontFamily', value);
-			settings.fontFamily = value;
+			settings.styles.fontFamily = value;
 			$this._updateSettings($this);
 		});		
 		
@@ -401,19 +408,19 @@ var FormBuilder = {
 		$("select[id$='form.fontSize']", $fontPanel).change(function(event) {
 			var value = $(this).val();
 			$builderPanel.css('fontSize', value + 'px');
-			settings.fontSize = value;
+			settings.styles.fontSize = value;
 			$this._updateSettings($this);
 		});	
 				
-		var color = options.settings.styles.color;
-		if (color == 'default') {
-			color = options._color;
+		if (options.settings.styles.color == 'default') {
+			options.settings.styles.color = options._color;
 		}
-		var backgroundColor = options.settings.styles.backgroundColor;
-		if (backgroundColor == 'default') {
-			backgroundColor = options._backgroundColor;
+		
+		if (options.settings.styles.backgroundColor == 'default') {
+			options.settings.styles.backgroundColor = options._backgroundColor;
 		}
-		var $colorPanel = $fbWidget._colorPanel({ color: color, backgroundColor: backgroundColor, idPrefix: 'form.' });
+		var $colorPanel = $fbWidget._colorPanel({ color: options.settings.styles.color, 
+			       backgroundColor: options.settings.styles.backgroundColor, idPrefix: 'form.' });
 		
 		$("input[id$='form.color']", $colorPanel).change(function(event) {
 			var value = $(this).data('colorPicker').color;
@@ -454,25 +461,25 @@ var FormBuilder = {
 			  $formSettingsLanguageSection).attr('selected', 'true');
 	  
 	  var $heading = $('<' + formSettings.heading + ' class="heading">' + formSettings.name + '</' + formSettings.heading + '>')
-	  .css('fontWeight', formSettings.fontStyles[0] == 1 ? 'bold' : 'normal')
-	  .css('fontStyle', formSettings.fontStyles[1] == 1 ? 'italic' : 'normal')
-	  .css('textDecoration', formSettings.fontStyles[2] == 1 ? 'underline' : 'none');
+	  .css('fontWeight', formSettings.styles.fontStyles[0] == 1 ? 'bold' : 'normal')
+	  .css('fontStyle', formSettings.styles.fontStyles[1] == 1 ? 'italic' : 'normal')
+	  .css('textDecoration', formSettings.styles.fontStyles[2] == 1 ? 'underline' : 'none');
 	  $('.heading', $formHeading).replaceWith($heading);
-	  $.fb.formbuilder.prototype._log('formSettings.fontStyles[2] = ' + formSettings.fontStyles[2]);
-	  $("input[id$='form.bold']", $formSettingsLanguageSection).attr('checked', formSettings.fontStyles[0]);
-	  $("input[id$='form.italic']", $formSettingsLanguageSection).attr('checked', formSettings.fontStyles[1]);
-	  $("input[id$='form.underline']", $formSettingsLanguageSection).attr('checked', formSettings.fontStyles[2]);
+	  $.fb.formbuilder.prototype._log('formSettings.fontStyles[2] = ' + formSettings.styles.fontStyles[2]);
+	  $("input[id$='form.bold']", $formSettingsLanguageSection).attr('checked', formSettings.styles.fontStyles[0]);
+	  $("input[id$='form.italic']", $formSettingsLanguageSection).attr('checked', formSettings.styles.fontStyles[1]);
+	  $("input[id$='form.underline']", $formSettingsLanguageSection).attr('checked', formSettings.styles.fontStyles[2]);
 	  
 	  $formHeading.removeClass('leftAlign centerAlign rightAlign').addClass(formSettings.classes[0]);
 	  $("select[id$='form.horizontalAlignment'] option[value='" + formSettings.classes[0] + "']", 
 			  $formSettingsLanguageSection).attr('selected', 'true');
 	  
-		var fontFamily = formSettings.fontFamily == 'default' ? fbOptions._fontFamily : formSettings.fontFamily;
-		var fontSize = formSettings.fontSize == 'default' ? fbOptions._fontSize : formSettings.fontSize;
-		$builderPanel.css('fontFamily', fontFamily);
-		$builderPanel.css('fontSize', fontSize + 'px');
-		$("select[id$='form.fontSize']", $formSettingsLanguageSection).val(fontSize);
-		$('.fontPicker', $formSettingsLanguageSection).fontPicker('fontFamily', fontFamily);
+	  formSettings.styles.fontFamily = formSettings.styles.fontFamily == 'default' ? fbOptions._fontFamily : formSettings.styles.fontFamily;
+	  formSettings.styles.fontSize = formSettings.styles.fontSize == 'default' ? fbOptions._fontSize : formSettings.styles.fontSize;
+		$builderPanel.css('fontFamily', formSettings.styles.fontFamily);
+		$builderPanel.css('fontSize', formSettings.styles.fontSize + 'px');
+		$("select[id$='form.fontSize']", $formSettingsLanguageSection).val(formSettings.styles.fontSize);
+		$('.fontPicker', $formSettingsLanguageSection).fontPicker('fontFamily', formSettings.styles.fontFamily);
 		
 		$ctrlHolders.each(function(i) {
 		    var $widget = $(this);

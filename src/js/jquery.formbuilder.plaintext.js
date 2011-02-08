@@ -22,16 +22,23 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 		settings : {
 			en : {
 				text : 'Plain Text',
-				classes : [ 'leftAlign', 'topAlign' ]
+				classes : [ 'leftAlign', 'topAlign' ],
+				styles: {
+					fontFamily: 'default', // form builder default
+					fontSize: 'default',
+					fontStyles: [0, 0, 0] // bold, italic, underline					
+				}
 			},
 			zh : {
 				text : '無格式文字',
-				classes : [ 'rightAlign', 'middleAlign' ]
+				classes : [ 'rightAlign', 'middleAlign' ],
+				styles: {
+					fontFamily: 'default', // form builder default
+					fontSize: 'default',
+					fontStyles: [0, 0, 0] // bold, italic, underline					
+				}				
 			},
 			styles : {
-				fontFamily: 'default', // form builder default
-				fontSize: 'default',
-				fontStyles: [0, 0, 0], // bold, italic, underline
 				color : 'default',
 				backgroundColor : 'default'
 			}
@@ -75,46 +82,43 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 							fb.settings.classes[0] = value;
 							fb.target._updateSettings(fb.item);
 						});
-		return [fb.target._oneColumn($text),
-				fb.target._twoColumns($horizontalAlignment, $verticalAlignment) ];
-	},
-	_getFieldSettingsGeneralSection : function(event, fb) {
+		
     var styles = fb.settings.styles;
-    var fbStyles = fb.target._getFbOptions().settings.styles;
+    var fbStyles = fb.target._getFbLocalizedSettings().styles;
     var fontFamily = styles.fontFamily != 'default' ? styles.fontFamily : fbStyles.fontFamily ;
 	  var fontSize = styles.fontSize != 'default' ? styles.fontSize : fbStyles.fontSize;	  
-    var color = styles.color != 'default' ? styles.color : fbStyles.color;
-	  var backgroundColor = styles.backgroundColor != 'default' ? styles.backgroundColor : fbStyles.backgroundColor;
 		var $fontPanel = fb.target._fontPanel({ fontFamily: fontFamily, fontSize: fontSize, 
-			                           fontStyles: styles.fontStyles, idPrefix: 'field.' });
-		var $colorPanel = fb.target._colorPanel({ color: color, backgroundColor: backgroundColor, idPrefix: 'field.' });
-	  
+				                           fontStyles: styles.fontStyles, idPrefix: 'field.', nofieldset: true });
+		
 		$("input[id$='field.bold']", $fontPanel).change(function(event) {
+			var item = fb.item.find('.PlainText');
 			if ($(this).attr('checked')) {
-				fb.item.css('fontWeight', 'bold');
+				item.css('fontWeight', 'bold');
 				styles.fontStyles[0] = 1;
 			} else {
-				fb.item.css('fontWeight', 'normal');
+				item.css('fontWeight', 'normal');
 				styles.fontStyles[0] = 0;
 			}
 			fb.target._updateSettings(fb.item);
 		});
 		$("input[id$='field.italic']", $fontPanel).change(function(event) {
+			var item = fb.item.find('.PlainText');
 			if ($(this).attr('checked')) {
-				fb.item.css('fontStyle', 'italic');
+				item.css('fontStyle', 'italic');
 				styles.fontStyles[1] = 1;
 			} else {
-				fb.item.css('fontStyle', 'normal');
+				item.css('fontStyle', 'normal');
 				styles.fontStyles[1] = 0;
 			}
 			fb.target._updateSettings(fb.item);
 		});	
 		$("input[id$='field.underline']", $fontPanel).change(function(event) {
+			var item = fb.item.find('.PlainText');
 			if ($(this).attr('checked')) {
-				fb.item.css('textDecoration', 'underline');
+				item.css('textDecoration', 'underline');
 				styles.fontStyles[2] = 1;
 			} else {
-				fb.item.css('textDecoration', 'none');
+				item.css('textDecoration', 'none');
 				styles.fontStyles[2] = 0;
 			}
 			fb.target._updateSettings(fb.item);
@@ -122,18 +126,28 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 		
 		$("input[id$='field.fontFamily']", $fontPanel).change(function(event) {
 			var value = $(this).val();
-			fb.item.css('fontFamily', value);
+			fb.item.find('.PlainText').css('fontFamily', value);
 			styles.fontFamily = value;
 			fb.target._updateSettings(fb.item);
 		});		
 		
 		$("select[id$='field.fontSize']", $fontPanel).change(function(event) {
 			var value = $(this).val();
-			fb.item.css('fontSize', value + 'px');
+			fb.item.find('.PlainText').css('fontSize', value + 'px');
 			styles.fontSize = value;
 			fb.target._updateSettings(fb.item);
 		});		
 		
+		return [fb.target._oneColumn($text),
+				fb.target._twoColumns($horizontalAlignment, $verticalAlignment), $fontPanel];
+	},
+	_getFieldSettingsGeneralSection : function(event, fb) {
+    var styles = fb.settings.styles;
+    var fbStyles = fb.target._getFbOptions().settings.styles;
+    var color = styles.color != 'default' ? styles.color : fbStyles.color;
+	  var backgroundColor = styles.backgroundColor != 'default' ? styles.backgroundColor : fbStyles.backgroundColor;
+		var $colorPanel = fb.target._colorPanel({ color: color, backgroundColor: backgroundColor, idPrefix: 'field.' });
+	  		
 		$("input[id$='field.color']", $colorPanel).change(function(event) {
 			var value = $(this).data('colorPicker').color;
 			fb.item.css('color','#' + value);
@@ -147,19 +161,37 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 			styles.backgroundColor = value;
 			fb.target._updateSettings(fb.item);
 		});			
-		return [$fontPanel, $colorPanel];
+		return [$colorPanel];
 	}, 
 	_languageChange : function(event, fb) {
 		this._log('languageChange = ' + $.toJSON(fb.settings));
-		fb.item.find('div.PlainText').text(fb.settings.text).removeClass('leftAlign centerAlign rightAlign').addClass(fb.settings.classes[0]);
+	  var styles = fb.settings.styles;
+	  var fbStyles = fb.target._getFbLocalizedSettings().styles;
+	  var fontFamily = styles.fontFamily != 'default' ? styles.fontFamily : fbStyles.fontFamily;
+	  var fontSize = styles.fontSize != 'default' ? styles.fontSize : fbStyles.fontSize;
+		fb.item.find('.PlainText').text(fb.settings.text)
+		       .removeClass('leftAlign centerAlign rightAlign')
+		       .addClass(fb.settings.classes[0])
+		       .css('fontWeight', styles.fontStyles[0] == 1 ? 'bold' : 'normal')
+	         .css('fontStyle', styles.fontStyles[1] == 1 ? 'italic' : 'normal')
+	         .css('textDecoration', styles.fontStyles[2] == 1 ? 'underline' : 'none')
+		       .css('fontFamily', fontFamily)
+		       .css('fontSize', fontSize + 'px');	         
+		
 		fb.item.removeClass('topAlign middleAlign bottomAlign').addClass(fb.settings.classes[1]);
-		if (fb.item.selected) {
+		if (fb.item.selected) { // refresh field settings
 			var $fieldSettingsLanguageSection = $(this._getFbOptions()._fieldSettingsLanguageSection);
 			$("input[id$='field.text']", $fieldSettingsLanguageSection).val(fb.settings.text);
 			$("select[id$='field.horizontalAlignment'] option[value='" + fb.settings.classes[0] + "']", 
 			    $fieldSettingsLanguageSection).attr('selected', 'true');
 			$("select[id$='field.verticalAlignment'] option[value='" + fb.settings.classes[1] + "']", 
 			    $fieldSettingsLanguageSection).attr('selected', 'true');			  
+			// font panel
+			$("input[id$='field.bold']", $fieldSettingsLanguageSection).attr('checked', styles.fontStyles[0]);
+			$("input[id$='field.italic']", $fieldSettingsLanguageSection).attr('checked', styles.fontStyles[1]);
+			$("input[id$='field.underline']", $fieldSettingsLanguageSection).attr('checked', styles.fontStyles[2]);
+			$("select[id$='field.fontSize']", $fieldSettingsLanguageSection).val(fontSize);
+			$('.fontPicker', $fieldSettingsLanguageSection).fontPicker('fontFamily', fontFamily);			
 		}
 	}
 });
