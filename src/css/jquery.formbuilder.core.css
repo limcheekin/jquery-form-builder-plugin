@@ -113,9 +113,11 @@ div.ctrlHolder { padding: 1em }
 
 /*#builderPalette fieldset div.legend { text-align: right }*/
 
-div.2cols { clear: both; padding:0; margin: 0;}
+.twoCols, .threeCols { clear: both; padding:0; margin: 0;}
   	
 div.labelOnTop { padding-top: 0em; padding-bottom: 2.5em; } /*border-bottom: 1px solid #C0C0C0;*/
+
+div.labelOnTop textarea { padding: 0; margin-bottom: 0.5em; }
 
 .clear {
   clear: both;
@@ -134,20 +136,42 @@ div.labelOnTop input, div.labelOnTop select, div.labelOnTop textarea {
    width: 98%;
     }
     
-div.col1 {
+.twoCols .col1 {
  float: left;
  width: 48%;
   }     
   
 div.noPaddingBottom { padding-bottom: 0; }
 
-div.col2 {
+.twoCols .col2 {
 	margin-left: 52%;
+ }
+
+.threeCols { display: table; width: 100% }
+.threeCols .col1 {
+  display: table-cell;
+  width: 32%;
+}
+
+.threeCols .col2 {
+  display: table-cell;	
+	margin-left: 2%;
+	width: 32%;
+ }
+ 
+.threeCols .col3 {
+  display: table-cell;	
+	margin-left: 2%;
+	width: 32%;
  }
  
 /* Color panel: color picker styles */
 #field\.backgroundColor, #field\.color, 
 #form\.backgroundColor, #form\.color  { width: 8em }
+
+#field\.label\.backgroundColor, #field\.label\.color, 
+#field\.value\.backgroundColor, #field\.value\.color,
+#field\.description\.backgroundColor, #field\.description\.color { width: 4em }
 
 /* Font styles */
 .floatClearLeft { float:left; clear:left }

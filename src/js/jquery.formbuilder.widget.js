@@ -254,7 +254,7 @@ var FbWidget = {
   	$settings.val($.toJSON(settings)).change();
    	} ,          
   _twoColumns: function($e1, $e2) {
-	  return $('<div class="2cols"></div>')
+	  return $('<div class="twoCols"></div>')
 	        .append($e1.addClass('labelOnTop col1 noPaddingBottom'))
 	        .append($e2.addClass('labelOnTop col2'));
  	} ,      

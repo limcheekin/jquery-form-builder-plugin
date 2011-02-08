@@ -1,0 +1,21 @@
+/*
+ * Styles of Plain Text widget. 
+ * 
+ * Revision: @REVISION
+ * Version: @VERSION
+ * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
+ *
+ * Licensed under Apache v2.0 http://www.apache.org/licenses/LICENSE-2.0.html
+ *
+ * Date: 
+ */
+.uniForm .ctrlHolder .PlainText { padding-top: 0; padding-bottom: 0 }
+.uniForm .topAlign { padding-top: 0; padding-bottom: 2em; }
+.uniForm .bottomAlign { padding-top: 2em; padding-bottom: 0; }
+div.rightAlign { text-align: right; }
+div.centerAlign { text-align: center; }
+
+/* for drag and drop */
+div.topAlign { padding-top: 0; padding-bottom: 2em; }
+div.bottomAlign { padding-top: 2em; padding-bottom: 0; }
+

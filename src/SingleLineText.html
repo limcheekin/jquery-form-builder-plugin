@@ -1,0 +1,199 @@
+<!--
+* Single Line Text design.
+*
+* Revision: @REVISION
+* Version: @VERSION
+* Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
+*
+* Licensed under Apache v2.0 http://www.apache.org/licenses/LICENSE-2.0.html
+*
+* Date: 08 Feb 2011 
+ -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Single Line Text design</title>
+<script type="text/javascript" src="../lib/js/jquery-1.4.2.min.js"></script>
+<script type="text/javascript" src="../lib/js/jquery-ui-1.8.7.custom.min.js"></script>
+<script type="text/javascript" src="../lib/js/jquery.json-2.2.min.js"></script>
+<script type="text/javascript" src="../lib/js/jquery.qtip.min.js"></script>
+<!--DEV--><script type="text/javascript" src="js/jquery.formbuilder.core.js"></script>
+<!--DEV--><script type="text/javascript" src="js/jquery.formbuilder.widget.js"></script>
+<!--DEV--><script type="text/javascript" src="js/jquery.colorpicker.js"></script>
+<!--DEV--><script type="text/javascript" src="js/jquery.fontpicker.js"></script>
+<!--PROD.JS-->
+<link type="text/css" href="../lib/css/smoothness/jquery-ui-1.8.7.custom.css" media="screen" rel="stylesheet" /> 
+<link type="text/css" href="../lib/css/uni-form.css" media="screen" rel="stylesheet" />  
+<link type="text/css" href="../lib/css/default.uni-form.css" media="screen" rel="stylesheet" />  
+<link type="text/css" href="../lib/css/jquery.qtip.css" media="screen" rel="stylesheet" />
+<!--DEV--><link type="text/css" href="css/jquery.formbuilder.core.css" media="screen" rel="stylesheet" />  
+<!--DEV--><link type="text/css" href="css/jquery.colorpicker.css" media="screen" rel="stylesheet" />  
+<!--DEV--><link type="text/css" href="css/jquery.fontpicker.css" media="screen" rel="stylesheet" /> 
+<!--PROD.CSS-->
+<script type="text/javascript">
+$(function(){
+	$('#paletteTabs').tabs();
+	$("[id$='field.label.color']").colorPicker({
+	    ico:    '../images/jquery.colourPicker.gif', 
+	    disabledIco:    '../images/jquery.colourPicker.disabled.gif', 
+	    name: 'field.label.color'
+	});		
+	$("[id$='field.label.backgroundColor']").colorPicker({
+	    ico:    '../images/jquery.colourPicker.gif', 
+	    disabledIco:    '../images/jquery.colourPicker.disabled.gif', 
+	    name: 'field.label.backgroundColor'
+	});			
+});
+</script>
+
+<style type="text/css">
+/* Field specific styles here */
+
+</style>
+</head>
+<body>
+<div id="container">
+  <div id="header"><h1>Single Line Text design</h1></div>
+  <div id="builderPalette">
+     <div class="floatingPanel">
+			<div id="paletteTabs">
+				<ul>
+					<li><a href="#fieldSettings">Field Settings</a></li>
+				</ul>
+				<div id="fieldSettings">
+					<fieldset class="language">
+					<legend>Language: English</legend>
+					<div class="twoCols">
+						<div class="labelOnTop col1 noPaddingBottom">
+							<label for="field.label">Label</label><br/>
+              <input type="text" id="field.label" />
+						</div>
+						<div class="labelOnTop col2">
+							<label for="field.value">Value</label><br/>
+              <input type="text" id="field.value" />
+						</div>	
+					</div>
+					<div class="clear labelOnTop">
+						<label for="field.description">Description</label><br/>
+						<textarea id="field.description" rows="2"></textarea>
+					</div>
+					<div class="twoRowsOneRow">
+					<div class="row1col1">
+					<div><label for="form.fontFamily">Font</label><br>
+					<div rel="form.fontFamily" class="fontPicker"
+						style="font-family: serif;">serif</div>
+					<input type="hidden" id="form.fontFamily" value="serif"></div>
+					<div class="row2col1">
+					<div><label for="form.fontSize">Size</label>&nbsp;<select
+						id="form.fontSize">
+						<option value="9">9</option>
+						<option value="10">10</option>
+						<option value="11">11</option>
+						<option value="12">12</option>
+						<option value="13">13</option>
+						<option value="14">14</option>
+						<option value="15">15</option>
+						<option value="16">16</option>
+						<option value="17">17</option>
+						<option value="18">18</option>
+						<option value="20">20</option>
+						<option value="22">22</option>
+						<option value="24">24</option>
+						<option value="28">28</option>
+						<option value="32">32</option>
+					</select></div>
+					</div>
+					</div>
+					<div class="row1col2">
+					<div style="padding-left: 2em;"><input type="checkbox"
+						id="form.bold">&nbsp;Bold<br>
+					<input type="checkbox" id="form.italic">&nbsp;Italic<br>
+					<input type="checkbox" id="form.underline">&nbsp;Underline</div>
+					</div>
+					</div>
+				</fieldset>
+					<div class="general">
+					 <fieldset><legend>Value</legend>
+					<div class="twoCols">
+						<div class="col1" style="width: 32%;">
+              <input type="checkbox" id="field.required">&nbsp;Required
+						</div>
+						<div class="col2" style="margin-left: 34%">
+							<select id="field.restriction" style="width: 99%">
+								<option value="">any character</option>
+								<option value="alphanumeric">alphanumeric only</option>
+								<option value="letterswithbasicpunc">letters or punctuation only</option>
+								<option value="lettersonly">letters only</option>
+							</select>
+						</div>	
+					</div>					 
+					 </fieldset>
+						<fieldset><legend>Colors</legend>
+						<div class="threeCols" style="padding-bottom: 2px;">
+							<div class="col1">
+							</div>
+							<div class="col2">
+							  Text
+							</div>
+							<div class="col3">
+							  Background
+							</div>
+						</div>	
+						<div class="threeCols">
+							<div class="col1">
+							  Label
+							</div>
+							<div class="col2">
+							  <div id="field.label.color"></div>
+							</div>
+							<div class="col3">
+							  <div id="field.label.backgroundColor"></div>
+							</div>
+						</div>
+						<div class="threeCols">
+							<div class="col1">
+							  Value
+							</div>
+							<div class="col2">
+							  <div id="field.label.color"></div>
+							</div>
+							<div class="col3">
+							  <div id="field.label.backgroundColor"></div>
+							</div>
+						</div>
+						<div class="threeCols">
+							<div class="col1">
+							  Description
+							</div>
+							<div class="col2">
+							  <div id="field.label.color"></div>
+							</div>
+							<div class="col3">
+							  <div id="field.label.backgroundColor"></div>
+							</div>
+						</div>						
+						</fieldset>						
+					</div>				
+				</div>
+			</div>     
+     </div>
+  </div>
+  <form id="builderForm" action="#" class="uniForm">
+		  <div id="builderPanel">
+		    <div class="formHeading"><h1>Form 1</h1></div>
+			  <fieldset>
+		    <div class="ctrlHolder">
+		      <label for="">Single Line Text</label>
+		      <input type="text" id="" name="" value="" size="35" class="textInput">
+		      <p class="formHint">This is a form hint.</p>
+		    </div>					
+		  </fieldset>		  
+  </div>
+  <div class="buttons">
+		  <input type="submit" name="create" class="save" value="Create" id="create" />
+	</div>
+	</form>	  	     
+</div>
+</body>
+</html>
