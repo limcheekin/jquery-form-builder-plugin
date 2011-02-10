@@ -128,7 +128,7 @@ var FbWidget = {
 		// store settings to be used in _createFieldSettings() and _languageChange()
 		$ctrlHolder.data('fbWidget', settings); 
 		$this._log("b4. text = " + settings[$('#language').val()].text);
-		var fb = {target: $this, item: $ctrlHolder, settings: settings[$('#language').val()]};
+		var fb = {target: $this, item: $ctrlHolder, settings: settings[$('#language').val()], _settings: settings};
 		var $widget = $this._getWidget(event, fb);
 		$this._log("at. text = " + settings[$('#language').val()].text);
 		$ctrlHolder.append($widget);
@@ -219,8 +219,8 @@ var FbWidget = {
 		// activate field settings tab
 		$(fbOptions._paletteTabs).tabs('select', 1);
 		
-		// focus on 1st input component
-		$('input:first', $fieldSettingsPanel).focus();	
+		// highlight and select the 1st input component
+		$('input:first', $fieldSettingsPanel).select();	
 		
   	$.fb.fbWidget.prototype._log('_createFieldSettings executed.');
     },
@@ -253,12 +253,24 @@ var FbWidget = {
   	var $settings = $widget.find("input[id$='fields[" + $widget.attr('rel') + "].settings']");
   	$settings.val($.toJSON(settings)).change();
    	} ,          
+  _updateName: function($widget, value) {
+		if ($.inArray($('#language').val(), this._getFbOptions()._languagesSupportIdGeneration) > -1) {
+			var name = this._propertyName(value);
+			$widget.find("input[id$='fields[" + $widget.attr('rel') + "].name']").val(name).change();
+		}
+    } ,
+  _threeColumns: function($e1, $e2, $e3) {
+  	  return $('<div class="threeCols"></div>')
+  	        .append($e1.addClass('col1'))
+  	        .append($e2.addClass('col2'))
+  	        .append($e3.addClass('col3'));
+   	} ,        
   _twoColumns: function($e1, $e2) {
 	  return $('<div class="twoCols"></div>')
 	        .append($e1.addClass('labelOnTop col1 noPaddingBottom'))
 	        .append($e2.addClass('labelOnTop col2'));
  	} ,      
-  _oneColumn: function($e) {
+ 	_oneColumn: function($e) {
 	  return $e.addClass('clear labelOnTop');
  	} ,   
  	_help: function(options) {
@@ -326,7 +338,13 @@ var FbWidget = {
  		return $name;		 
  	}, 	
  	_colorPicker: function(options) {
-		var $colorPicker = this._label(options);
+		var $colorPicker;
+		if (options.label) {
+			$colorPicker = this._label(options);	
+		} else {
+			$colorPicker = $('<div></div>');
+		}
+		
  		if (!options.type || options.type == 'basic') {
 			$colorPicker.colorPicker({
 				name: options.name,
@@ -454,6 +472,38 @@ var FbWidget = {
 			  this._colorPicker({ label: 'Background', name: o.idPrefix + 'backgroundColor', value: o.backgroundColor })));
 	  $colorPanel.find('.2cols .col2').addClass('noPaddingBottom');
 	  $colorPanel.find('input:first').addClass('floatClearLeft');
+	  return $colorPanel;
+  },
+  //label.color, label.backgroundColor, value.color, value.backgroundColor, description.color, description.backgroundColor
+  _labelValueDescriptionColorPanel: function(options) {
+	  var o = $.extend({}, options);
+	  var fbStyles = this._getFbOptions().settings.styles;
+	  if (o.label.color == 'default') {
+		  o.label.color = fbStyles.color;
+	    } 	  
+	  if (o.label.backgroundColor == 'default') {
+		  o.label.backgroundColor = fbStyles.backgroundColor;
+	    } 	 
+	  if (o.description.color == 'default') {
+		  o.description.color = fbStyles.color;
+	    } 	  
+	  if (o.description.backgroundColor == 'default') {
+		  o.description.backgroundColor = fbStyles.backgroundColor;
+	    } 	 	  
+	  var $colorPanel = this._fieldset({ text: 'Colors' })
+	  .append(this._threeColumns($('<div></div>'), $('<div>Text</div>'), $('<div>Background</div>')).css('paddingBottom', '2px'))
+		.append(this._threeColumns($('<div>Label</div>'),
+				    this._colorPicker({ name: 'field.label.color', value: o.label.color }),
+			      this._colorPicker({ name: 'field.label.backgroundColor', value: o.label.backgroundColor })))
+		.append(this._threeColumns($('<div>Value</div>'),
+				    this._colorPicker({ name: 'field.value.color', value: o.value.color }),
+			      this._colorPicker({ name: 'field.value.backgroundColor', value: o.value.backgroundColor })))
+		.append(this._threeColumns($('<div>Description</div>'),
+				    this._colorPicker({ name: 'field.description.color', value: o.description.color }),
+			      this._colorPicker({ name: 'field.description.backgroundColor', value: o.description.backgroundColor })));
+	  $colorPanel.css('paddingTop', '0.5em');
+	  $('input', $colorPanel).addClass('floatClearLeft');
+	  $('.col1', $colorPanel).css('verticalAlign', 'top');
 	  return $colorPanel;
   },
   _getWidget: function(event, fb) {

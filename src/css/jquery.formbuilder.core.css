@@ -24,7 +24,8 @@
 
 #builderPanel {
   border: 1px solid #ccc;  
-  min-height: 460px	  
+  min-height: 435px;	  
+  padding: 1em;
 }
 
 .buttons {
@@ -74,8 +75,6 @@
 	font-size: 20px;
 }
 
-.uniForm .formHeading { padding: 1em; }
-
 #builderPanel fieldset {
   min-height: 250px	  
 }
@@ -86,7 +85,7 @@ div.ctrlHolder { padding: 1em }
 .uniForm .ctrlHolder {
 	 position:relative; 
 	 cursor: pointer; 
-	 padding: 1em 1.5em 1em 1em;
+/*	 padding: 1em 1.5em 1em 1em;*/
 }
 
 .uniForm .ctrlHolder .closeButton {
@@ -117,7 +116,7 @@ div.ctrlHolder { padding: 1em }
   	
 div.labelOnTop { padding-top: 0em; padding-bottom: 2.5em; } /*border-bottom: 1px solid #C0C0C0;*/
 
-div.labelOnTop textarea { padding: 0; margin-bottom: 0.5em; }
+div.labelOnTop textarea { padding: 0; margin-bottom: 0.5em }
 
 .clear {
   clear: both;

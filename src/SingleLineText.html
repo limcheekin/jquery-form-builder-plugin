@@ -34,16 +34,6 @@
 <script type="text/javascript">
 $(function(){
 	$('#paletteTabs').tabs();
-	$("[id$='field.label.color']").colorPicker({
-	    ico:    '../images/jquery.colourPicker.gif', 
-	    disabledIco:    '../images/jquery.colourPicker.disabled.gif', 
-	    name: 'field.label.color'
-	});		
-	$("[id$='field.label.backgroundColor']").colorPicker({
-	    ico:    '../images/jquery.colourPicker.gif', 
-	    disabledIco:    '../images/jquery.colourPicker.disabled.gif', 
-	    name: 'field.label.backgroundColor'
-	});			
 });
 </script>
 
@@ -113,69 +103,90 @@ $(function(){
 					</div>
 					</div>
 				</fieldset>
-					<div class="general">
-					 <fieldset><legend>Value</legend>
-					<div class="twoCols">
-						<div class="col1" style="width: 32%;">
-              <input type="checkbox" id="field.required">&nbsp;Required
-						</div>
-						<div class="col2" style="margin-left: 34%">
-							<select id="field.restriction" style="width: 99%">
-								<option value="">any character</option>
-								<option value="alphanumeric">alphanumeric only</option>
-								<option value="letterswithbasicpunc">letters or punctuation only</option>
-								<option value="lettersonly">letters only</option>
-							</select>
-						</div>	
-					</div>					 
-					 </fieldset>
-						<fieldset><legend>Colors</legend>
-						<div class="threeCols" style="padding-bottom: 2px;">
-							<div class="col1">
-							</div>
-							<div class="col2">
-							  Text
-							</div>
-							<div class="col3">
-							  Background
-							</div>
-						</div>	
-						<div class="threeCols">
-							<div class="col1">
-							  Label
-							</div>
-							<div class="col2">
-							  <div id="field.label.color"></div>
-							</div>
-							<div class="col3">
-							  <div id="field.label.backgroundColor"></div>
-							</div>
-						</div>
-						<div class="threeCols">
-							<div class="col1">
-							  Value
-							</div>
-							<div class="col2">
-							  <div id="field.label.color"></div>
-							</div>
-							<div class="col3">
-							  <div id="field.label.backgroundColor"></div>
-							</div>
-						</div>
-						<div class="threeCols">
-							<div class="col1">
-							  Description
-							</div>
-							<div class="col2">
-							  <div id="field.label.color"></div>
-							</div>
-							<div class="col3">
-							  <div id="field.label.backgroundColor"></div>
-							</div>
-						</div>						
-						</fieldset>						
-					</div>				
-				</div>
+<div class="general">
+<fieldset><legend>Value</legend>
+<!-- 
+<div class="twoCols">
+<div class="col1" style="width: 32%;"><input type="checkbox"
+	id="field.required" />&nbsp;Required</div>
+<div class="col2" style="margin-left: 34%"><select
+	id="field.restriction" style="width: 99%">
+	<option value="no">any character</option>
+	<option value="alphanumeric">alphanumeric only</option>
+	<option value="letterswithbasicpunc">letters or punctuation
+	only</option>
+	<option value="lettersonly">letters only</option>
+</select></div>
+	</div>
+-->
+<div class="twoCols">
+<div class="col1 noPaddingBottom" style="width: 32%;"><input
+	type="checkbox" id="field.required">&nbsp;Required</div>
+<div class="col2 noPaddingBottom" style="margin-left: 34%;"><select
+	style="width: 99%;" id="field.restriction">
+	<option value="no">any character</option>
+	<option value="alphanumeric">alphanumeric only</option>
+	<option value="letterswithbasicpunc">letters or punctuation
+	only</option>
+	<option value="lettersonly">letters only</option>
+</select></div>
+</div>
+</fieldset>	
+		<fieldset style="padding-top: 0.5em;"><legend>Colors</legend>
+		<div class="threeCols" style="padding-bottom: 2px;">
+		<div class="col1"></div>
+		<div class="col2">Text</div>
+		<div class="col3">Background</div>
+		</div>
+		<div class="threeCols">
+		<div class="col1">Label</div>
+		<div class="col2"><input class="floatClearLeft" type="text" name="field.label.color"
+			id="field.label.color" readonly="" disabled=""
+			style="background: none repeat scroll 0% 0% rgb(0, 0, 0); color: rgb(0, 0, 0);">
+		<a rel="field.label.color" href="#" class="floatLeft"> <img
+			border="0" alt="Open colour picker"
+			src="../images/jquery.colourPicker.gif"></a></div>
+		<div class="col3"><input type="text"
+			name="field.label.backgroundColor" class="floatClearLeft" id="field.label.backgroundColor"
+			readonly="" disabled=""
+			style="background: none repeat scroll 0% 0% transparent; color: rgb(0, 0, 0);">
+		<a rel="field.label.backgroundColor" href="#" class="floatLeft"> <img
+			border="0" alt="Open colour picker"
+			src="../images/jquery.colourPicker.gif"></a></div>
+		</div>
+		<div class="threeCols">
+		<div class="col1">Value</div>
+		<div class="col2"><input type="text" class="floatClearLeft" name="field.value.color"
+			id="field.value.color" readonly="" disabled=""
+			style="color: rgb(0, 0, 0);"> <a rel="field.value.color"
+			href="#" class="floatLeft"> <img border="0"
+			alt="Open colour picker" src="../images/jquery.colourPicker.gif"></a></div>
+		<div class="col3"><input type="text"
+			name="field.value.backgroundColor" class="floatClearLeft" id="field.value.backgroundColor"
+			readonly="" disabled="" style="color: rgb(0, 0, 0);"> <a
+			rel="field.value.backgroundColor" href="#" class="floatLeft"> <img
+			border="0" alt="Open colour picker"
+			src="../images/jquery.colourPicker.gif"></a></div>
+		</div>
+		<div class="threeCols">
+		<div class="col1">Description</div>
+		<div class="col2"><input type="text"
+			name="field.description.color" class="floatClearLeft" id="field.description.color" readonly=""
+			disabled="" style="color: rgb(0, 0, 0);"> <a
+			rel="field.description.color" href="#" class="floatLeft"> <img
+			border="0" alt="Open colour picker"
+			src="../images/jquery.colourPicker.gif"></a></div>
+		<div class="col3"><input type="text" class="floatClearLeft"
+			name="field.description.backgroundColor"
+			id="field.description.backgroundColor" readonly="" disabled=""
+			style="color: rgb(0, 0, 0);"> <a
+			rel="field.description.backgroundColor" href="#" class="floatLeft">
+		<img border="0" alt="Open colour picker"
+			src="../images/jquery.colourPicker.gif"></a></div>
+		</div>
+		</fieldset>
+</div>
+</div>
 			</div>     
      </div>
   </div>
@@ -184,7 +195,7 @@ $(function(){
 		    <div class="formHeading"><h1>Form 1</h1></div>
 			  <fieldset>
 		    <div class="ctrlHolder">
-		      <label for="">Single Line Text</label>
+		      <label for=""><em>*</em>Single Line Text</label>
 		      <input type="text" id="" name="" value="" size="35" class="textInput">
 		      <p class="formHint">This is a form hint.</p>
 		    </div>					
