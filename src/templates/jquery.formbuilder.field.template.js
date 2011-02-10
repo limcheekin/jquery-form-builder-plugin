@@ -3,36 +3,43 @@
  * 
  * Revision: @REVISION
  * Version: @VERSION
- * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
+ * Copyright 2011 Author Name (email@domain.com)
  *
  * Licensed under Apache v2.0 http://www.apache.org/licenses/LICENSE-2.0.html
  *
- * Date: 25-Jan-2011
+ * Date: DD-MMM-2011
  */
 
 var FbFieldName = $.extend({}, $.fb.fbWidget.prototype, {
-	options : { // default options. values are stored in widget's prototype
-		name : 'Field Name',
-		belongsTo : $.fb.formbuilder.prototype.options._fancyFieldsPanel,
-		_type : 'FieldName',
-		_html : '<div></div>',
-		_counterField : 'field1',
-		_languages : [ 'en', 'zh' ],
-		settings : {
-			en : {
-				field1 : 'Value',
-				classes : []
+	options: { // default options. values are stored in widget's prototype
+		name: 'Field Name',
+		belongsTo: $.fb.formbuilder.prototype.options._fancyFieldsPanel,
+		_type: 'FieldName',
+		_html: '<div></div>',
+		_counterField: 'field1',
+		_languages: [ 'en', 'zh' ],
+		settings: {
+			en: {
+				field1: 'Value',
+				classes: [],
+				styles: {
+					fontFamily: 'default', // form builder default
+					fontSize: 'default',
+					fontStyles: [0, 0, 0] // bold, italic, underline					
+				}				
 			},
-			zh : {
-				field1 : '文字',
-				classes : []
+			zh: {
+				field1: '文字',
+				classes: [],
+				styles: {
+					fontFamily: 'default', // form builder default
+					fontSize: 'default',
+					fontStyles: [0, 0, 0] // bold, italic, underline					
+				}				
 			},
-			styles : {
-				fontFamily: 'default', // form builder default
-				fontSize: 'default',
-				fontStyles: [0, 0, 0], // bold, italic, underline
-				color : 'default',
-				backgroundColor : 'default'
+			styles: {
+				color: 'default',
+				backgroundColor: 'default'
 			}
 		}
 	},
