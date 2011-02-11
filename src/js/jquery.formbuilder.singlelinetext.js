@@ -16,7 +16,7 @@ var FbSingleLineText = $.extend({}, $.fb.fbWidget.prototype, {
 		belongsTo: $.fb.formbuilder.prototype.options._standardFieldsPanel,
 		_type: 'SingleLineText',
 		_html : '<div><label><em></em><span></span></label> \
-		      <input type="text" class="textInput"> \
+		      <input type="text" class="textInput" /> \
 	        <p class="formHint"></p></div>',
 		_counterField: 'label',
 		_languages: [ 'en', 'zh' ],
@@ -285,18 +285,6 @@ var FbSingleLineText = $.extend({}, $.fb.fbWidget.prototype, {
 
 		fb.item.find('.formHint').text(fb.settings.description);
 		
-		if (fb.item.selected) { // refresh field settings
-			var $fieldSettingsLanguageSection = $(this._getFbOptions()._fieldSettingsLanguageSection);
-			$("[id$='field.label']", $fieldSettingsLanguageSection).val(fb.settings.label);
-			$("[id$='field.value']", $fieldSettingsLanguageSection).val(fb.settings.value);
-			$("[id$='field.description']", $fieldSettingsLanguageSection).val(fb.settings.description);		  
-			// font panel
-			$("input[id$='field.bold']", $fieldSettingsLanguageSection).attr('checked', styles.fontStyles[0]);
-			$("input[id$='field.italic']", $fieldSettingsLanguageSection).attr('checked', styles.fontStyles[1]);
-			$("input[id$='field.underline']", $fieldSettingsLanguageSection).attr('checked', styles.fontStyles[2]);
-			$("select[id$='field.fontSize']", $fieldSettingsLanguageSection).val(fontSize);
-			$('.fontPicker', $fieldSettingsLanguageSection).fontPicker('fontFamily', fontFamily);			
-		}		
 		fb.target._log('fbSingleLineText.languageChange executed.');
 	}
 });

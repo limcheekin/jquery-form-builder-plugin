@@ -134,7 +134,7 @@ var FbWidget = {
 		$ctrlHolder.append($widget);
 		if (event.type == 'click' || event.type == 'drop') {
 			var name = $this._propertyName($this.options._type + counter);
-			$widget.click($this._createFieldSettings);			
+			$widget.click($this._createFieldSettings);
 			$this._createField(name, $ctrlHolder, $this.options, settings);
 			if (event.type == 'click') {
 				$($.fb.formbuilder.prototype.options._formControls).append($ctrlHolder).sortable('refresh');				
@@ -168,9 +168,11 @@ var FbWidget = {
 			 }, 1500,'easeInOutExpo');			 
 		 }
     },
-  _createFieldSettings: function(event) { 
+  _createFieldSettings: function(event, $widget) { 
 	  $.fb.fbWidget.prototype._log('_createFieldSettings executing.');
-		var $widget = $(this);	  
+	  if (!$widget) { // calling from click event
+		  $widget = $(this);
+	    }
 		var selectedClass = $.fb.fbWidget.prototype.options._selectedClass;
 		$widget = $widget.attr('class').indexOf($.fb.fbWidget.prototype.options._styleClass) > -1 ? $widget : $widget.parent();
 		$widget.parent().find('.' + selectedClass).removeClass(selectedClass);
@@ -216,12 +218,14 @@ var FbWidget = {
 		  $('textarea', $fieldSettingsPanel).attr("disabled", true);
 		}
 		
-		// activate field settings tab
-		$(fbOptions._paletteTabs).tabs('select', 1);
+		$.fb.fbWidget.prototype._log('_createFieldSettings. event.type = ' + event.type);
+		if (event.type == 'click') {
+		  // activate field settings tab
+		  $(fbOptions._paletteTabs).tabs('select', 1);
 		
-		// highlight and select the 1st input component
-		$('input:first', $fieldSettingsPanel).select();	
-		
+		  // highlight and select the 1st input component
+		  $('input:first', $fieldSettingsPanel).select();	
+		}
   	$.fb.fbWidget.prototype._log('_createFieldSettings executed.');
     },
 	_getCounter: function($this) {

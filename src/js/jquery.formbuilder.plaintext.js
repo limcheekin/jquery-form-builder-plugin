@@ -57,7 +57,7 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 		var $text = fb.target._label({ label: 'Text', name: 'field.text', 
 			                 description: 'Text entered below will display in the form.' })
 		           .append('<input type="text" id="field.text" />');
-				$('input', $text).val(fb.item.find('div.PlainText').text())
+				$('input', $text).val(fb.settings.text)
 				.keyup(function(event) {
 					var value = $(this).val();
 					fb.item.find('div.PlainText').text(value);
@@ -179,20 +179,6 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 		       .css('fontSize', fontSize + 'px')	         
 		       .removeClass('topAlign middleAlign bottomAlign')
 		       .addClass(fb.settings.classes[1]);
-		if (fb.item.selected) { // refresh field settings
-			var $fieldSettingsLanguageSection = $(this._getFbOptions()._fieldSettingsLanguageSection);
-			$("input[id$='field.text']", $fieldSettingsLanguageSection).val(fb.settings.text);
-			$("select[id$='field.horizontalAlignment'] option[value='" + fb.settings.classes[0] + "']", 
-			    $fieldSettingsLanguageSection).attr('selected', 'true');
-			$("select[id$='field.verticalAlignment'] option[value='" + fb.settings.classes[1] + "']", 
-			    $fieldSettingsLanguageSection).attr('selected', 'true');			  
-			// font panel
-			$("input[id$='field.bold']", $fieldSettingsLanguageSection).attr('checked', styles.fontStyles[0]);
-			$("input[id$='field.italic']", $fieldSettingsLanguageSection).attr('checked', styles.fontStyles[1]);
-			$("input[id$='field.underline']", $fieldSettingsLanguageSection).attr('checked', styles.fontStyles[2]);
-			$("select[id$='field.fontSize']", $fieldSettingsLanguageSection).val(fontSize);
-			$('.fontPicker', $fieldSettingsLanguageSection).fontPicker('fontFamily', fontFamily);			
-		}
 	}
 });
 

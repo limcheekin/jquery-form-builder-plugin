@@ -499,6 +499,9 @@ var FormBuilder = {
 		    $this = $('#' + type).data('fb' + type);
 		    fb = {target: $this, item: $widget, settings: settings[language]};
 		    fb.item.selected = selected;
+		    if (selected) { // refresh field settings tab
+		      $this._createFieldSettings(event, $widget); 
+		        }
 		    $this._languageChange(event, fb);
 		});
    },
