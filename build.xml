@@ -16,7 +16,7 @@
 	<property name="JQUERY_FORM_BUILDER_IMG" value="${DIST_DIR}/images" />
 	<property name="JQUERY_FORM_BUILDER_ZIP" value="${DIST_DIR}/jquery-formbuilder-${version}.zip" />
 
-	<property name="PLUGINS" value="PlainText" />
+	<property name="PLUGINS" value="PlainText, SingleLineText" />
 	
 	<property name="APPENGINE_SDK_DIR" location="/opt/dev/lib/appengine-java-sdk/1.4.0" />
 	<import file="${APPENGINE_SDK_DIR}/config/user/ant-macros.xml" />

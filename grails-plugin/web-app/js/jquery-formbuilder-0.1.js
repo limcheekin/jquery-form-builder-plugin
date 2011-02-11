@@ -2,13 +2,13 @@
 * jquery-form-builder-plugin - JQuery WYSIWYG Web Form Builder
 * http://code.google.com/p/jquery-form-builder-plugin/
 *
-* Revision: 107
+* Revision: 116
 * Version: 0.1
 * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
 *
 * Licensed under Apache v2.0 http://www.apache.org/licenses/LICENSE-2.0.html
 *
-* Date: Fri Jan 28 17:19:17 GMT+08:00 2011 
+* Date: Thu Feb 10 17:12:06 GMT+08:00 2011 
 */
 
 /*
@@ -16,7 +16,7 @@
  * consists of builder palette contains widgets supported by the form builder and 
  * builder panel where the constructed form display. 
  * 
- * Revision: 107
+ * Revision: 116
  * Version: 0.1
  * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
  *
@@ -27,7 +27,7 @@
 
 var FormBuilder = {
   options: { // default options. values are stored in prototype
-		fields: 'PlainText',
+		fields: 'PlainText, SingleLineText',
 		tabSelected: 0,
 		readOnly: false,
 		tabDisabled: [],
@@ -37,19 +37,25 @@ var FormBuilder = {
 				name: 'Form',
 				classes: ['leftAlign'],
 				heading: 'h2',
-				fontStyles: [1, 0, 0]
+				styles: {
+					fontFamily: 'default', 
+					fontSize: 'default',
+					fontStyles: [1, 0, 0] // bold, italic, underline					
+				}				
 			},
 			zh: {
 				name: '表格',
 				classes: ['rightAlign'],
 				heading: 'h2',
-				fontStyles: [1, 0, 0]
+				styles: {
+					fontFamily: 'default', 
+					fontSize: 'default',
+					fontStyles: [1, 0, 0] // bold, italic, underline					
+				}			
 			},			
 			styles : {
 				color : 'default', // browser default
-				backgroundColor : 'default',
-				fontFamily: 'default', 
-				fontSize: 'default'				
+				backgroundColor : 'default'	
 			}
 		},
 		_id: '#container',
@@ -169,8 +175,7 @@ var FormBuilder = {
    _isFieldSettingsTabCanOpen: function(event, ui) { 
 		if (ui.index == 1) { // Field Settings tab selected
 			var options = $.fb.formbuilder.prototype.options;
-			// activate Add Field tab
-			$(this).tabs('select', 0);
+			var canOpen = true;
 			if ($(options._emptyBuilderPanel).is(':visible')) {
 				$(options._standardFieldsPanel).qtip({
 					   content: 'No field was created. Please select standard field or fancy field.',
@@ -189,7 +194,7 @@ var FormBuilder = {
 								tip: true
 							}								   
 			    });
-				return false;
+				canOpen = false;
 			} else if ($(options._builderForm + ' .' + $.fb.fbWidget.prototype.options._selectedClass).length === 0) {
 				$('.' + $.fb.fbWidget.prototype.options._styleClass + ':first').qtip({
 					   content: "Please select field below to see it's Field Settings.",
@@ -206,8 +211,13 @@ var FormBuilder = {
 								tip: true
 							}								   
 			    });	
-				return false;
+				canOpen = false;
 			}
+			if (!canOpen) {
+				// activate Add Field tab
+				$(this).tabs('select', 0);
+			}
+			return canOpen;
 		} 
 	 },
   _initBuilderPanel: function() {
@@ -216,8 +226,8 @@ var FormBuilder = {
 	    this._initSortableWidgets();
       this._initDroppable();
 	  } else {
-			$('input:not(div.buttons input)').attr("disabled", true);
-			$('select').attr("disabled", true);
+			$('input:not(div.buttons input, #id)').attr("disabled", true);
+			$('select:not(#language)').attr("disabled", true);
 			$('textarea').attr("disabled", true);	    	
 	    }
 	  this._initWidgetsEventBinder();
@@ -320,28 +330,32 @@ var FormBuilder = {
 					});			  
 		
 
+		 var $heading = $fbWidget._label({ 
+			  label: 'Heading', 
+			  name: 'form.heading' 
+	    }).append('<select> \
+				<option value="h1">Heading 1</option> \
+				<option value="h2">Heading 2</option> \
+				<option value="h3">Heading 3</option> \
+				<option value="h4">Heading 4</option> \
+				<option value="h5">Heading 5</option> \
+				<option value="h6">Heading 6</option> \
+			</select>');
 		
-		var $heading = $('<select> \
-					<option value="h1">Heading 1</option> \
-					<option value="h2">Heading 2</option> \
-					<option value="h3">Heading 3</option> \
-					<option value="h4">Heading 4</option> \
-					<option value="h5">Heading 5</option> \
-					<option value="h6">Heading 6</option> \
-				</select>').css('marginTop', '1em')
-				.val(settings.heading)
+		 $('select', $heading)
+		    .val(settings.heading)
 				.attr('id', 'form.heading') // unable to set value if specify in select tag
 	      .change(function(event) {
 	    	  var heading = $(this).val();
 	    	  var text = $(settings.heading, $formHeading).text();
 	    	  var $heading = $('<' + heading + ' class="heading">' + text + '</' + heading + '>');
-	    	  if (settings.fontStyles[0] === 0) {
+	    	  if (settings.styles.fontStyles[0] === 0) {
 	    		  $heading.css('fontWeight', 'normal');  
 	    	  }
-	    	  if (settings.fontStyles[1] == 1) {
+	    	  if (settings.styles.fontStyles[1] == 1) {
 	    		  $heading.css('fontStyle', 'italic');
 	    	  }	    	  
-	    	  if (settings.fontStyles[2] == 1) {
+	    	  if (settings.styles.fontStyles[2] == 1) {
 	    		  $heading.css('textDecoration', 'underline');
 	    	  }	    		    	  
 	    	  $(settings.heading, $formHeading).replaceWith($heading);
@@ -356,77 +370,70 @@ var FormBuilder = {
 					settings.classes[0] = value;
 					$this._updateSettings($this);
 				});
-		
-		var names = ['form.bold', 'form.italic', 'form.underline'];
-		var $fontStyles = $fbWidget._fontStyles({ names: names, checked: settings.fontStyles })
-		                  .css('paddingLeft', '3em');
-		$("input[id$='form.bold']", $fontStyles).change(function(event) {
+			
+		settings.styles.fontFamily = settings.styles.fontFamily == 'default' ? options._fontFamily : settings.styles.fontFamily;
+		settings.styles.fontSize = settings.styles.fontSize == 'default' ? options._fontSize : settings.styles.fontSize;
+		var $fontPanel = $fbWidget._fontPanel({ 
+			      fontFamily: settings.styles.fontFamily, 
+			      fontSize: settings.styles.fontSize, 
+            fontStyles: settings.styles.fontStyles, 
+            idPrefix: 'form.', nofieldset: true });
+
+		$("input[id$='form.bold']", $fontPanel).change(function(event) {
 			if ($(this).attr('checked')) {
 				$(settings.heading, $formHeading).css('fontWeight', 'bold');
-				settings.fontStyles[0] = 1;
+				settings.styles.fontStyles[0] = 1;
 			} else {
 				$(settings.heading, $formHeading).css('fontWeight', 'normal');
-				settings.fontStyles[0] = 0;
+				settings.styles.fontStyles[0] = 0;
 			}
 			$this._updateSettings($this);
 		});
-		$("input[id$='form.italic']", $fontStyles).change(function(event) {
+		$("input[id$='form.italic']", $fontPanel).change(function(event) {
 			if ($(this).attr('checked')) {
 				$(settings.heading, $formHeading).css('fontStyle', 'italic');
-				settings.fontStyles[1] = 1;
+				settings.styles.fontStyles[1] = 1;
 			} else {
 				$(settings.heading, $formHeading).css('fontStyle', 'normal');
-				settings.fontStyles[1] = 0;
+				settings.styles.fontStyles[1] = 0;
 			}
 			$this._updateSettings($this);
 		});		
-		$("input[id$='form.underline']", $fontStyles).change(function(event) {
+		$("input[id$='form.underline']", $fontPanel).change(function(event) {
 			if ($(this).attr('checked')) {
 				$(settings.heading, $formHeading).css('textDecoration', 'underline');
-				settings.fontStyles[2] = 1;
+				settings.styles.fontStyles[2] = 1;
 			} else {
 				$(settings.heading, $formHeading).css('textDecoration', 'none');
-				settings.fontStyles[2] = 0;
+				settings.styles.fontStyles[2] = 0;
 			}
 			$this._updateSettings($this);
 		});
 		
-		var fontFamily = options.settings.styles.fontFamily;
-		if (fontFamily == 'default') {
-			fontFamily = options._fontFamily;
-		}
-		var $fontPicker = $fbWidget._fontPicker({ name: 'form.fontFamily', value: fontFamily });
-		$("input[id$='form.fontFamily']", $fontPicker).change(function(event) {
+		$("input[id$='form.fontFamily']", $fontPanel).change(function(event) {
 			var value = $(this).val();
 			$builderPanel.css('fontFamily', value);
-			options.settings.styles.fontFamily = value;
+			settings.styles.fontFamily = value;
 			$this._updateSettings($this);
 		});		
 		
-		var fontSize = options.settings.styles.fontSize;
-		if (fontSize == 'default') {
-			fontSize = options._fontSize;
-		}
-		var $fontSize = $fbWidget._fontSize({ label: 'Size', name: 'form.fontSize', value: fontSize });
-		$("select[id$='form.fontSize']", $fontSize).change(function(event) {
+
+		$("select[id$='form.fontSize']", $fontPanel).change(function(event) {
 			var value = $(this).val();
 			$builderPanel.css('fontSize', value + 'px');
-			options.settings.styles.fontSize = value;
+			settings.styles.fontSize = value;
 			$this._updateSettings($this);
-		});		
-		
-		var $fontPanel = $fbWidget._twoColumns($fontPicker, $fontSize);
-		$fontPanel.find('.col2').addClass('noPaddingBottom').css('marginLeft', '60%');
-		
-		var color = options.settings.styles.color;
-		if (color == 'default') {
-			color = options._color;
+		});	
+				
+		if (options.settings.styles.color == 'default') {
+			options.settings.styles.color = options._color;
 		}
-		var backgroundColor = options.settings.styles.backgroundColor;
-		if (backgroundColor == 'default') {
-			backgroundColor = options._backgroundColor;
+		
+		if (options.settings.styles.backgroundColor == 'default') {
+			options.settings.styles.backgroundColor = options._backgroundColor;
 		}
-		var $colorPanel = $fbWidget._colorPanel({ color: color, backgroundColor: backgroundColor, idPrefix: 'form.' });
+		var $colorPanel = $fbWidget._colorPanel({ color: options.settings.styles.color, 
+			       backgroundColor: options.settings.styles.backgroundColor, idPrefix: 'form.' });
 		
 		$("input[id$='form.color']", $colorPanel).change(function(event) {
 			var value = $(this).data('colorPicker').color;
@@ -444,9 +451,9 @@ var FormBuilder = {
 		});			
 		
 		$formSettingsLanguageSection.append($fbWidget._oneColumn($name))
-		   .append($fbWidget._twoRowsOneRow($heading, $horizontalAlignment, $fontStyles));
-		$formSettingsGeneralSection.append($fbWidget._fieldset({ text: 'Fonts' }).append($fontPanel))
-		   .append($colorPanel);
+		   .append($fbWidget._twoColumns($heading, $horizontalAlignment))
+		   .append($fontPanel);
+		$formSettingsGeneralSection.append($colorPanel);
 	 
    },
  _languageChange:function(event) {
@@ -458,6 +465,7 @@ var FormBuilder = {
 	  var formSettings = fbOptions.settings[language];
 	  var $formHeading = $('.formHeading');
 	  var $formSettingsLanguageSection = $(fbOptions._formSettingsLanguageSection);
+	  var $builderPanel = $(fbOptions._builderPanel);
 	  var settings, type, $widget, selected, fb;
 	  
 	  $("input[id$='form.name']", $formSettingsLanguageSection).val(formSettings.name);
@@ -466,26 +474,39 @@ var FormBuilder = {
 			  $formSettingsLanguageSection).attr('selected', 'true');
 	  
 	  var $heading = $('<' + formSettings.heading + ' class="heading">' + formSettings.name + '</' + formSettings.heading + '>')
-	  .css('fontWeight', formSettings.fontStyles[0] == 1 ? 'bold' : 'normal')
-	  .css('fontStyle', formSettings.fontStyles[1] == 1 ? 'italic' : 'normal')
-	  .css('textDecoration', formSettings.fontStyles[2] == 1 ? 'underline' : 'none');
+	  .css('fontWeight', formSettings.styles.fontStyles[0] == 1 ? 'bold' : 'normal')
+	  .css('fontStyle', formSettings.styles.fontStyles[1] == 1 ? 'italic' : 'normal')
+	  .css('textDecoration', formSettings.styles.fontStyles[2] == 1 ? 'underline' : 'none');
 	  $('.heading', $formHeading).replaceWith($heading);
-	  $.fb.formbuilder.prototype._log('formSettings.fontStyles[2] = ' + formSettings.fontStyles[2]);
-	  $("input[id$='form.bold']", $formSettingsLanguageSection).attr('checked', formSettings.fontStyles[0]);
-	  $("input[id$='form.italic']", $formSettingsLanguageSection).attr('checked', formSettings.fontStyles[1]);
-	  $("input[id$='form.underline']", $formSettingsLanguageSection).attr('checked', formSettings.fontStyles[2]);
+	  $.fb.formbuilder.prototype._log('formSettings.fontStyles[2] = ' + formSettings.styles.fontStyles[2]);
+	  $("input[id$='form.bold']", $formSettingsLanguageSection).attr('checked', formSettings.styles.fontStyles[0]);
+	  $("input[id$='form.italic']", $formSettingsLanguageSection).attr('checked', formSettings.styles.fontStyles[1]);
+	  $("input[id$='form.underline']", $formSettingsLanguageSection).attr('checked', formSettings.styles.fontStyles[2]);
 	  
 	  $formHeading.removeClass('leftAlign centerAlign rightAlign').addClass(formSettings.classes[0]);
 	  $("select[id$='form.horizontalAlignment'] option[value='" + formSettings.classes[0] + "']", 
 			  $formSettingsLanguageSection).attr('selected', 'true');
 	  
+	  formSettings.styles.fontFamily = formSettings.styles.fontFamily == 'default' ? fbOptions._fontFamily : formSettings.styles.fontFamily;
+	  formSettings.styles.fontSize = formSettings.styles.fontSize == 'default' ? fbOptions._fontSize : formSettings.styles.fontSize;
+		$builderPanel.css('fontFamily', formSettings.styles.fontFamily);
+		$builderPanel.css('fontSize', formSettings.styles.fontSize + 'px');
+		$("select[id$='form.fontSize']", $formSettingsLanguageSection).val(formSettings.styles.fontSize);
+		$('.fontPicker', $formSettingsLanguageSection).fontPicker('fontFamily', formSettings.styles.fontFamily);
+		
 		$ctrlHolders.each(function(i) {
 		    var $widget = $(this);
 		    selected = $widget.attr('class').indexOf($.fb.fbWidget.prototype.options._selectedClass) > -1;
 		    if (selected) {
 		    	$(fbOptions._fieldSettingsLanguageSection + ' legend').text('Language: ' + languageText);
 		       }
+			  if (!$widget.data('fbWidget')) { // widgets loaded from server
+					var $settings = $widget.find("input[id$='fields[" + $widget.attr('rel') + "].settings']");
+					// settings is JavaScript encoded when return from server-side
+					$widget.data('fbWidget', $.parseJSON(unescape($settings.val())));
+				}		    
 		    settings = $widget.data('fbWidget');
+		    $.fb.formbuilder.prototype._log(i + ') settings = ' + settings);
 		    type = $widget.find("input[id$='fields[" + $widget.attr('rel') + "].type']").val();
 		    $.fb.formbuilder.prototype._log('type = ' + type);
 		    $this = $('#' + type).data('fb' + type);
@@ -516,7 +537,9 @@ var FormBuilder = {
 					}	  
 			});
 			if (!this.options.readOnly) {
-			  $ctrlHolders.find(".closeButton").click($.fb.fbWidget.prototype._deleteWidget);
+			  $ctrlHolders.find(".closeButton").click($.fb.fbWidget.prototype._deleteWidget)
+			    .mouseover(function () { $('span', this).removeClass('ui-icon-close').addClass('ui-icon-circle-close'); }) 
+			    .mouseout(function () { $('span', this).removeClass('ui-icon-circle-close').addClass('ui-icon-close'); });
 			}
 		}
   },
@@ -618,7 +641,7 @@ $.widget('fb.formbuilder', FormBuilder);/*
  * at http://andreaslagerkvist.com/jquery/colour-picker/ and customized for 
  * JQuery Form Builder plugin project at http://code.google.com/p/jquery-form-builder-plugin/
  * 
- * Revision: 107
+ * Revision: 116
  * Version: 0.1
  * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
  *
@@ -817,7 +840,7 @@ $.widget('fb.colorPicker', ColorPicker);/*
  * at http://plugins.jquery.com/project/fontpicker-regios and customized for 
  * JQuery Form Builder plugin project at http://code.google.com/p/jquery-form-builder-plugin/
  * 
- * Revision: 107
+ * Revision: 116
  * Version: 0.1
  * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
  *
@@ -858,10 +881,17 @@ var FontPicker = {
 	_init : function() {
 		var options = this.options;
 		var fontPicker = $('#' + options.id);		
-		this.element.parent().append('<input type="hidden" id="' + options.name + '" value="' + options.defaultFont + '" />');
+		this.element.parent().append('<input type="hidden" id="' + options.name + '" />');
 		if (!fontPicker.length && !options.disabled) {
 			fontPicker = $('<div id="'+options.id+'" ></div>').appendTo(document.body).hide();
 
+			/* add individual font divs to fontbox */
+			$.each(this.fonts, function(i, item) {
+				
+				fontPicker.append('<div class="singlefont" onmouseover="this.style.backgroundColor=\''+options.hoverColor
+				+'\'" onmouseout="this.style.backgroundColor=\''+options.bgColor+'\'" style="font-family: '+item+';" value="' + item + '"> ' + item.split(',')[0] + '</div>');
+			});
+			
 			// Remove the font-picker if you click outside it (on body)
 			$(document.body).click(function(event) {									
 					if ($(event.target).is('.'+options.selClass) || $(event.target).is('#'+options.id)) return;					
@@ -889,16 +919,8 @@ var FontPicker = {
 		// select initial value
 		if (options.defaultFont.length)
 		{
-			this.element.css('fontFamily', options.defaultFont);
-			this.element.text(options.defaultFont);
+			this.fontFamily(options.defaultFont);
 		}
-
-		/* add individual font divs to fontbox */
-		$.each(this.fonts, function(i, item) {
-			
-			fontPicker.append('<div class="singlefont" onmouseover="this.style.backgroundColor=\''+options.hoverColor
-			+'\'" onmouseout="this.style.backgroundColor=\''+options.bgColor+'\'" style="font-family: '+item+';" value="' + item + '"> ' + item.split(',')[0] + '</div>');
-		});
 		
 		$('.'+options.fontclass).click(function(event) {
 			var $this = $(this);
@@ -911,13 +933,21 @@ var FontPicker = {
 		  event.stopImmediatePropagation();
 		});
 
+	},
+	fontFamily : function(value) {
+	   this._log('fontFamily(' + value + ')');	
+	   var fontFamilyValue = value.replace(/'/gi, ''); // remove single quote for chrome browser
+		 var fontFamilyText = fontFamilyValue.split(',', 1)[0]; // taking the 1st font type
+		 this._log('fontFamilyValue = ' + fontFamilyValue + ', fontFamilyText = ' + fontFamilyText);	
+		 this.element.text(fontFamilyText).css('fontFamily', fontFamilyValue);
+		 $('input', this.element.parent()).val(fontFamilyValue);
 	}
 };
 
 $.widget('fb.fontPicker', FontPicker);/*
  * Base widget plugin of JQuery Form Builder plugin, all Form Builder widgets should extend from this plugin. 
  * 
- * Revision: 107
+ * Revision: 116
  * Version: 0.1
  * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
  *
@@ -952,6 +982,9 @@ var FbWidget = {
   _getFbOptions: function() {
 	  return $($.fb.formbuilder.prototype.options._id).formbuilder('option');  
   },
+  _getFbLocalizedSettings: function() {
+	  return $($.fb.formbuilder.prototype.options._id).formbuilder('option').settings[$('#language').val()];  
+  },  
   _createField: function(name, widget, options, settings) {
 	  var fbOptions = $.fb.formbuilder.prototype.options;
 	  var index = $('#builderForm div.ctrlHolder').size();
@@ -1041,7 +1074,7 @@ var FbWidget = {
 		// store settings to be used in _createFieldSettings() and _languageChange()
 		$ctrlHolder.data('fbWidget', settings); 
 		$this._log("b4. text = " + settings[$('#language').val()].text);
-		var fb = {target: $this, item: $ctrlHolder, settings: settings[$('#language').val()]};
+		var fb = {target: $this, item: $ctrlHolder, settings: settings[$('#language').val()], _settings: settings};
 		var $widget = $this._getWidget(event, fb);
 		$this._log("at. text = " + settings[$('#language').val()].text);
 		$ctrlHolder.append($widget);
@@ -1051,7 +1084,9 @@ var FbWidget = {
 			$this._createField(name, $ctrlHolder, $this.options, settings);
 			if (event.type == 'click') {
 				$($.fb.formbuilder.prototype.options._formControls).append($ctrlHolder).sortable('refresh');				
-				$ctrlHolder.toggle('slide', {direction: 'up'}, 'slow');			
+				$ctrlHolder.toggle('slide', {direction: 'up'}, 'slow');
+				$this._scroll(event);
+				event.preventDefault();
 			} else {
 				return $ctrlHolder;
 			}
@@ -1059,6 +1094,25 @@ var FbWidget = {
 			return $ctrlHolder.show();
 		}
 		$this._log('_createFbWidget executed');
+    },
+  _scroll: function(event) {
+		 var $builderPanel = $($.fb.formbuilder.prototype.options._builderPanel); 
+		 this._log("builderPanel: min-height = " + $builderPanel.css('minHeight') + ", height = " + $builderPanel.css('height'));
+		 var minHeight = $builderPanel.css('minHeight');
+		 var height = $builderPanel.css('height');
+		 minHeight = minHeight.substring(0, minHeight.lastIndexOf('px')) * 1;
+		 height = height.substring(0, height.lastIndexOf('px')) * 1;
+		 
+		 if (height > minHeight) {
+			 this._log("builderPanel: scrolling... height: " + height + ", minHeight: " + minHeight);
+			 var y = height - minHeight;
+			 this._log("y = " + y);
+			 //window.scrollTo(0, y);
+			 // From: http://tympanus.net/codrops/2010/06/02/smooth-vertical-or-horizontal-page-scrolling-with-jquery/
+			 $('html, body').stop().animate({
+				 scrollTop: y
+			 }, 1500,'easeInOutExpo');			 
+		 }
     },
   _createFieldSettings: function(event) { 
 	  $.fb.fbWidget.prototype._log('_createFieldSettings executing.');
@@ -1111,8 +1165,8 @@ var FbWidget = {
 		// activate field settings tab
 		$(fbOptions._paletteTabs).tabs('select', 1);
 		
-		// focus on 1st input component
-		$('input:first', $fieldSettingsPanel).focus();	
+		// highlight and select the 1st input component
+		$('input:first', $fieldSettingsPanel).select();	
 		
   	$.fb.fbWidget.prototype._log('_createFieldSettings executed.');
     },
@@ -1145,12 +1199,24 @@ var FbWidget = {
   	var $settings = $widget.find("input[id$='fields[" + $widget.attr('rel') + "].settings']");
   	$settings.val($.toJSON(settings)).change();
    	} ,          
+  _updateName: function($widget, value) {
+		if ($.inArray($('#language').val(), this._getFbOptions()._languagesSupportIdGeneration) > -1) {
+			var name = this._propertyName(value);
+			$widget.find("input[id$='fields[" + $widget.attr('rel') + "].name']").val(name).change();
+		}
+    } ,
+  _threeColumns: function($e1, $e2, $e3) {
+  	  return $('<div class="threeCols"></div>')
+  	        .append($e1.addClass('col1'))
+  	        .append($e2.addClass('col2'))
+  	        .append($e3.addClass('col3'));
+   	} ,        
   _twoColumns: function($e1, $e2) {
-	  return $('<div class="2cols"></div>')
+	  return $('<div class="twoCols"></div>')
 	        .append($e1.addClass('labelOnTop col1 noPaddingBottom'))
 	        .append($e2.addClass('labelOnTop col2'));
  	} ,      
-  _oneColumn: function($e) {
+ 	_oneColumn: function($e) {
 	  return $e.addClass('clear labelOnTop');
  	} ,   
  	_help: function(options) {
@@ -1218,7 +1284,13 @@ var FbWidget = {
  		return $name;		 
  	}, 	
  	_colorPicker: function(options) {
-		var $colorPicker = this._label(options);
+		var $colorPicker;
+		if (options.label) {
+			$colorPicker = this._label(options);	
+		} else {
+			$colorPicker = $('<div></div>');
+		}
+		
  		if (!options.type || options.type == 'basic') {
 			$colorPicker.colorPicker({
 				name: options.name,
@@ -1245,9 +1317,7 @@ var FbWidget = {
  	_fontPicker: function(options) {
  		var o = $.extend({}, options);
  		this._log('fontPicker(' + $.toJSON(o) + ')');
- 		o.value = o.value.replace(/'/gi, ''); // remove single quote for chrome browser
- 		o.value = o.value.split(',', 1)[0]; // taking the 1st font type
- 		o.value = o.value != 'default' ? o.value : this._getFbOptions().settings.styles.fontFamily;
+ 		o.value = o.value != 'default' ? o.value : this._getFbOptions()._fontFamily;
  		if (!o.label) o.label = 'Font';
 		var $fontPicker = this._label(o).append('<div class="fontPicker" rel="' + o.name + '"></div>'); 		
 
@@ -1323,11 +1393,15 @@ var FbWidget = {
 	  //fontFamily, fontSize, styles.fontStyles
 	  var idPrefix = options.idPrefix ? options.idPrefix : '';
 	  var names = [idPrefix + 'bold', idPrefix + 'italic', idPrefix + 'underline'];
-	  return this._fieldset({ text: 'Fonts' }).append(this._twoRowsOneRow(
+	  var fontPanel = this._twoRowsOneRow(
 			  this._fontPicker({ name: idPrefix + 'fontFamily', value: options.fontFamily }),
 			  this._fontSize({ label: 'Size', name: idPrefix + 'fontSize', value: options.fontSize }),
 			  this._fontStyles({ names: names, checked: options.fontStyles }).css('paddingLeft', '2em')
-			  ));
+	    );
+	  if (options.nofieldset)
+		  return fontPanel;
+	  else
+	    return this._fieldset({ text: 'Fonts' }).append(fontPanel);
   },
   _colorPanel: function(options) {
 	  //textColorValue, backgroundColorValue, idPrefix
@@ -1344,6 +1418,38 @@ var FbWidget = {
 			  this._colorPicker({ label: 'Background', name: o.idPrefix + 'backgroundColor', value: o.backgroundColor })));
 	  $colorPanel.find('.2cols .col2').addClass('noPaddingBottom');
 	  $colorPanel.find('input:first').addClass('floatClearLeft');
+	  return $colorPanel;
+  },
+  //label.color, label.backgroundColor, value.color, value.backgroundColor, description.color, description.backgroundColor
+  _labelValueDescriptionColorPanel: function(options) {
+	  var o = $.extend({}, options);
+	  var fbStyles = this._getFbOptions().settings.styles;
+	  if (o.label.color == 'default') {
+		  o.label.color = fbStyles.color;
+	    } 	  
+	  if (o.label.backgroundColor == 'default') {
+		  o.label.backgroundColor = fbStyles.backgroundColor;
+	    } 	 
+	  if (o.description.color == 'default') {
+		  o.description.color = fbStyles.color;
+	    } 	  
+	  if (o.description.backgroundColor == 'default') {
+		  o.description.backgroundColor = fbStyles.backgroundColor;
+	    } 	 	  
+	  var $colorPanel = this._fieldset({ text: 'Colors' })
+	  .append(this._threeColumns($('<div></div>'), $('<div>Text</div>'), $('<div>Background</div>')).css('paddingBottom', '2px'))
+		.append(this._threeColumns($('<div>Label</div>'),
+				    this._colorPicker({ name: 'field.label.color', value: o.label.color }),
+			      this._colorPicker({ name: 'field.label.backgroundColor', value: o.label.backgroundColor })))
+		.append(this._threeColumns($('<div>Value</div>'),
+				    this._colorPicker({ name: 'field.value.color', value: o.value.color }),
+			      this._colorPicker({ name: 'field.value.backgroundColor', value: o.value.backgroundColor })))
+		.append(this._threeColumns($('<div>Description</div>'),
+				    this._colorPicker({ name: 'field.description.color', value: o.description.color }),
+			      this._colorPicker({ name: 'field.description.backgroundColor', value: o.description.backgroundColor })));
+	  $colorPanel.css('paddingTop', '0.5em');
+	  $('input', $colorPanel).addClass('floatClearLeft');
+	  $('.col1', $colorPanel).css('verticalAlign', 'top');
 	  return $colorPanel;
   },
   _getWidget: function(event, fb) {
@@ -1363,7 +1469,7 @@ var FbWidget = {
 $.widget('fb.fbWidget', FbWidget);/*
  * JQuery Form Builder - Plain Text plugin.
  * 
- * Revision: 107
+ * Revision: 116
  * Version: 0.1
  * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
  *
@@ -1384,16 +1490,23 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 		settings : {
 			en : {
 				text : 'Plain Text',
-				classes : [ 'leftAlign', 'topAlign' ]
+				classes : [ 'leftAlign', 'topAlign' ],
+				styles: {
+					fontFamily: 'default', // form builder default
+					fontSize: 'default',
+					fontStyles: [0, 0, 0] // bold, italic, underline					
+				}
 			},
 			zh : {
 				text : '無格式文字',
-				classes : [ 'rightAlign', 'middleAlign' ]
+				classes : [ 'rightAlign', 'middleAlign' ],
+				styles: {
+					fontFamily: 'default', // form builder default
+					fontSize: 'default',
+					fontStyles: [0, 0, 0] // bold, italic, underline					
+				}				
 			},
 			styles : {
-				fontFamily: 'default', // form builder default
-				fontSize: 'default',
-				fontStyles: [0, 0, 0], // bold, italic, underline
 				color : 'default',
 				backgroundColor : 'default'
 			}
@@ -1437,46 +1550,43 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 							fb.settings.classes[0] = value;
 							fb.target._updateSettings(fb.item);
 						});
-		return [fb.target._oneColumn($text),
-				fb.target._twoColumns($horizontalAlignment, $verticalAlignment) ];
-	},
-	_getFieldSettingsGeneralSection : function(event, fb) {
+		
     var styles = fb.settings.styles;
-    var fbStyles = fb.target._getFbOptions().settings.styles;
+    var fbStyles = fb.target._getFbLocalizedSettings().styles;
     var fontFamily = styles.fontFamily != 'default' ? styles.fontFamily : fbStyles.fontFamily ;
 	  var fontSize = styles.fontSize != 'default' ? styles.fontSize : fbStyles.fontSize;	  
-    var color = styles.color != 'default' ? styles.color : fbStyles.color;
-	  var backgroundColor = styles.backgroundColor != 'default' ? styles.backgroundColor : fbStyles.backgroundColor;
 		var $fontPanel = fb.target._fontPanel({ fontFamily: fontFamily, fontSize: fontSize, 
-			                           fontStyles: styles.fontStyles, idPrefix: 'field.' });
-		var $colorPanel = fb.target._colorPanel({ color: color, backgroundColor: backgroundColor, idPrefix: 'field.' });
-	  
+				                           fontStyles: styles.fontStyles, idPrefix: 'field.', nofieldset: true });
+		
 		$("input[id$='field.bold']", $fontPanel).change(function(event) {
+			var item = fb.item.find('.PlainText');
 			if ($(this).attr('checked')) {
-				fb.item.css('fontWeight', 'bold');
+				item.css('fontWeight', 'bold');
 				styles.fontStyles[0] = 1;
 			} else {
-				fb.item.css('fontWeight', 'normal');
+				item.css('fontWeight', 'normal');
 				styles.fontStyles[0] = 0;
 			}
 			fb.target._updateSettings(fb.item);
 		});
 		$("input[id$='field.italic']", $fontPanel).change(function(event) {
+			var item = fb.item.find('.PlainText');
 			if ($(this).attr('checked')) {
-				fb.item.css('fontStyle', 'italic');
+				item.css('fontStyle', 'italic');
 				styles.fontStyles[1] = 1;
 			} else {
-				fb.item.css('fontStyle', 'normal');
+				item.css('fontStyle', 'normal');
 				styles.fontStyles[1] = 0;
 			}
 			fb.target._updateSettings(fb.item);
 		});	
 		$("input[id$='field.underline']", $fontPanel).change(function(event) {
+			var item = fb.item.find('.PlainText');
 			if ($(this).attr('checked')) {
-				fb.item.css('textDecoration', 'underline');
+				item.css('textDecoration', 'underline');
 				styles.fontStyles[2] = 1;
 			} else {
-				fb.item.css('textDecoration', 'none');
+				item.css('textDecoration', 'none');
 				styles.fontStyles[2] = 0;
 			}
 			fb.target._updateSettings(fb.item);
@@ -1484,18 +1594,28 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 		
 		$("input[id$='field.fontFamily']", $fontPanel).change(function(event) {
 			var value = $(this).val();
-			fb.item.css('fontFamily', value);
+			fb.item.find('.PlainText').css('fontFamily', value);
 			styles.fontFamily = value;
 			fb.target._updateSettings(fb.item);
 		});		
 		
 		$("select[id$='field.fontSize']", $fontPanel).change(function(event) {
 			var value = $(this).val();
-			fb.item.css('fontSize', value + 'px');
+			fb.item.find('.PlainText').css('fontSize', value + 'px');
 			styles.fontSize = value;
 			fb.target._updateSettings(fb.item);
 		});		
 		
+		return [fb.target._oneColumn($text),
+				fb.target._twoColumns($horizontalAlignment, $verticalAlignment), $fontPanel];
+	},
+	_getFieldSettingsGeneralSection : function(event, fb) {
+    var styles = fb.settings.styles;
+    var fbStyles = fb.target._getFbOptions().settings.styles;
+    var color = styles.color != 'default' ? styles.color : fbStyles.color;
+	  var backgroundColor = styles.backgroundColor != 'default' ? styles.backgroundColor : fbStyles.backgroundColor;
+		var $colorPanel = fb.target._colorPanel({ color: color, backgroundColor: backgroundColor, idPrefix: 'field.' });
+	  		
 		$("input[id$='field.color']", $colorPanel).change(function(event) {
 			var value = $(this).data('colorPicker').color;
 			fb.item.css('color','#' + value);
@@ -1509,21 +1629,343 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 			styles.backgroundColor = value;
 			fb.target._updateSettings(fb.item);
 		});			
-		return [$fontPanel, $colorPanel];
+		return [$colorPanel];
 	}, 
 	_languageChange : function(event, fb) {
 		this._log('languageChange = ' + $.toJSON(fb.settings));
-		fb.item.find('div.PlainText').text(fb.settings.text).removeClass('leftAlign centerAlign rightAlign').addClass(fb.settings.classes[0]);
-		fb.item.removeClass('topAlign middleAlign bottomAlign').addClass(fb.settings.classes[1]);
-		if (fb.item.selected) {
+	  var styles = fb.settings.styles;
+	  var fbStyles = fb.target._getFbLocalizedSettings().styles;
+	  var fontFamily = styles.fontFamily != 'default' ? styles.fontFamily : fbStyles.fontFamily;
+	  var fontSize = styles.fontSize != 'default' ? styles.fontSize : fbStyles.fontSize;
+		fb.item.find('.PlainText').text(fb.settings.text)
+		       .removeClass('leftAlign centerAlign rightAlign')
+		       .addClass(fb.settings.classes[0]);
+		fb.item.css('fontWeight', styles.fontStyles[0] == 1 ? 'bold' : 'normal')
+	         .css('fontStyle', styles.fontStyles[1] == 1 ? 'italic' : 'normal')
+	         .css('textDecoration', styles.fontStyles[2] == 1 ? 'underline' : 'none')
+		       .css('fontFamily', fontFamily)
+		       .css('fontSize', fontSize + 'px')	         
+		       .removeClass('topAlign middleAlign bottomAlign')
+		       .addClass(fb.settings.classes[1]);
+		if (fb.item.selected) { // refresh field settings
 			var $fieldSettingsLanguageSection = $(this._getFbOptions()._fieldSettingsLanguageSection);
 			$("input[id$='field.text']", $fieldSettingsLanguageSection).val(fb.settings.text);
 			$("select[id$='field.horizontalAlignment'] option[value='" + fb.settings.classes[0] + "']", 
 			    $fieldSettingsLanguageSection).attr('selected', 'true');
 			$("select[id$='field.verticalAlignment'] option[value='" + fb.settings.classes[1] + "']", 
 			    $fieldSettingsLanguageSection).attr('selected', 'true');			  
+			// font panel
+			$("input[id$='field.bold']", $fieldSettingsLanguageSection).attr('checked', styles.fontStyles[0]);
+			$("input[id$='field.italic']", $fieldSettingsLanguageSection).attr('checked', styles.fontStyles[1]);
+			$("input[id$='field.underline']", $fieldSettingsLanguageSection).attr('checked', styles.fontStyles[2]);
+			$("select[id$='field.fontSize']", $fieldSettingsLanguageSection).val(fontSize);
+			$('.fontPicker', $fieldSettingsLanguageSection).fontPicker('fontFamily', fontFamily);			
 		}
 	}
 });
 
 $.widget('fb.fbPlainText', FbPlainText);
+/*
+ * JQuery Form Builder - Single Line Text plugin.
+ * 
+ * Revision: 116
+ * Version: 0.1
+ * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
+ *
+ * Licensed under Apache v2.0 http://www.apache.org/licenses/LICENSE-2.0.html
+ *
+ * Date: 10-Feb-2011
+ */
+
+var FbSingleLineText = $.extend({}, $.fb.fbWidget.prototype, {
+	options: { // default options. values are stored in widget's prototype
+		name: 'Single Line Text',
+		belongsTo: $.fb.formbuilder.prototype.options._standardFieldsPanel,
+		_type: 'SingleLineText',
+		_html : '<div><label><em></em><span></span></label> \
+		      <input type="text" class="textInput"> \
+	        <p class="formHint"></p></div>',
+		_counterField: 'label',
+		_languages: [ 'en', 'zh' ],
+		settings: {
+			en: {
+				label: 'Single Line Text',
+				value: '',
+				description: '',
+				styles: {
+					fontFamily: 'default', // form builder default
+					fontSize: 'default',
+					fontStyles: [0, 0, 0] // bold, italic, underline					
+				}				
+			},
+			zh : {
+				label: '单行文字输入',
+				value: '',
+				description: '',				
+				styles: {
+					fontFamily: 'default', // form builder default
+					fontSize: 'default',
+					fontStyles: [0, 0, 0] // bold, italic, underline					
+				}				
+			},
+			required: true,
+			restriction: 'no',
+			styles : {
+				label: {
+				  color : 'default',
+				  backgroundColor : 'default'
+				},
+			  value: {
+				  color : 'default',
+				  backgroundColor : 'default'
+				},
+				description: {
+					color : '777777',
+					backgroundColor : 'default'
+			    }				
+			}
+		}
+	},
+	_init : function() {
+		// calling base plugin init
+		$.fb.fbWidget.prototype._init.call(this);
+		// merge base plugin's options
+		this.options = $.extend({}, $.fb.fbWidget.prototype.options, this.options);
+	},
+	_getWidget : function(event, fb) {
+		var $jqueryObject = $(fb.target.options._html);
+		fb.target._log('fbSingleLineText._getWidget executing...');
+		$('label span', $jqueryObject).text(fb.settings.label);
+		if (fb._settings.required) {
+			$('label em', $jqueryObject).text('*');	
+		}
+		$('input', $jqueryObject).val(fb.settings.value);
+		$('.formHint', $jqueryObject).text(fb.settings.description);
+		fb.target._log('fbSingleLineText._getWidget executed.');
+		return $jqueryObject;
+	},
+	_getFieldSettingsLanguageSection : function(event, fb) {
+		fb.target._log('fbSingleLineText._getFieldSettingsLanguageSection executing...');
+		var $label = fb.target._label({ label: 'Label', name: 'field.label' })
+                         .append('<input type="text" id="field.label" />');
+    $('input', $label).val(fb.settings.label)
+     .keyup(function(event) {
+ 	      var value = $(this).val();
+	      fb.item.find('label span').text(value);
+	      fb.settings.label = value;
+	      fb.target._updateSettings(fb.item);
+	      fb.target._updateName(fb.item, value);
+         });
+	  var $value = fb.target._label({ label: 'Value', name: 'field.value' })
+		                      .append('<input type="text" id="field.value" />');
+		$('input', $value).val(fb.settings.value)
+		 .keyup(function(event) {
+		  var value = $(this).val();
+		  fb.item.find('.textInput').val(value);
+		  fb.settings.value = value;
+		  fb.target._updateSettings(fb.item);
+		});    
+		
+		var $description = fb.target._label({ label: 'Description', name: 'field.description' })
+          .append('<textarea id="field.description" rows="2"></textarea>');
+		$('textarea', $description).val(fb.settings.description)
+			.keyup(function(event) {
+			  var value = $(this).val();
+			  fb.item.find('.formHint').text(value);
+			  fb.settings.description = value;
+			  fb.target._updateSettings(fb.item);
+		});    		
+		
+    var styles = fb.settings.styles;
+    var fbStyles = fb.target._getFbLocalizedSettings().styles;
+    var fontFamily = styles.fontFamily != 'default' ? styles.fontFamily : fbStyles.fontFamily ;
+	  var fontSize = styles.fontSize != 'default' ? styles.fontSize : fbStyles.fontSize;	  
+		var $fontPanel = fb.target._fontPanel({ fontFamily: fontFamily, fontSize: fontSize, 
+				                           fontStyles: styles.fontStyles, idPrefix: 'field.', nofieldset: true });
+		
+		$("input[id$='field.bold']", $fontPanel).change(function(event) {
+			if ($(this).attr('checked')) {
+				fb.item.find('label').css('fontWeight', 'bold');
+				fb.item.find('.textInput').css('fontWeight', 'bold');
+				styles.fontStyles[0] = 1;
+			} else {
+				fb.item.find('label').css('fontWeight', 'normal');
+				fb.item.find('.textInput').css('fontWeight', 'normal');				
+				styles.fontStyles[0] = 0;
+			}
+			fb.target._updateSettings(fb.item);
+		});
+		$("input[id$='field.italic']", $fontPanel).change(function(event) {
+			if ($(this).attr('checked')) {
+				fb.item.find('label').css('fontStyle', 'italic');
+				fb.item.find('.textInput').css('fontStyle', 'italic');				
+				styles.fontStyles[1] = 1;
+			} else {
+				fb.item.find('label').css('fontStyle', 'normal');
+				fb.item.find('.textInput').css('fontStyle', 'normal');					
+				styles.fontStyles[1] = 0;
+			}
+			fb.target._updateSettings(fb.item);
+		});	
+		$("input[id$='field.underline']", $fontPanel).change(function(event) {
+			if ($(this).attr('checked')) {
+				fb.item.find('label span').css('textDecoration', 'underline');
+				fb.item.find('.textInput').css('textDecoration', 'underline');					
+				styles.fontStyles[2] = 1;
+			} else {
+				fb.item.find('label span').css('textDecoration', 'none');
+				fb.item.find('.textInput').css('textDecoration', 'none');					
+				styles.fontStyles[2] = 0;
+			}
+			fb.target._updateSettings(fb.item);
+		});
+		
+		$("input[id$='field.fontFamily']", $fontPanel).change(function(event) {
+			var value = $(this).val();
+			fb.item.css('fontFamily', value);
+			fb.item.find('.textInput').css('fontFamily', value);	
+			styles.fontFamily = value;
+			fb.target._updateSettings(fb.item);
+		});		
+		
+		$("select[id$='field.fontSize']", $fontPanel).change(function(event) {
+			var value = $(this).val();
+			fb.item.find('label').css('fontSize', value + 'px');
+			fb.item.find('.textInput').css('fontSize', value + 'px');					
+			styles.fontSize = value;
+			fb.target._updateSettings(fb.item);
+		});				
+		fb.target._log('fbSingleLineText._getFieldSettingsLanguageSection executed.');
+		return [fb.target._twoColumns($label, $value), fb.target._oneColumn($description), $fontPanel];
+	},
+	_getFieldSettingsGeneralSection : function(event, fb) {
+		fb.target._log('fbSingleLineText._getFieldSettingsGeneralSection executing...');
+		var $required = $('<div><input type="checkbox" id="field.required" />&nbsp;Required</div>');
+		var $restriction = $('<div><select id="field.restriction" style="width: 99%"> \
+				<option value="no">any character</option> \
+				<option value="alphanumeric">alphanumeric only</option> \
+				<option value="letterswithbasicpunc">letters or punctuation only</option> \
+				<option value="lettersonly">letters only</option> \
+			</select></div>');
+		var $valuePanel = fb.target._fieldset({ text: 'Value'})
+		                  .append(fb.target._twoColumns($required, $restriction));
+		$('.col1', $valuePanel).css('width', '32%').removeClass('labelOnTop');
+		$('.col2', $valuePanel).css('marginLeft', '34%').removeClass('labelOnTop');
+		
+		$('input', $required).attr('checked', fb.settings.required)
+		 .change(function(event) {
+			if ($(this).attr('checked')) {
+				fb.item.find('em').text('*');
+				fb.settings.required = true;
+			} else {
+				fb.item.find('em').text('');		
+				fb.settings.required = false;
+			}
+			fb.target._updateSettings(fb.item);
+		});		
+		
+		$("select option[value='" + fb.settings.restriction + "']", $restriction).attr('selected', 'true');
+		$('select', $restriction).change(function(event) {
+			fb.settings.restriction = $(this).val();
+			fb.target._log('fb.settings.restriction = ' + fb.settings.restriction);
+			fb.target._updateSettings(fb.item);
+		});			
+		
+		var $textInput = fb.item.find('.textInput');
+		var styles = fb.settings.styles;
+		if (styles.value.color == 'default') {
+			styles.value.color = $textInput.css('color');
+		}
+		if (styles.value.backgroundColor == 'default') {
+			styles.value.backgroundColor = $textInput.css('backgroundColor');
+		}		
+		var $colorPanel = fb.target._labelValueDescriptionColorPanel(styles);
+		
+		$("input[id$='field.label.color']", $colorPanel).change(function(event) {
+			var value = $(this).data('colorPicker').color;
+			fb.item.css('color','#' + value);
+			styles.label.color = value;
+			fb.target._updateSettings(fb.item);
+		});		
+
+		$("input[id$='field.label.backgroundColor']", $colorPanel).change(function(event) {
+			var value = $(this).data('colorPicker').color;
+			fb.item.css('backgroundColor','#' + value);
+			styles.label.backgroundColor = value;
+			fb.target._updateSettings(fb.item);
+		});				
+		
+		$("input[id$='field.value.color']", $colorPanel).change(function(event) {
+			var value = $(this).data('colorPicker').color;
+			$textInput.css('color','#' + value);
+			styles.value.color = value;
+			fb.target._updateSettings(fb.item);
+		});		
+
+		$("input[id$='field.value.backgroundColor']", $colorPanel).change(function(event) {
+			var value = $(this).data('colorPicker').color;
+			$textInput.css('backgroundColor','#' + value);
+			styles.value.backgroundColor = value;
+			fb.target._updateSettings(fb.item);
+		});					
+		
+		$("input[id$='field.description.color']", $colorPanel).change(function(event) {
+			var value = $(this).data('colorPicker').color;
+			fb.item.find('.formHint').css('color','#' + value);
+			styles.description.color = value;
+			fb.target._updateSettings(fb.item);
+		});		
+
+		$("input[id$='field.description.backgroundColor']", $colorPanel).change(function(event) {
+			var value = $(this).data('colorPicker').color;
+			fb.item.find('.formHint').css('backgroundColor','#' + value);
+			styles.description.backgroundColor = value;
+			fb.target._updateSettings(fb.item);
+		});				
+		fb.target._log('fbSingleLineText._getFieldSettingsGeneralSection executed.');
+		return [$valuePanel, $colorPanel];
+	}, 
+	_languageChange : function(event, fb) {
+		fb.target._log('fbSingleLineText.languageChange executing...');
+		var styles = fb.settings.styles;
+		var fbStyles = fb.target._getFbLocalizedSettings().styles;
+		var fontFamily = styles.fontFamily != 'default' ? styles.fontFamily : fbStyles.fontFamily;
+		var fontSize = styles.fontSize != 'default' ? styles.fontSize : fbStyles.fontSize;
+		var fontWeight = styles.fontStyles[0] == 1 ? 'bold' : 'normal';
+    var fontStyle = styles.fontStyles[1] == 1 ? 'italic' : 'normal';
+    var textDecoration = styles.fontStyles[2] == 1 ? 'underline' : 'none';
+		
+    fb.item.css('fontFamily', fontFamily);
+		fb.item.find('label span').text(fb.settings.label)
+		  .css('textDecoration', textDecoration);
+
+		fb.item.find('label').css('fontWeight', fontWeight)
+		  .css('fontStyle', fontStyle)
+		  .css('fontSize', fontSize + 'px');
+			
+		fb.item.find('.textInput').val(fb.settings.value)
+		  .css('fontWeight', fontWeight)
+		  .css('fontStyle', fontStyle)
+		  .css('textDecoration', textDecoration)
+		  .css('fontFamily', fontFamily)
+		  .css('fontSize', fontSize + 'px');
+
+		fb.item.find('.formHint').text(fb.settings.description);
+		
+		if (fb.item.selected) { // refresh field settings
+			var $fieldSettingsLanguageSection = $(this._getFbOptions()._fieldSettingsLanguageSection);
+			$("[id$='field.label']", $fieldSettingsLanguageSection).val(fb.settings.label);
+			$("[id$='field.value']", $fieldSettingsLanguageSection).val(fb.settings.value);
+			$("[id$='field.description']", $fieldSettingsLanguageSection).val(fb.settings.description);		  
+			// font panel
+			$("input[id$='field.bold']", $fieldSettingsLanguageSection).attr('checked', styles.fontStyles[0]);
+			$("input[id$='field.italic']", $fieldSettingsLanguageSection).attr('checked', styles.fontStyles[1]);
+			$("input[id$='field.underline']", $fieldSettingsLanguageSection).attr('checked', styles.fontStyles[2]);
+			$("select[id$='field.fontSize']", $fieldSettingsLanguageSection).val(fontSize);
+			$('.fontPicker', $fieldSettingsLanguageSection).fontPicker('fontFamily', fontFamily);			
+		}		
+		fb.target._log('fbSingleLineText.languageChange executed.');
+	}
+});
+
+$.widget('fb.fbSingleLineText', FbSingleLineText);

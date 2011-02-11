@@ -171,14 +171,14 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 	  var fontSize = styles.fontSize != 'default' ? styles.fontSize : fbStyles.fontSize;
 		fb.item.find('.PlainText').text(fb.settings.text)
 		       .removeClass('leftAlign centerAlign rightAlign')
-		       .addClass(fb.settings.classes[0])
-		       .css('fontWeight', styles.fontStyles[0] == 1 ? 'bold' : 'normal')
+		       .addClass(fb.settings.classes[0]);
+		fb.item.css('fontWeight', styles.fontStyles[0] == 1 ? 'bold' : 'normal')
 	         .css('fontStyle', styles.fontStyles[1] == 1 ? 'italic' : 'normal')
 	         .css('textDecoration', styles.fontStyles[2] == 1 ? 'underline' : 'none')
 		       .css('fontFamily', fontFamily)
-		       .css('fontSize', fontSize + 'px');	         
-		
-		fb.item.removeClass('topAlign middleAlign bottomAlign').addClass(fb.settings.classes[1]);
+		       .css('fontSize', fontSize + 'px')	         
+		       .removeClass('topAlign middleAlign bottomAlign')
+		       .addClass(fb.settings.classes[1]);
 		if (fb.item.selected) { // refresh field settings
 			var $fieldSettingsLanguageSection = $(this._getFbOptions()._fieldSettingsLanguageSection);
 			$("input[id$='field.text']", $fieldSettingsLanguageSection).val(fb.settings.text);

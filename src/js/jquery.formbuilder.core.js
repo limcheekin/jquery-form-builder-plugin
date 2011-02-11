@@ -213,8 +213,8 @@ var FormBuilder = {
 	    this._initSortableWidgets();
       this._initDroppable();
 	  } else {
-			$('input:not(div.buttons input)').attr("disabled", true);
-			$('select').attr("disabled", true);
+			$('input:not(div.buttons input, #id)').attr("disabled", true);
+			$('select:not(#language)').attr("disabled", true);
 			$('textarea').attr("disabled", true);	    	
 	    }
 	  this._initWidgetsEventBinder();
@@ -487,7 +487,13 @@ var FormBuilder = {
 		    if (selected) {
 		    	$(fbOptions._fieldSettingsLanguageSection + ' legend').text('Language: ' + languageText);
 		       }
+			  if (!$widget.data('fbWidget')) { // widgets loaded from server
+					var $settings = $widget.find("input[id$='fields[" + $widget.attr('rel') + "].settings']");
+					// settings is JavaScript encoded when return from server-side
+					$widget.data('fbWidget', $.parseJSON(unescape($settings.val())));
+				}		    
 		    settings = $widget.data('fbWidget');
+		    $.fb.formbuilder.prototype._log(i + ') settings = ' + settings);
 		    type = $widget.find("input[id$='fields[" + $widget.attr('rel') + "].type']").val();
 		    $.fb.formbuilder.prototype._log('type = ' + type);
 		    $this = $('#' + type).data('fb' + type);
@@ -518,7 +524,9 @@ var FormBuilder = {
 					}	  
 			});
 			if (!this.options.readOnly) {
-			  $ctrlHolders.find(".closeButton").click($.fb.fbWidget.prototype._deleteWidget);
+			  $ctrlHolders.find(".closeButton").click($.fb.fbWidget.prototype._deleteWidget)
+			    .mouseover(function () { $('span', this).removeClass('ui-icon-close').addClass('ui-icon-circle-close'); }) 
+			    .mouseout(function () { $('span', this).removeClass('ui-icon-circle-close').addClass('ui-icon-close'); });
 			}
 		}
   },
