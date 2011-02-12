@@ -2,13 +2,13 @@
 * jquery-form-builder-plugin - JQuery WYSIWYG Web Form Builder
 * http://code.google.com/p/jquery-form-builder-plugin/
 *
-* Revision: 116
+* Revision: 118
 * Version: 0.1
 * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
 *
 * Licensed under Apache v2.0 http://www.apache.org/licenses/LICENSE-2.0.html
 *
-* Date: Thu Feb 10 17:12:06 GMT+08:00 2011 
+* Date: Fri Feb 11 14:57:39 GMT+08:00 2011 
 */
 
 /*
@@ -16,7 +16,7 @@
  * consists of builder palette contains widgets supported by the form builder and 
  * builder panel where the constructed form display. 
  * 
- * Revision: 116
+ * Revision: 118
  * Version: 0.1
  * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
  *
@@ -512,6 +512,9 @@ var FormBuilder = {
 		    $this = $('#' + type).data('fb' + type);
 		    fb = {target: $this, item: $widget, settings: settings[language]};
 		    fb.item.selected = selected;
+		    if (selected) { // refresh field settings tab
+		      $this._createFieldSettings(event, $widget); 
+		        }
 		    $this._languageChange(event, fb);
 		});
    },
@@ -641,7 +644,7 @@ $.widget('fb.formbuilder', FormBuilder);/*
  * at http://andreaslagerkvist.com/jquery/colour-picker/ and customized for 
  * JQuery Form Builder plugin project at http://code.google.com/p/jquery-form-builder-plugin/
  * 
- * Revision: 116
+ * Revision: 118
  * Version: 0.1
  * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
  *
@@ -840,7 +843,7 @@ $.widget('fb.colorPicker', ColorPicker);/*
  * at http://plugins.jquery.com/project/fontpicker-regios and customized for 
  * JQuery Form Builder plugin project at http://code.google.com/p/jquery-form-builder-plugin/
  * 
- * Revision: 116
+ * Revision: 118
  * Version: 0.1
  * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
  *
@@ -947,7 +950,7 @@ var FontPicker = {
 $.widget('fb.fontPicker', FontPicker);/*
  * Base widget plugin of JQuery Form Builder plugin, all Form Builder widgets should extend from this plugin. 
  * 
- * Revision: 116
+ * Revision: 118
  * Version: 0.1
  * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
  *
@@ -1080,7 +1083,7 @@ var FbWidget = {
 		$ctrlHolder.append($widget);
 		if (event.type == 'click' || event.type == 'drop') {
 			var name = $this._propertyName($this.options._type + counter);
-			$widget.click($this._createFieldSettings);			
+			$widget.click($this._createFieldSettings);
 			$this._createField(name, $ctrlHolder, $this.options, settings);
 			if (event.type == 'click') {
 				$($.fb.formbuilder.prototype.options._formControls).append($ctrlHolder).sortable('refresh');				
@@ -1114,9 +1117,11 @@ var FbWidget = {
 			 }, 1500,'easeInOutExpo');			 
 		 }
     },
-  _createFieldSettings: function(event) { 
+  _createFieldSettings: function(event, $widget) { 
 	  $.fb.fbWidget.prototype._log('_createFieldSettings executing.');
-		var $widget = $(this);	  
+	  if (!$widget) { // calling from click event
+		  $widget = $(this);
+	    }
 		var selectedClass = $.fb.fbWidget.prototype.options._selectedClass;
 		$widget = $widget.attr('class').indexOf($.fb.fbWidget.prototype.options._styleClass) > -1 ? $widget : $widget.parent();
 		$widget.parent().find('.' + selectedClass).removeClass(selectedClass);
@@ -1162,12 +1167,14 @@ var FbWidget = {
 		  $('textarea', $fieldSettingsPanel).attr("disabled", true);
 		}
 		
-		// activate field settings tab
-		$(fbOptions._paletteTabs).tabs('select', 1);
+		$.fb.fbWidget.prototype._log('_createFieldSettings. event.type = ' + event.type);
+		if (event.type == 'click') {
+		  // activate field settings tab
+		  $(fbOptions._paletteTabs).tabs('select', 1);
 		
-		// highlight and select the 1st input component
-		$('input:first', $fieldSettingsPanel).select();	
-		
+		  // highlight and select the 1st input component
+		  $('input:first', $fieldSettingsPanel).select();	
+		}
   	$.fb.fbWidget.prototype._log('_createFieldSettings executed.');
     },
 	_getCounter: function($this) {
@@ -1469,7 +1476,7 @@ var FbWidget = {
 $.widget('fb.fbWidget', FbWidget);/*
  * JQuery Form Builder - Plain Text plugin.
  * 
- * Revision: 116
+ * Revision: 118
  * Version: 0.1
  * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
  *
@@ -1525,7 +1532,7 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 		var $text = fb.target._label({ label: 'Text', name: 'field.text', 
 			                 description: 'Text entered below will display in the form.' })
 		           .append('<input type="text" id="field.text" />');
-				$('input', $text).val(fb.item.find('div.PlainText').text())
+				$('input', $text).val(fb.settings.text)
 				.keyup(function(event) {
 					var value = $(this).val();
 					fb.item.find('div.PlainText').text(value);
@@ -1647,20 +1654,6 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 		       .css('fontSize', fontSize + 'px')	         
 		       .removeClass('topAlign middleAlign bottomAlign')
 		       .addClass(fb.settings.classes[1]);
-		if (fb.item.selected) { // refresh field settings
-			var $fieldSettingsLanguageSection = $(this._getFbOptions()._fieldSettingsLanguageSection);
-			$("input[id$='field.text']", $fieldSettingsLanguageSection).val(fb.settings.text);
-			$("select[id$='field.horizontalAlignment'] option[value='" + fb.settings.classes[0] + "']", 
-			    $fieldSettingsLanguageSection).attr('selected', 'true');
-			$("select[id$='field.verticalAlignment'] option[value='" + fb.settings.classes[1] + "']", 
-			    $fieldSettingsLanguageSection).attr('selected', 'true');			  
-			// font panel
-			$("input[id$='field.bold']", $fieldSettingsLanguageSection).attr('checked', styles.fontStyles[0]);
-			$("input[id$='field.italic']", $fieldSettingsLanguageSection).attr('checked', styles.fontStyles[1]);
-			$("input[id$='field.underline']", $fieldSettingsLanguageSection).attr('checked', styles.fontStyles[2]);
-			$("select[id$='field.fontSize']", $fieldSettingsLanguageSection).val(fontSize);
-			$('.fontPicker', $fieldSettingsLanguageSection).fontPicker('fontFamily', fontFamily);			
-		}
 	}
 });
 
@@ -1668,7 +1661,7 @@ $.widget('fb.fbPlainText', FbPlainText);
 /*
  * JQuery Form Builder - Single Line Text plugin.
  * 
- * Revision: 116
+ * Revision: 118
  * Version: 0.1
  * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
  *
@@ -1683,7 +1676,7 @@ var FbSingleLineText = $.extend({}, $.fb.fbWidget.prototype, {
 		belongsTo: $.fb.formbuilder.prototype.options._standardFieldsPanel,
 		_type: 'SingleLineText',
 		_html : '<div><label><em></em><span></span></label> \
-		      <input type="text" class="textInput"> \
+		      <input type="text" class="textInput" /> \
 	        <p class="formHint"></p></div>',
 		_counterField: 'label',
 		_languages: [ 'en', 'zh' ],
@@ -1952,18 +1945,6 @@ var FbSingleLineText = $.extend({}, $.fb.fbWidget.prototype, {
 
 		fb.item.find('.formHint').text(fb.settings.description);
 		
-		if (fb.item.selected) { // refresh field settings
-			var $fieldSettingsLanguageSection = $(this._getFbOptions()._fieldSettingsLanguageSection);
-			$("[id$='field.label']", $fieldSettingsLanguageSection).val(fb.settings.label);
-			$("[id$='field.value']", $fieldSettingsLanguageSection).val(fb.settings.value);
-			$("[id$='field.description']", $fieldSettingsLanguageSection).val(fb.settings.description);		  
-			// font panel
-			$("input[id$='field.bold']", $fieldSettingsLanguageSection).attr('checked', styles.fontStyles[0]);
-			$("input[id$='field.italic']", $fieldSettingsLanguageSection).attr('checked', styles.fontStyles[1]);
-			$("input[id$='field.underline']", $fieldSettingsLanguageSection).attr('checked', styles.fontStyles[2]);
-			$("select[id$='field.fontSize']", $fieldSettingsLanguageSection).val(fontSize);
-			$('.fontPicker', $fieldSettingsLanguageSection).fontPicker('fontFamily', fontFamily);			
-		}		
 		fb.target._log('fbSingleLineText.languageChange executed.');
 	}
 });

@@ -39,6 +39,7 @@
 	</path>
 
 	<typedef resource="org/tigris/subversion/svnant/svnantlib.xml" classpathref="svnant.classpath" />
+	<taskdef classname="net.bluecow.googlecode.ant.GoogleCodeUploadTask" classpath="${BUILD_DIR}/ant-googlecode-0.0.2.jar" name="gcupload"/>
 	
 	<target name="dir" depends="clean" description="Builds distribution directory">
 		<mkdir dir="${DIST_DIR}" />
@@ -228,6 +229,19 @@
 	<target name="release" depends="all" description="Release the distribution under compressed file.">
 	  <zip destfile="${JQUERY_FORM_BUILDER_ZIP}" basedir="${DIST_DIR}" />
   </target>
+	
+  <target name="upload" depends="release" description="Upload release file to google code">
+	  <gcupload 
+				username="${username}" 
+				password="${password}" 
+				projectname="jquery-form-builder-plugin" 
+				filename="${JQUERY_FORM_BUILDER_ZIP}" 
+				targetfilename="jquery-formbuilder-${version}.zip"
+				summary="JQuery Form Builder Plugin ${version} Released"
+				labels="Featured, Type-Archive, OpSys-All"
+				verbose="true"
+		/>
+	</target>
 	
   <target name="copyToWar" depends="all" description="Copy form builder resources to the WAR.">
   	<delete dir="war" />
