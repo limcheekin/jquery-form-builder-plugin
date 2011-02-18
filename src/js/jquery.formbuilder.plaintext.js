@@ -18,7 +18,7 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 		_type : 'PlainText',
 		_html : '<div class="PlainText"></div>',
 		_counterField : 'text',
-		_languages : [ 'en', 'zh' ],
+		_languages : [ 'en', 'zh_CN' ],
 		settings : {
 			en : {
 				text : 'Plain Text',
@@ -29,8 +29,8 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 					fontStyles: [0, 0, 0] // bold, italic, underline					
 				}
 			},
-			zh : {
-				text : '無格式文字',
+			zh_CN : {
+				text : '无格式文字',
 				classes : [ 'rightAlign', 'middleAlign' ],
 				styles: {
 					fontFamily: 'default', // form builder default

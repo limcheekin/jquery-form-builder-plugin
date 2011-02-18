@@ -13,6 +13,7 @@
 	<property name="JQUERY_FORM_BUILDER_MIN" value="${DIST_DIR}/jquery-formbuilder-${version}.min.js" />
 	<property name="JQUERY_FORM_BUILDER_PACK" value="${DIST_DIR}/jquery-formbuilder-${version}.pack.js" />
 	<property name="JQUERY_FORM_BUILDER_CSS" value="${DIST_DIR}/jquery-formbuilder-${version}.css" />
+    <property name="JQUERY_FORM_BUILDER_CSS_MIN" value="${DIST_DIR}/jquery-formbuilder-${version}.min.css" />
 	<property name="JQUERY_FORM_BUILDER_IMG" value="${DIST_DIR}/images" />
 	<property name="JQUERY_FORM_BUILDER_ZIP" value="${DIST_DIR}/jquery-formbuilder-${version}.zip" />
 
@@ -45,7 +46,7 @@
 		<mkdir dir="${DIST_DIR}" />
 	</target>
 	
-	<target name="plugins" depends="dir">
+	<target name="plugins" depends="svninfo">
 		<script language="groovy" classpath="${BUILD_DIR}/groovy-all-1.7.4.jar">
 			<![CDATA[
 		 	   def pluginNames = project.getProperty("PLUGINS").split(",")
@@ -77,7 +78,7 @@
 		<echo message="svn.info.lastDate: ${svn.info.lastDate}" />
 	</target>
 	
-	<target name="formbuilderdev" depends="svninfo" description="Main jquery-form-builder-plugin build. Concatenates source and css files and replaces @VERSION/Date" if="dev">
+	<target name="formbuilderdev" depends="plugins" description="Main jquery-form-builder-plugin build. Concatenates source and css files and replaces @VERSION/Date" if="dev">
 		<echo message="Building ${JQUERY_FORM_BUILDER} for development." />
 
 		<concat destfile="${JQUERY_FORM_BUILDER}">
@@ -150,6 +151,23 @@
 		<delete file="dist/tmpmin" />
 
 		<echo message="${JQUERY_FORM_BUILDER_MIN} built." />
+		
+		<apply executable="java" parallel="false" verbose="true">
+			<fileset dir="${DIST_DIR}">
+				<include name="jquery-formbuilder-${version}.css" />
+			</fileset>
+			
+			<arg value="-Xmx96m" />
+			<arg line="-jar" />
+			<arg path="${BUILD_DIR}/yuicompressor.jar" />
+			<arg path="${JQUERY_FORM_BUILDER_CSS}" />
+			<arg value="--type" />
+			<arg value="css" />
+			<arg value="-o" />
+			<arg path="${JQUERY_FORM_BUILDER_CSS_MIN}" />
+		</apply>
+
+		<echo message="${JQUERY_FORM_BUILDER_CSS_MIN} built." />		
 	</target>
 
 	<target name="pack" depends="min" description="Compresses minified jquery-form-builder-plugin source for even smaller file-sizes">
@@ -291,6 +309,7 @@
   	<copy file="${JQUERY_FORM_BUILDER}" todir="grails-plugin/web-app/js" overwrite="true" />
   	<copy file="${JQUERY_FORM_BUILDER_MIN}" todir="grails-plugin/web-app/js" overwrite="true" />
   	<copy file="${JQUERY_FORM_BUILDER_CSS}" todir="grails-plugin/web-app/css" overwrite="true" />
+  	<copy file="${JQUERY_FORM_BUILDER_CSS_MIN}" todir="grails-plugin/web-app/css" overwrite="true" />
   	<copy todir="grails-plugin/web-app/images" overwrite="true">
       <fileset dir="${JQUERY_FORM_BUILDER_IMG}" />
     </copy>

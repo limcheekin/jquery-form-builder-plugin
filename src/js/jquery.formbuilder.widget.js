@@ -258,9 +258,19 @@ var FbWidget = {
   	$settings.val($.toJSON(settings)).change();
    	} ,          
   _updateName: function($widget, value) {
-		if ($.inArray($('#language').val(), this._getFbOptions()._languagesSupportIdGeneration) > -1) {
+	  var fbOptions = this._getFbOptions();
+	  // disabledNameChange option for edit view.
+	  var disabledNameChange = fbOptions.disabledNameChange;
+	  var index = $widget.attr('rel');
+	  if (disabledNameChange) { 
+		  // disabledNameChange apply for fields loaded from server-side only
+		  this._log('_updateName. id == null: ' + ($widget.find("input[id$='fields[" + index + "].id']").val() != 'null'));
+		  disabledNameChange = $widget.find("input[id$='fields[" + index + "].id']").val() != 'null';
+	  }
+		if (!disabledNameChange && 
+				$.inArray($('#language').val(), fbOptions._languagesSupportIdGeneration) > -1) {
 			var name = this._propertyName(value);
-			$widget.find("input[id$='fields[" + $widget.attr('rel') + "].name']").val(name).change();
+			$widget.find("input[id$='fields[" + index + "].name']").val(name).change();
 		}
     } ,
   _threeColumns: function($e1, $e2, $e3) {

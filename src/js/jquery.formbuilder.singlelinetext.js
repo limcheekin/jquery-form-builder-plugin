@@ -19,7 +19,7 @@ var FbSingleLineText = $.extend({}, $.fb.fbWidget.prototype, {
 		      <input type="text" class="textInput" /> \
 	        <p class="formHint"></p></div>',
 		_counterField: 'label',
-		_languages: [ 'en', 'zh' ],
+		_languages: [ 'en', 'zh_CN' ],
 		settings: {
 			en: {
 				label: 'Single Line Text',
@@ -31,7 +31,7 @@ var FbSingleLineText = $.extend({}, $.fb.fbWidget.prototype, {
 					fontStyles: [0, 0, 0] // bold, italic, underline					
 				}				
 			},
-			zh : {
+			zh_CN : {
 				label: '单行文字输入',
 				value: '',
 				description: '',				
@@ -41,6 +41,7 @@ var FbSingleLineText = $.extend({}, $.fb.fbWidget.prototype, {
 					fontStyles: [0, 0, 0] // bold, italic, underline					
 				}				
 			},
+			_persistable: true,
 			required: true,
 			restriction: 'no',
 			styles : {

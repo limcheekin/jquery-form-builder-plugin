@@ -2,13 +2,13 @@
 * jquery-form-builder-plugin - JQuery WYSIWYG Web Form Builder
 * http://code.google.com/p/jquery-form-builder-plugin/
 *
-* Revision: 118
+* Revision: ${svn.info.lastRev}
 * Version: 0.1
 * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
 *
 * Licensed under Apache v2.0 http://www.apache.org/licenses/LICENSE-2.0.html
 *
-* Date: Fri Feb 11 14:57:39 GMT+08:00 2011 
+* Date: ${svn.info.lastDate} 
 */
 
 /*
@@ -16,7 +16,7 @@
  * consists of builder palette contains widgets supported by the form builder and 
  * builder panel where the constructed form display. 
  * 
- * Revision: 118
+ * Revision: ${svn.info.lastRev}
  * Version: 0.1
  * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
  *
@@ -32,6 +32,7 @@ var FormBuilder = {
 		readOnly: false,
 		tabDisabled: [],
 		formCounter: 1,
+		language: 'en',
 		settings: {
 			en: {
 				name: 'Form',
@@ -43,7 +44,7 @@ var FormBuilder = {
 					fontStyles: [1, 0, 0] // bold, italic, underline					
 				}				
 			},
-			zh: {
+			zh_CN: {
 				name: '表格',
 				classes: ['rightAlign'],
 				heading: 'h2',
@@ -59,7 +60,7 @@ var FormBuilder = {
 			}
 		},
 		_id: '#container',
-		_languages : [ 'en', 'zh' ],
+		_languages : [ 'en', 'zh_CN' ],
 		_builderPanel: '#builderPanel',
 		_builderForm: '#builderForm',
 		_emptyBuilderPanel: '#emptyBuilderPanel',
@@ -289,12 +290,13 @@ var FormBuilder = {
   },  
   _initFormSettings: function() {
 	  var $fbWidget = $.fb.fbWidget.prototype;
-	  var $builderPanel = $(this.options._builderPanel);
-	  var $builderForm = $(this.options._builderForm);
-	  var $formSettingsLanguageSection = $(this.options._formSettingsLanguageSection);
-	  var $formSettingsGeneralSection = $(this.options._formSettingsGeneralSection);
-	  var $language = $('#language', $formSettingsLanguageSection).change(this._languageChange);
 	  var options = this.options;
+	  var $builderPanel = $(options._builderPanel);
+	  var $builderForm = $(options._builderForm);
+	  var $formSettingsLanguageSection = $(options._formSettingsLanguageSection);
+	  var $formSettingsGeneralSection = $(options._formSettingsGeneralSection);
+	  var defaultLanguage = $.inArray(options.language, options._languages) > -1 ? options.language : 'en';
+	  var $language = $('#language', $formSettingsLanguageSection).val(defaultLanguage).change(this._languageChange);
 	  var settings;
 	  var $this = this;
 	  var $formHeading = $('.formHeading', $builderPanel);
@@ -305,8 +307,8 @@ var FormBuilder = {
 		  for (var i = 0; i < options._languages.length; i++) {
 			   options.settings[options._languages[i]].name += ' ' + options.formCounter;
 		    }
-		  $formHeading.append('<' + settings.heading + ' class="heading">' + settings.name + '</' + settings.heading + '>');
-		  $('#name',$builderForm).val($fbWidget._propertyName(settings.name));
+		  $formHeading.addClass(settings.classes[0]).append('<' + settings.heading + ' class="heading">' + settings.name + '</' + settings.heading + '>');
+		  $('#name',$builderForm).val($fbWidget._propertyName(options.settings['en'].name));
 		  $this._updateSettings($this);
 		} else {
 			options.settings = $.parseJSON(unescape($settings.val()));
@@ -318,16 +320,18 @@ var FormBuilder = {
 		var $name = $fbWidget._label({ label: 'Name', name: 'form.name' })
 		       .append('<input type="text" id="form.name" value="' + settings.name + '" />');
 		$('input', $name).keyup(function(event) {
-						var value = $(this).val();
-						if ($.inArray($language.val(), options._languagesSupportIdGeneration) > -1) {
-							var name = $fbWidget._propertyName(value);
-				      $('#name',$builderForm).val(name).change();
-						}
-						$fbWidget._log('$(this).val() = ' + value);
-						settings.name = value;
-						$(settings.heading, $formHeading).text(value);
-						$this._updateSettings($this);
-					});			  
+				var value = $(this).val();
+				$fbWidget._log('options.disabledNameChange = ' + options.disabledNameChange);
+				if (!options.disabledNameChange && 
+						$.inArray($language.val(), options._languagesSupportIdGeneration) > -1) {
+					var name = $fbWidget._propertyName(value);
+		      $('#name',$builderForm).val(name).change();
+				}
+				$fbWidget._log('$(this).val() = ' + value);
+				settings.name = value;
+				$(settings.heading, $formHeading).text(value);
+				$this._updateSettings($this);
+		 });			  
 		
 
 		 var $heading = $fbWidget._label({ 
@@ -644,7 +648,7 @@ $.widget('fb.formbuilder', FormBuilder);/*
  * at http://andreaslagerkvist.com/jquery/colour-picker/ and customized for 
  * JQuery Form Builder plugin project at http://code.google.com/p/jquery-form-builder-plugin/
  * 
- * Revision: 118
+ * Revision: ${svn.info.lastRev}
  * Version: 0.1
  * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
  *
@@ -843,7 +847,7 @@ $.widget('fb.colorPicker', ColorPicker);/*
  * at http://plugins.jquery.com/project/fontpicker-regios and customized for 
  * JQuery Form Builder plugin project at http://code.google.com/p/jquery-form-builder-plugin/
  * 
- * Revision: 118
+ * Revision: ${svn.info.lastRev}
  * Version: 0.1
  * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
  *
@@ -950,7 +954,7 @@ var FontPicker = {
 $.widget('fb.fontPicker', FontPicker);/*
  * Base widget plugin of JQuery Form Builder plugin, all Form Builder widgets should extend from this plugin. 
  * 
- * Revision: 118
+ * Revision: ${svn.info.lastRev}
  * Version: 0.1
  * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
  *
@@ -1207,9 +1211,19 @@ var FbWidget = {
   	$settings.val($.toJSON(settings)).change();
    	} ,          
   _updateName: function($widget, value) {
-		if ($.inArray($('#language').val(), this._getFbOptions()._languagesSupportIdGeneration) > -1) {
+	  var fbOptions = this._getFbOptions();
+	  // disabledNameChange option for edit view.
+	  var disabledNameChange = fbOptions.disabledNameChange;
+	  var index = $widget.attr('rel');
+	  if (disabledNameChange) { 
+		  // disabledNameChange apply for fields loaded from server-side only
+		  this._log('_updateName. id == null: ' + ($widget.find("input[id$='fields[" + index + "].id']").val() != 'null'));
+		  disabledNameChange = $widget.find("input[id$='fields[" + index + "].id']").val() != 'null';
+	  }
+		if (!disabledNameChange && 
+				$.inArray($('#language').val(), fbOptions._languagesSupportIdGeneration) > -1) {
 			var name = this._propertyName(value);
-			$widget.find("input[id$='fields[" + $widget.attr('rel') + "].name']").val(name).change();
+			$widget.find("input[id$='fields[" + index + "].name']").val(name).change();
 		}
     } ,
   _threeColumns: function($e1, $e2, $e3) {
@@ -1476,7 +1490,7 @@ var FbWidget = {
 $.widget('fb.fbWidget', FbWidget);/*
  * JQuery Form Builder - Plain Text plugin.
  * 
- * Revision: 118
+ * Revision: ${svn.info.lastRev}
  * Version: 0.1
  * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
  *
@@ -1493,7 +1507,7 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 		_type : 'PlainText',
 		_html : '<div class="PlainText"></div>',
 		_counterField : 'text',
-		_languages : [ 'en', 'zh' ],
+		_languages : [ 'en', 'zh_CN' ],
 		settings : {
 			en : {
 				text : 'Plain Text',
@@ -1504,8 +1518,8 @@ var FbPlainText = $.extend({}, $.fb.fbWidget.prototype, {
 					fontStyles: [0, 0, 0] // bold, italic, underline					
 				}
 			},
-			zh : {
-				text : '無格式文字',
+			zh_CN : {
+				text : '无格式文字',
 				classes : [ 'rightAlign', 'middleAlign' ],
 				styles: {
 					fontFamily: 'default', // form builder default
@@ -1661,7 +1675,7 @@ $.widget('fb.fbPlainText', FbPlainText);
 /*
  * JQuery Form Builder - Single Line Text plugin.
  * 
- * Revision: 118
+ * Revision: ${svn.info.lastRev}
  * Version: 0.1
  * Copyright 2011 Lim Chee Kin (limcheekin@vobject.com)
  *
@@ -1679,7 +1693,7 @@ var FbSingleLineText = $.extend({}, $.fb.fbWidget.prototype, {
 		      <input type="text" class="textInput" /> \
 	        <p class="formHint"></p></div>',
 		_counterField: 'label',
-		_languages: [ 'en', 'zh' ],
+		_languages: [ 'en', 'zh_CN' ],
 		settings: {
 			en: {
 				label: 'Single Line Text',
@@ -1691,7 +1705,7 @@ var FbSingleLineText = $.extend({}, $.fb.fbWidget.prototype, {
 					fontStyles: [0, 0, 0] // bold, italic, underline					
 				}				
 			},
-			zh : {
+			zh_CN : {
 				label: '单行文字输入',
 				value: '',
 				description: '',				
@@ -1701,6 +1715,7 @@ var FbSingleLineText = $.extend({}, $.fb.fbWidget.prototype, {
 					fontStyles: [0, 0, 0] // bold, italic, underline					
 				}				
 			},
+			_persistable: true,
 			required: true,
 			restriction: 'no',
 			styles : {

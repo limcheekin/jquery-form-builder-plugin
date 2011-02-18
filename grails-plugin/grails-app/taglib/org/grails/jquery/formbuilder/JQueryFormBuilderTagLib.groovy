@@ -32,11 +32,11 @@ class JQueryFormBuilderTagLib {
 		
 		if (!type) {
 			renderJavaScript g.resource(plugin:"jqueryFormBuilder", dir:"js", file:"jquery-formbuilder-${version}.${minified ? 'min.js' : 'js'}")
-			renderCSS g.resource(plugin:"jqueryFormBuilder", dir:"css", file:"jquery-formbuilder-${version}.css")
+			renderCSS g.resource(plugin:"jqueryFormBuilder", dir:"css", file:"jquery-formbuilder-${version}.${minified ? 'min.css' : 'css'}")
 		} else if (type.equals("js")) {
 			renderJavaScript g.resource(plugin:"jqueryFormBuilder", dir:"js", file:"jquery-formbuilder-${version}.${minified ? 'min.js' : 'js'}")
 		} else if (type.equals("css")) {
-			renderCSS g.resource(plugin:"jqueryFormBuilder", dir:"css", file:"jquery-formbuilder-${version}.css")
+			renderCSS g.resource(plugin:"jqueryFormBuilder", dir:"css", file:"jquery-formbuilder-${version}.${minified ? 'min.css' : 'css'}")
 		}
 	}
 	

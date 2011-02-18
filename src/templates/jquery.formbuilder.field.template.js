@@ -17,7 +17,7 @@ var FbFieldName = $.extend({}, $.fb.fbWidget.prototype, {
 		_type: 'FieldName',
 		_html: '<div></div>',
 		_counterField: 'field1',
-		_languages: [ 'en', 'zh' ],
+		_languages: [ 'en', 'zh_CN' ],
 		settings: {
 			en: {
 				field1: 'Value',

@@ -1,4 +1,3 @@
-10. Font Panel should belong to language section (English and Chinese have different font family)
 11. Multiple Choices Widget
 Choose One (Radio button) and Choose Multiple (Check Box) allow restriction such as choose 2 only 
 (default no restriction, can choose all), 1 in a row (default), support few choices in a row. 

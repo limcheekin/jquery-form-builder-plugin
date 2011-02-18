@@ -19,6 +19,7 @@ var FormBuilder = {
 		readOnly: false,
 		tabDisabled: [],
 		formCounter: 1,
+		language: 'en',
 		settings: {
 			en: {
 				name: 'Form',
@@ -30,7 +31,7 @@ var FormBuilder = {
 					fontStyles: [1, 0, 0] // bold, italic, underline					
 				}				
 			},
-			zh: {
+			zh_CN: {
 				name: '表格',
 				classes: ['rightAlign'],
 				heading: 'h2',
@@ -46,7 +47,7 @@ var FormBuilder = {
 			}
 		},
 		_id: '#container',
-		_languages : [ 'en', 'zh' ],
+		_languages : [ 'en', 'zh_CN' ],
 		_builderPanel: '#builderPanel',
 		_builderForm: '#builderForm',
 		_emptyBuilderPanel: '#emptyBuilderPanel',
@@ -276,12 +277,13 @@ var FormBuilder = {
   },  
   _initFormSettings: function() {
 	  var $fbWidget = $.fb.fbWidget.prototype;
-	  var $builderPanel = $(this.options._builderPanel);
-	  var $builderForm = $(this.options._builderForm);
-	  var $formSettingsLanguageSection = $(this.options._formSettingsLanguageSection);
-	  var $formSettingsGeneralSection = $(this.options._formSettingsGeneralSection);
-	  var $language = $('#language', $formSettingsLanguageSection).change(this._languageChange);
 	  var options = this.options;
+	  var $builderPanel = $(options._builderPanel);
+	  var $builderForm = $(options._builderForm);
+	  var $formSettingsLanguageSection = $(options._formSettingsLanguageSection);
+	  var $formSettingsGeneralSection = $(options._formSettingsGeneralSection);
+	  var defaultLanguage = $.inArray(options.language, options._languages) > -1 ? options.language : 'en';
+	  var $language = $('#language', $formSettingsLanguageSection).val(defaultLanguage).change(this._languageChange);
 	  var settings;
 	  var $this = this;
 	  var $formHeading = $('.formHeading', $builderPanel);
@@ -292,8 +294,8 @@ var FormBuilder = {
 		  for (var i = 0; i < options._languages.length; i++) {
 			   options.settings[options._languages[i]].name += ' ' + options.formCounter;
 		    }
-		  $formHeading.append('<' + settings.heading + ' class="heading">' + settings.name + '</' + settings.heading + '>');
-		  $('#name',$builderForm).val($fbWidget._propertyName(settings.name));
+		  $formHeading.addClass(settings.classes[0]).append('<' + settings.heading + ' class="heading">' + settings.name + '</' + settings.heading + '>');
+		  $('#name',$builderForm).val($fbWidget._propertyName(options.settings['en'].name));
 		  $this._updateSettings($this);
 		} else {
 			options.settings = $.parseJSON(unescape($settings.val()));
@@ -305,16 +307,18 @@ var FormBuilder = {
 		var $name = $fbWidget._label({ label: 'Name', name: 'form.name' })
 		       .append('<input type="text" id="form.name" value="' + settings.name + '" />');
 		$('input', $name).keyup(function(event) {
-						var value = $(this).val();
-						if ($.inArray($language.val(), options._languagesSupportIdGeneration) > -1) {
-							var name = $fbWidget._propertyName(value);
-				      $('#name',$builderForm).val(name).change();
-						}
-						$fbWidget._log('$(this).val() = ' + value);
-						settings.name = value;
-						$(settings.heading, $formHeading).text(value);
-						$this._updateSettings($this);
-					});			  
+				var value = $(this).val();
+				$fbWidget._log('options.disabledNameChange = ' + options.disabledNameChange);
+				if (!options.disabledNameChange && 
+						$.inArray($language.val(), options._languagesSupportIdGeneration) > -1) {
+					var name = $fbWidget._propertyName(value);
+		      $('#name',$builderForm).val(name).change();
+				}
+				$fbWidget._log('$(this).val() = ' + value);
+				settings.name = value;
+				$(settings.heading, $formHeading).text(value);
+				$this._updateSettings($this);
+		 });			  
 		
 
 		 var $heading = $fbWidget._label({ 

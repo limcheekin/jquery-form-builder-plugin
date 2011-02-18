@@ -1,4 +1,4 @@
-<plugin name='jquery-form-builder' version='0.1' grailsVersion='1.2.2 &gt; *'>
+<plugin name='jquery-form-builder' version='0.1' grailsVersion='1.3.6 &gt; *'>
   <author>Lim Chee Kin</author>
   <authorEmail>limcheekin@vobject.com</authorEmail>
   <title>JQuery Form Builder Plugin - JQuery WYSIWYG Web Form Builder</title>
