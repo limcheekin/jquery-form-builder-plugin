@@ -364,7 +364,7 @@ var FbWidget = {
 				name: options.name,
 				value: options.value,
 				ico: '../images/jquery.colourPicker.gif',
-				disabledIco: '../images/jquery.colourPicker.disabled.gif',				
+				disabledIco: '../../images/jquery.colourPicker.disabled.gif',				
 			  title: 'Basic Colors',
 			  disabled: this._getFbOptions().readOnly
 			});		
@@ -373,7 +373,7 @@ var FbWidget = {
 				name: name,
 				value: value,
 				ico: '../images/jquery.colourPicker.gif',				
-				disabledIco: '../images/jquery.colourPicker.disabled.gif',	
+				disabledIco: '../../images/jquery.colourPicker.disabled.gif',	
 			  title: 'Web Safe Colors',
 			  type: 'webSafe',
 			  width: 360,
