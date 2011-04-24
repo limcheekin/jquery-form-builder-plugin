@@ -14,7 +14,7 @@
 /* REF: http://www.thesitewizard.com/css/design-2-column-layout.shtml */
 #builderPalette {
   float: left;
-  width: 320px;
+  width: 325px;
   padding: 0;
 }  
   
@@ -24,7 +24,7 @@
 
 #builderPanel {
   border: 1px solid #ccc;  
-  min-height: 435px;	  
+  min-height: 415px;	  
   padding: 1em;
 }
 
@@ -58,7 +58,7 @@
 #paletteTabs {
 		font-size: 12px;
 		margin: 0;
-		width: 320px;		
+		width: 325px;		
 }
 
 /* Add Field Panel */
@@ -70,13 +70,14 @@
 /* Builder Panel */
 #emptyBuilderPanel {
 	text-align: center;
-	margin-top: 5em;
+	top: 5em;
 	color: grey;
 	font-size: 20px;
+	position:relative;
 }
 
 #builderPanel fieldset {
-  min-height: 250px	  
+  min-height: 355px; 
 }
 
 /* for drag and drop */

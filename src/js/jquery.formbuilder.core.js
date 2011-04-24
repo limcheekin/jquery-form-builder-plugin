@@ -237,7 +237,7 @@ var FormBuilder = {
 		    	 if ($prevCtrlHolder) {
 	  			   $widget._log('$prevCtrlHolder.text() = ' + $prevCtrlHolder.text());
 	  			   $ctrlHolder.insertAfter($prevCtrlHolder);
-	  			   $elements = $prevCtrlHolder.next().nextAll(); // $ctrlHolder.next() not works
+	  			   $elements = $prevCtrlHolder.next().nextAll(':visible'); // $ctrlHolder.next() not works. :visible to prevent select the invisible ctrlHolder and emptyBuilderPanel
 	  		   } else {
 	  			   $(fbOptions._emptyBuilderPanel + ':visible').hide();
 	  			   $elements = $('.' + $.fb.fbWidget.prototype.options._styleClass + 
